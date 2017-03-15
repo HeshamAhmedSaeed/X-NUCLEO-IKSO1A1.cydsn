@@ -1,0 +1,186 @@
+--------------- Build Started: 03/14/2017 17:58:29 Project: Design01, Configuration: ARM GCC 4.9-2015-q1-update Debug ---------------
+cydsfit.exe -.appdatapath "C:\Users\Hesham\AppData\Local\Cypress Semiconductor\PSoC Creator\4.0" -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p "C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\Design01.cydsn\Design01.cyprj" -d CY8C5888LTI-LP097 -s "C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\Design01.cydsn\Generated_Source\PSoC5" -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
+Elaborating Design...
+ADD: fit.M0032: warning: Clock Warning: (Clock_1's accuracy range '12 MHz +/- 1%, (11.88 MHz - 12.12 MHz)' is not within the specified tolerance range '10 MHz +/- 5%, (9.5 MHz - 10.5 MHz)'.).
+ * C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\Design01.cydsn\Design01.cydwr (Clock_1)
+ * C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\Design01.cydsn\TopDesign\TopDesign.cysch (Instance:Clock_1)
+HDL Generation...
+Synthesis...
+Tech Mapping...
+Analog Placement...
+Log: apr.M0058: The analog placement iterative improvement is 24% done. (App=cydsfit)
+Log: apr.M0058: The analog placement iterative improvement is 91% done. (App=cydsfit)
+Analog Routing...
+Analog Code Generation...
+Digital Placement...
+Digital Routing...
+Bitstream Generation...
+Bitstream Verification...
+Static timing analysis...
+API Generation...
+Dependency Generation...
+Cleanup...
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/HTS221TempHumiditySensor.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c HTS221TempHumiditySensor.c -o .\CortexM3\ARM_GCC_493\Debug\HTS221TempHumiditySensor.o
+HTS221TempHumiditySensor.c: In function 'Init_HTS221':
+HTS221TempHumiditySensor.c:54:11: warning: unused variable 'RD_Status' [-Wunused-variable]
+     uint8 RD_Status = 0;
+           ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/LPS25HPressureSensor.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c LPS25HPressureSensor.c -o .\CortexM3\ARM_GCC_493\Debug\LPS25HPressureSensor.o
+LPS25HPressureSensor.c: In function 'Init_LPS25H':
+LPS25HPressureSensor.c:54:11: warning: unused variable 'RD_Status' [-Wunused-variable]
+     uint8 RD_Status = 0;
+           ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/LIS3MDLMagnitometerSensor.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c LIS3MDLMagnitometerSensor.c -o .\CortexM3\ARM_GCC_493\Debug\LIS3MDLMagnitometerSensor.o
+LIS3MDLMagnitometerSensor.c: In function 'Init_LIS3MDL':
+LIS3MDLMagnitometerSensor.c:126:36: warning: passing argument 1 of 'LIS3MDL_Read_Magnetiometer' discards 'volatile' qualifier from pointer target type
+         LIS3MDL_Read_Magnetiometer(&X_Abs, &Y_Abs, &Z_Abs);
+                                    ^
+LIS3MDLMagnitometerSensor.c:65:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LIS3MDL_Read_Magnetiometer(signed short* X, signed short* Y ,signed short* Z){
+      ^
+LIS3MDLMagnitometerSensor.c:126:44: warning: passing argument 2 of 'LIS3MDL_Read_Magnetiometer' discards 'volatile' qualifier from pointer target type
+         LIS3MDL_Read_Magnetiometer(&X_Abs, &Y_Abs, &Z_Abs);
+                                            ^
+LIS3MDLMagnitometerSensor.c:65:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LIS3MDL_Read_Magnetiometer(signed short* X, signed short* Y ,signed short* Z){
+      ^
+LIS3MDLMagnitometerSensor.c:126:52: warning: passing argument 3 of 'LIS3MDL_Read_Magnetiometer' discards 'volatile' qualifier from pointer target type
+         LIS3MDL_Read_Magnetiometer(&X_Abs, &Y_Abs, &Z_Abs);
+                                                    ^
+LIS3MDLMagnitometerSensor.c:65:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LIS3MDL_Read_Magnetiometer(signed short* X, signed short* Y ,signed short* Z){
+      ^
+LIS3MDLMagnitometerSensor.c:103:11: warning: unused variable 'RD_Status' [-Wunused-variable]
+     uint8 RD_Status = 0;
+           ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/LSM6DS0AccelerometerGyroscopeSensor.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c LSM6DS0AccelerometerGyroscopeSensor.c -o .\CortexM3\ARM_GCC_493\Debug\LSM6DS0AccelerometerGyroscopeSensor.o
+LSM6DS0AccelerometerGyroscopeSensor.c: In function 'LSM6DS0_Read_Acelerometer':
+LSM6DS0AccelerometerGyroscopeSensor.c:124:31: warning: suggest parentheses around '-' inside '<<' [-Wparentheses]
+     *X_A = X_L_A | X_H_A << 8 - X_A_Abs;
+                               ^
+LSM6DS0AccelerometerGyroscopeSensor.c:126:31: warning: suggest parentheses around '-' inside '<<' [-Wparentheses]
+     *Y_A = Y_L_A | Y_H_A << 8 - Y_A_Abs;
+                               ^
+LSM6DS0AccelerometerGyroscopeSensor.c:128:31: warning: suggest parentheses around '-' inside '<<' [-Wparentheses]
+     *Z_A = Z_L_A | Z_H_A << 8 - Z_A_Abs;
+                               ^
+LSM6DS0AccelerometerGyroscopeSensor.c: In function 'Init_LSM6DS0':
+LSM6DS0AccelerometerGyroscopeSensor.c:151:35: warning: passing argument 1 of 'LSM6DS0_Read_Acelerometer' discards 'volatile' qualifier from pointer target type
+         LSM6DS0_Read_Acelerometer(&X_A_Abs ,&Y_A_Abs ,&Z_A_Abs);
+                                   ^
+LSM6DS0AccelerometerGyroscopeSensor.c:103:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LSM6DS0_Read_Acelerometer(signed short* X_A, signed short* Y_A ,signed short* Z_A){
+      ^
+LSM6DS0AccelerometerGyroscopeSensor.c:151:45: warning: passing argument 2 of 'LSM6DS0_Read_Acelerometer' discards 'volatile' qualifier from pointer target type
+         LSM6DS0_Read_Acelerometer(&X_A_Abs ,&Y_A_Abs ,&Z_A_Abs);
+                                             ^
+LSM6DS0AccelerometerGyroscopeSensor.c:103:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LSM6DS0_Read_Acelerometer(signed short* X_A, signed short* Y_A ,signed short* Z_A){
+      ^
+LSM6DS0AccelerometerGyroscopeSensor.c:151:55: warning: passing argument 3 of 'LSM6DS0_Read_Acelerometer' discards 'volatile' qualifier from pointer target type
+         LSM6DS0_Read_Acelerometer(&X_A_Abs ,&Y_A_Abs ,&Z_A_Abs);
+                                                       ^
+LSM6DS0AccelerometerGyroscopeSensor.c:103:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LSM6DS0_Read_Acelerometer(signed short* X_A, signed short* Y_A ,signed short* Z_A){
+      ^
+LSM6DS0AccelerometerGyroscopeSensor.c:153:32: warning: passing argument 1 of 'LSM6DS0_Read_Gyrometer' discards 'volatile' qualifier from pointer target type
+         LSM6DS0_Read_Gyrometer(&X_G_Abs ,&Y_G_Abs ,&Z_G_Abs);
+                                ^
+LSM6DS0AccelerometerGyroscopeSensor.c:72:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LSM6DS0_Read_Gyrometer(signed short* X_G, signed short* Y_G ,signed short* Z_G){
+      ^
+LSM6DS0AccelerometerGyroscopeSensor.c:153:42: warning: passing argument 2 of 'LSM6DS0_Read_Gyrometer' discards 'volatile' qualifier from pointer target type
+         LSM6DS0_Read_Gyrometer(&X_G_Abs ,&Y_G_Abs ,&Z_G_Abs);
+                                          ^
+LSM6DS0AccelerometerGyroscopeSensor.c:72:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LSM6DS0_Read_Gyrometer(signed short* X_G, signed short* Y_G ,signed short* Z_G){
+      ^
+LSM6DS0AccelerometerGyroscopeSensor.c:153:52: warning: passing argument 3 of 'LSM6DS0_Read_Gyrometer' discards 'volatile' qualifier from pointer target type
+         LSM6DS0_Read_Gyrometer(&X_G_Abs ,&Y_G_Abs ,&Z_G_Abs);
+                                                    ^
+LSM6DS0AccelerometerGyroscopeSensor.c:72:6: note: expected 'short int *' but argument is of type 'volatile short int *'
+ void LSM6DS0_Read_Gyrometer(signed short* X_G, signed short* Y_G ,signed short* Z_G){
+      ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/main.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c main.c -o .\CortexM3\ARM_GCC_493\Debug\main.o
+main.c: In function 'I2C_Write':
+main.c:189:11: warning: unused variable 'RD_Status' [-Wunused-variable]
+     uint8 RD_Status = 0;
+           ^
+main.c: In function 'main':
+main.c:318:10: warning: unused variable 'Pressure_str' [-Wunused-variable]
+     char Pressure_str[5] = {0};
+          ^
+main.c:316:10: warning: unused variable 'Humidity_str' [-Wunused-variable]
+     char Humidity_str[5] = {0};
+          ^
+main.c:295:21: warning: variable 'Pressure' set but not used [-Wunused-but-set-variable]
+     volatile uint16 Pressure = 0;
+                     ^
+main.c:291:21: warning: variable 'Humidity' set but not used [-Wunused-but-set-variable]
+     volatile uint16 Humidity = 0;
+                     ^
+main.c: At top level:
+main.c:29:13: warning: 'LED_Off' defined but not used [-Wunused-function]
+ static void LED_Off(){
+             ^
+main.c:35:13: warning: 'LED_Different' defined but not used [-Wunused-function]
+ static void LED_Different(int value){
+             ^
+main.c:41:13: warning: 'LED_Breath' defined but not used [-Wunused-function]
+ static void LED_Breath(){
+             ^
+main.c:145:14: warning: 'I2C_Read' defined but not used [-Wunused-function]
+ static uint8 I2C_Read(uint8 Address,uint8 Ref_Address){
+              ^
+main.c:185:13: warning: 'I2C_Write' defined but not used [-Wunused-function]
+ static void I2C_Write(uint8 Address,uint8 Ref_Address,uint8 Data){
+             ^
+main.c:216:13: warning: 'UART_Send_8' defined but not used [-Wunused-function]
+ static void UART_Send_8(char8* Data_Name, uint8 Data){
+             ^
+main.c:226:13: warning: 'UART_Send_16' defined but not used [-Wunused-function]
+ static void UART_Send_16(char8* Data_Name, signed short Data ){
+             ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/cyfitter_cfg.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\cyfitter_cfg.c -o .\CortexM3\ARM_GCC_493\Debug\cyfitter_cfg.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/cymetadata.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\cymetadata.c -o .\CortexM3\ARM_GCC_493\Debug\cymetadata.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/LED_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\LED_1.c -o .\CortexM3\ARM_GCC_493\Debug\LED_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/Clock_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\Clock_1.c -o .\CortexM3\ARM_GCC_493\Debug\Clock_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/Cm3Start.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\Cm3Start.c -o .\CortexM3\ARM_GCC_493\Debug\Cm3Start.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/CyDmac.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\CyDmac.c -o .\CortexM3\ARM_GCC_493\Debug\CyDmac.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/CyFlash.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\CyFlash.c -o .\CortexM3\ARM_GCC_493\Debug\CyFlash.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/CyLib.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\CyLib.c -o .\CortexM3\ARM_GCC_493\Debug\CyLib.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/cyPm.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\cyPm.c -o .\CortexM3\ARM_GCC_493\Debug\cyPm.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/CySpc.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\CySpc.c -o .\CortexM3\ARM_GCC_493\Debug\CySpc.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/cyutils.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\cyutils.c -o .\CortexM3\ARM_GCC_493\Debug\cyutils.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/PWM_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\PWM_1.c -o .\CortexM3\ARM_GCC_493\Debug\PWM_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/PWM_1_PM.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\PWM_1_PM.c -o .\CortexM3\ARM_GCC_493\Debug\PWM_1_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/PWM_2.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\PWM_2.c -o .\CortexM3\ARM_GCC_493\Debug\PWM_2.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/PWM_2_PM.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\PWM_2_PM.c -o .\CortexM3\ARM_GCC_493\Debug\PWM_2_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/UART_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\UART_1.c -o .\CortexM3\ARM_GCC_493\Debug\UART_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/UART_1_PM.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\UART_1_PM.c -o .\CortexM3\ARM_GCC_493\Debug\UART_1_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/UART_1_INT.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\UART_1_INT.c -o .\CortexM3\ARM_GCC_493\Debug\UART_1_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/UART_1_BOOT.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\UART_1_BOOT.c -o .\CortexM3\ARM_GCC_493\Debug\UART_1_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/UART_1_IntClock.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\UART_1_IntClock.c -o .\CortexM3\ARM_GCC_493\Debug\UART_1_IntClock.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/PIN_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\PIN_1.c -o .\CortexM3\ARM_GCC_493\Debug\PIN_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/I2C_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\I2C_1.c -o .\CortexM3\ARM_GCC_493\Debug\I2C_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/I2C_1_BOOT.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\I2C_1_BOOT.c -o .\CortexM3\ARM_GCC_493\Debug\I2C_1_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/I2C_1_INT.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\I2C_1_INT.c -o .\CortexM3\ARM_GCC_493\Debug\I2C_1_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/I2C_1_PM.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\I2C_1_PM.c -o .\CortexM3\ARM_GCC_493\Debug\I2C_1_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/I2C_1_SLAVE.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\I2C_1_SLAVE.c -o .\CortexM3\ARM_GCC_493\Debug\I2C_1_SLAVE.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/I2C_1_MASTER.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\I2C_1_MASTER.c -o .\CortexM3\ARM_GCC_493\Debug\I2C_1_MASTER.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/SDA_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\SDA_1.c -o .\CortexM3\ARM_GCC_493\Debug\SDA_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/SCL_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\SCL_1.c -o .\CortexM3\ARM_GCC_493\Debug\SCL_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/VDAC8_1.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\VDAC8_1.c -o .\CortexM3\ARM_GCC_493\Debug\VDAC8_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/VDAC8_1_PM.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\VDAC8_1_PM.c -o .\CortexM3\ARM_GCC_493\Debug\VDAC8_1_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/Intr.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\Intr.c -o .\CortexM3\ARM_GCC_493\Debug\Intr.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/V3.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\V3.c -o .\CortexM3\ARM_GCC_493\Debug\V3.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_493\Debug/REDY.lst -g -D DEBUG -Wall -ffunction-sections -Og -ffat-lto-objects -c Generated_Source\PSoC5\REDY.c -o .\CortexM3\ARM_GCC_493\Debug\REDY.o
+arm-none-eabi-as.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -alh=.\CortexM3\ARM_GCC_493\Debug/CyBootAsmGnu.lst -g -W -o .\CortexM3\ARM_GCC_493\Debug\CyBootAsmGnu.o Generated_Source\PSoC5\CyBootAsmGnu.s
+arm-none-eabi-ar.exe -rs .\CortexM3\ARM_GCC_493\Debug\Design01.a .\CortexM3\ARM_GCC_493\Debug\cyfitter_cfg.o .\CortexM3\ARM_GCC_493\Debug\LED_1.o .\CortexM3\ARM_GCC_493\Debug\Clock_1.o .\CortexM3\ARM_GCC_493\Debug\CyDmac.o .\CortexM3\ARM_GCC_493\Debug\CyFlash.o .\CortexM3\ARM_GCC_493\Debug\CyLib.o .\CortexM3\ARM_GCC_493\Debug\cyPm.o .\CortexM3\ARM_GCC_493\Debug\CySpc.o .\CortexM3\ARM_GCC_493\Debug\cyutils.o .\CortexM3\ARM_GCC_493\Debug\PWM_1.o .\CortexM3\ARM_GCC_493\Debug\PWM_1_PM.o .\CortexM3\ARM_GCC_493\Debug\PWM_2.o .\CortexM3\ARM_GCC_493\Debug\PWM_2_PM.o .\CortexM3\ARM_GCC_493\Debug\UART_1.o .\CortexM3\ARM_GCC_493\Debug\UART_1_PM.o .\CortexM3\ARM_GCC_493\Debug\UART_1_INT.o .\CortexM3\ARM_GCC_493\Debug\UART_1_BOOT.o .\CortexM3\ARM_GCC_493\Debug\UART_1_IntClock.o .\CortexM3\ARM_GCC_493\Debug\PIN_1.o .\CortexM3\ARM_GCC_493\Debug\I2C_1.o .\CortexM3\ARM_GCC_493\Debug\I2C_1_BOOT.o .\CortexM3\ARM_GCC_493\Debug\I2C_1_INT.o .\CortexM3\ARM_GCC_493\Debug\I2C_1_PM.o .\CortexM3\ARM_GCC_493\Debug\I2C_1_SLAVE.o .\CortexM3\ARM_GCC_493\Debug\I2C_1_MASTER.o .\CortexM3\ARM_GCC_493\Debug\SDA_1.o .\CortexM3\ARM_GCC_493\Debug\SCL_1.o .\CortexM3\ARM_GCC_493\Debug\VDAC8_1.o .\CortexM3\ARM_GCC_493\Debug\VDAC8_1_PM.o .\CortexM3\ARM_GCC_493\Debug\Intr.o .\CortexM3\ARM_GCC_493\Debug\V3.o .\CortexM3\ARM_GCC_493\Debug\REDY.o .\CortexM3\ARM_GCC_493\Debug\CyBootAsmGnu.o
+arm-none-eabi-ar.exe: creating .\CortexM3\ARM_GCC_493\Debug\Design01.a
+arm-none-eabi-gcc.exe -Wl,--start-group -o .\CortexM3\ARM_GCC_493\Debug\Design01.elf .\CortexM3\ARM_GCC_493\Debug\HTS221TempHumiditySensor.o .\CortexM3\ARM_GCC_493\Debug\LPS25HPressureSensor.o .\CortexM3\ARM_GCC_493\Debug\LIS3MDLMagnitometerSensor.o .\CortexM3\ARM_GCC_493\Debug\LSM6DS0AccelerometerGyroscopeSensor.o .\CortexM3\ARM_GCC_493\Debug\main.o .\CortexM3\ARM_GCC_493\Debug\cymetadata.o .\CortexM3\ARM_GCC_493\Debug\Cm3Start.o .\CortexM3\ARM_GCC_493\Debug\Design01.a "C:\Program Files (x86)\Cypress\PSoC Creator\4.0\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM3\ARM_GCC_493\Debug\CyComponentLibrary.a" -mcpu=cortex-m3 -mthumb -g -ffunction-sections -Og -ffat-lto-objects -L Generated_Source\PSoC5 -Wl,-Map,.\CortexM3\ARM_GCC_493\Debug/Design01.map -T "C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\Design01.cydsn\Generated_Source\PSoC5\cm3gcc.ld" -specs=nano.specs -Wl,--gc-sections -Wl,--end-group
+cyelftool.exe -C "C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\Design01.cydsn\CortexM3\ARM_GCC_493\Debug\Design01.elf" --flash_row_size 256 --flash_size 262144
+cyelftool.exe -S "C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\Design01.cydsn\CortexM3\ARM_GCC_493\Debug\Design01.elf"
+Flash used: 7830 of 262144 bytes (3.0 %).
+SRAM used: 2629 of 65536 bytes (4.0 %). Stack: 2048 bytes. Heap: 128 bytes.
+--------------- Build Succeeded: 03/14/2017 17:58:44 ---------------

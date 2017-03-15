@@ -1,0 +1,1827 @@
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"LIS3MDLMagnitometerSensor.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.I2C_LIS3MDL,"ax",%progbits
+  19              		.align	2
+  20              		.global	I2C_LIS3MDL
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	I2C_LIS3MDL, %function
+  24              	I2C_LIS3MDL:
+  25              	.LFB63:
+  26              		.file 1 "LIS3MDLMagnitometerSensor.c"
+   1:LIS3MDLMagnitometerSensor.c **** /*
+   2:LIS3MDLMagnitometerSensor.c ****  * LIS3MDLMagnitometer.c
+   3:LIS3MDLMagnitometerSensor.c ****  *
+   4:LIS3MDLMagnitometerSensor.c ****  *  Created on: Mar 12, 2017
+   5:LIS3MDLMagnitometerSensor.c ****  *      Author: Hesham
+   6:LIS3MDLMagnitometerSensor.c ****  */
+   7:LIS3MDLMagnitometerSensor.c **** 
+   8:LIS3MDLMagnitometerSensor.c **** #include "LIS3MDLMagnitometerSensor.h"
+   9:LIS3MDLMagnitometerSensor.c **** 
+  10:LIS3MDLMagnitometerSensor.c **** volatile signed short X_Abs = 0 ;
+  11:LIS3MDLMagnitometerSensor.c **** 
+  12:LIS3MDLMagnitometerSensor.c **** volatile signed short Y_Abs = 0 ;
+  13:LIS3MDLMagnitometerSensor.c **** 
+  14:LIS3MDLMagnitometerSensor.c **** volatile signed short Z_Abs = 0 ;
+  15:LIS3MDLMagnitometerSensor.c **** 
+  16:LIS3MDLMagnitometerSensor.c **** uint8 I2C_LIS3MDL(uint8 Ref_Address){
+  27              		.loc 1 16 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 00B5     		push	{lr}
+  33              		.cfi_def_cfa_offset 4
+  34              		.cfi_offset 14, -4
+  35 0002 83B0     		sub	sp, sp, #12
+  36              		.cfi_def_cfa_offset 16
+  37              	.LVL1:
+  17:LIS3MDLMagnitometerSensor.c **** 
+  18:LIS3MDLMagnitometerSensor.c ****     uint8 WR_Status = 0;
+  19:LIS3MDLMagnitometerSensor.c ****     uint8 RD_Status = 0;
+  20:LIS3MDLMagnitometerSensor.c ****     uint8 WR_Buffer[LIS3MDL_WR_BUFFER_SIZE];
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 2
+
+
+  21:LIS3MDLMagnitometerSensor.c ****     uint8 RD_Buffer[LIS3MDL_RD_BUFFER_SIZE];
+  22:LIS3MDLMagnitometerSensor.c **** 
+  23:LIS3MDLMagnitometerSensor.c ****     WR_Buffer[0] = Ref_Address;
+  38              		.loc 1 23 0
+  39 0004 8DF80400 		strb	r0, [sp, #4]
+  40              	.LVL2:
+  41              	.L2:
+  24:LIS3MDLMagnitometerSensor.c **** 
+  25:LIS3MDLMagnitometerSensor.c ****             do
+  26:LIS3MDLMagnitometerSensor.c ****         {
+  27:LIS3MDLMagnitometerSensor.c ****             /* The syntax below automatically writes a buffer of data to a slave
+  28:LIS3MDLMagnitometerSensor.c ****              * device from start to stop.
+  29:LIS3MDLMagnitometerSensor.c ****               */
+  30:LIS3MDLMagnitometerSensor.c ****             WR_Status = I2C_1_MasterWriteBuf(I2C_LIS3MDL_Address, (uint8 *)WR_Buffer,
+  42              		.loc 1 30 0 discriminator 1
+  43 0008 1E20     		movs	r0, #30
+  44 000a 01A9     		add	r1, sp, #4
+  45 000c 0122     		movs	r2, #1
+  46 000e 0023     		movs	r3, #0
+  47 0010 FFF7FEFF 		bl	I2C_1_MasterWriteBuf
+  48              	.LVL3:
+  31:LIS3MDLMagnitometerSensor.c ****                                         LIS3MDL_WR_BUFFER_SIZE, I2C_1_MODE_COMPLETE_XFER);
+  32:LIS3MDLMagnitometerSensor.c ****         }
+  33:LIS3MDLMagnitometerSensor.c ****         while (WR_Status != I2C_1_MSTR_NO_ERROR);
+  49              		.loc 1 33 0 discriminator 1
+  50 0014 0028     		cmp	r0, #0
+  51 0016 F7D1     		bne	.L2
+  52              	.LVL4:
+  53              	.L3:
+  34:LIS3MDLMagnitometerSensor.c **** 
+  35:LIS3MDLMagnitometerSensor.c **** 
+  36:LIS3MDLMagnitometerSensor.c **** 
+  37:LIS3MDLMagnitometerSensor.c ****         /* Wait for the data transfer to complete */
+  38:LIS3MDLMagnitometerSensor.c ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+  54              		.loc 1 38 0 discriminator 1
+  55 0018 FFF7FEFF 		bl	I2C_1_MasterStatus
+  56              	.LVL5:
+  57 001c 10F0040F 		tst	r0, #4
+  58 0020 FAD1     		bne	.L3
+  39:LIS3MDLMagnitometerSensor.c **** 
+  40:LIS3MDLMagnitometerSensor.c ****         WR_Status = I2C_1_MasterClearStatus();
+  59              		.loc 1 40 0
+  60 0022 FFF7FEFF 		bl	I2C_1_MasterClearStatus
+  61              	.LVL6:
+  41:LIS3MDLMagnitometerSensor.c **** 
+  42:LIS3MDLMagnitometerSensor.c ****         RD_Status = I2C_1_MasterReadBuf(I2C_LIS3MDL_Address, (uint8 *)RD_Buffer,
+  62              		.loc 1 42 0
+  63 0026 1E20     		movs	r0, #30
+  64 0028 6946     		mov	r1, sp
+  65 002a 0122     		movs	r2, #1
+  66 002c 0023     		movs	r3, #0
+  67 002e FFF7FEFF 		bl	I2C_1_MasterReadBuf
+  68              	.LVL7:
+  69              	.L4:
+  43:LIS3MDLMagnitometerSensor.c ****                     LIS3MDL_RD_BUFFER_SIZE, I2C_1_MODE_COMPLETE_XFER);
+  44:LIS3MDLMagnitometerSensor.c **** 
+  45:LIS3MDLMagnitometerSensor.c ****         while (RD_Status != I2C_1_MSTR_NO_ERROR);
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 3
+
+
+  70              		.loc 1 45 0 discriminator 1
+  71 0032 0028     		cmp	r0, #0
+  72 0034 FDD1     		bne	.L4
+  73              	.LVL8:
+  74              	.L5:
+  46:LIS3MDLMagnitometerSensor.c **** 
+  47:LIS3MDLMagnitometerSensor.c ****         /* Wait for the data transfer to complete */
+  48:LIS3MDLMagnitometerSensor.c ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+  75              		.loc 1 48 0 discriminator 1
+  76 0036 FFF7FEFF 		bl	I2C_1_MasterStatus
+  77              	.LVL9:
+  78 003a 10F0040F 		tst	r0, #4
+  79 003e FAD1     		bne	.L5
+  49:LIS3MDLMagnitometerSensor.c **** 
+  50:LIS3MDLMagnitometerSensor.c ****         RD_Status = I2C_1_MasterClearStatus();
+  80              		.loc 1 50 0
+  81 0040 FFF7FEFF 		bl	I2C_1_MasterClearStatus
+  82              	.LVL10:
+  51:LIS3MDLMagnitometerSensor.c **** 
+  52:LIS3MDLMagnitometerSensor.c ****         return RD_Buffer[0];
+  53:LIS3MDLMagnitometerSensor.c **** }
+  83              		.loc 1 53 0
+  84 0044 9DF80000 		ldrb	r0, [sp]	@ zero_extendqisi2
+  85 0048 03B0     		add	sp, sp, #12
+  86              		.cfi_def_cfa_offset 4
+  87              		@ sp needed
+  88 004a 5DF804FB 		ldr	pc, [sp], #4
+  89              		.cfi_endproc
+  90              	.LFE63:
+  91              		.size	I2C_LIS3MDL, .-I2C_LIS3MDL
+  92 004e 00BF     		.section	.text.LIS3MDL_TEST,"ax",%progbits
+  93              		.align	2
+  94              		.global	LIS3MDL_TEST
+  95              		.thumb
+  96              		.thumb_func
+  97              		.type	LIS3MDL_TEST, %function
+  98              	LIS3MDL_TEST:
+  99              	.LFB64:
+  54:LIS3MDLMagnitometerSensor.c **** 
+  55:LIS3MDLMagnitometerSensor.c **** //Testing LIS3MDL
+  56:LIS3MDLMagnitometerSensor.c **** 
+  57:LIS3MDLMagnitometerSensor.c **** uint16 LIS3MDL_TEST(){
+ 100              		.loc 1 57 0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 0
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+ 104 0000 08B5     		push	{r3, lr}
+ 105              		.cfi_def_cfa_offset 8
+ 106              		.cfi_offset 3, -8
+ 107              		.cfi_offset 14, -4
+  58:LIS3MDLMagnitometerSensor.c **** 
+  59:LIS3MDLMagnitometerSensor.c ****     return I2C_LIS3MDL(LIS3MDL_WHO_AM_I); // should be 0x3D
+ 108              		.loc 1 59 0
+ 109 0002 0F20     		movs	r0, #15
+ 110 0004 FFF7FEFF 		bl	I2C_LIS3MDL
+ 111              	.LVL11:
+  60:LIS3MDLMagnitometerSensor.c **** 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 4
+
+
+  61:LIS3MDLMagnitometerSensor.c **** }
+ 112              		.loc 1 61 0
+ 113 0008 08BD     		pop	{r3, pc}
+ 114              		.cfi_endproc
+ 115              	.LFE64:
+ 116              		.size	LIS3MDL_TEST, .-LIS3MDL_TEST
+ 117 000a 00BF     		.section	.text.LIS3MDL_Read_Magnetiometer,"ax",%progbits
+ 118              		.align	2
+ 119              		.global	LIS3MDL_Read_Magnetiometer
+ 120              		.thumb
+ 121              		.thumb_func
+ 122              		.type	LIS3MDL_Read_Magnetiometer, %function
+ 123              	LIS3MDL_Read_Magnetiometer:
+ 124              	.LFB65:
+  62:LIS3MDLMagnitometerSensor.c **** 
+  63:LIS3MDLMagnitometerSensor.c **** //Read Magentometer
+  64:LIS3MDLMagnitometerSensor.c **** 
+  65:LIS3MDLMagnitometerSensor.c **** void LIS3MDL_Read_Magnetiometer(signed short* X, signed short* Y ,signed short* Z){
+ 125              		.loc 1 65 0
+ 126              		.cfi_startproc
+ 127              		@ args = 0, pretend = 0, frame = 8
+ 128              		@ frame_needed = 0, uses_anonymous_args = 0
+ 129              	.LVL12:
+ 130 0000 70B5     		push	{r4, r5, r6, lr}
+ 131              		.cfi_def_cfa_offset 16
+ 132              		.cfi_offset 4, -16
+ 133              		.cfi_offset 5, -12
+ 134              		.cfi_offset 6, -8
+ 135              		.cfi_offset 14, -4
+ 136 0002 82B0     		sub	sp, sp, #8
+ 137              		.cfi_def_cfa_offset 24
+ 138 0004 0646     		mov	r6, r0
+ 139 0006 0D46     		mov	r5, r1
+ 140 0008 1446     		mov	r4, r2
+  66:LIS3MDLMagnitometerSensor.c **** 
+  67:LIS3MDLMagnitometerSensor.c ****     volatile uint8 X_L = 0;
+ 141              		.loc 1 67 0
+ 142 000a 0023     		movs	r3, #0
+ 143 000c 8DF80730 		strb	r3, [sp, #7]
+  68:LIS3MDLMagnitometerSensor.c **** 
+  69:LIS3MDLMagnitometerSensor.c ****     volatile uint8 X_H = 0;
+ 144              		.loc 1 69 0
+ 145 0010 8DF80630 		strb	r3, [sp, #6]
+  70:LIS3MDLMagnitometerSensor.c **** 
+  71:LIS3MDLMagnitometerSensor.c ****     volatile uint8 Y_L = 0;
+ 146              		.loc 1 71 0
+ 147 0014 8DF80530 		strb	r3, [sp, #5]
+  72:LIS3MDLMagnitometerSensor.c **** 
+  73:LIS3MDLMagnitometerSensor.c ****     volatile uint8 Y_H = 0;
+ 148              		.loc 1 73 0
+ 149 0018 8DF80430 		strb	r3, [sp, #4]
+  74:LIS3MDLMagnitometerSensor.c **** 
+  75:LIS3MDLMagnitometerSensor.c ****     volatile uint8 Z_L = 0;
+ 150              		.loc 1 75 0
+ 151 001c 8DF80330 		strb	r3, [sp, #3]
+  76:LIS3MDLMagnitometerSensor.c **** 
+  77:LIS3MDLMagnitometerSensor.c ****     volatile uint8 Z_H = 0;
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 5
+
+
+ 152              		.loc 1 77 0
+ 153 0020 8DF80230 		strb	r3, [sp, #2]
+  78:LIS3MDLMagnitometerSensor.c **** 
+  79:LIS3MDLMagnitometerSensor.c ****     X_L = I2C_LIS3MDL(LIS3MDL_OUT_X_L);
+ 154              		.loc 1 79 0
+ 155 0024 2820     		movs	r0, #40
+ 156              	.LVL13:
+ 157 0026 FFF7FEFF 		bl	I2C_LIS3MDL
+ 158              	.LVL14:
+ 159 002a 8DF80700 		strb	r0, [sp, #7]
+  80:LIS3MDLMagnitometerSensor.c **** 
+  81:LIS3MDLMagnitometerSensor.c ****     X_H = I2C_LIS3MDL(LIS3MDL_OUT_X_H);
+ 160              		.loc 1 81 0
+ 161 002e 2920     		movs	r0, #41
+ 162 0030 FFF7FEFF 		bl	I2C_LIS3MDL
+ 163              	.LVL15:
+ 164 0034 8DF80600 		strb	r0, [sp, #6]
+  82:LIS3MDLMagnitometerSensor.c **** 
+  83:LIS3MDLMagnitometerSensor.c ****     Y_L = I2C_LIS3MDL(LIS3MDL_OUT_Y_L);
+ 165              		.loc 1 83 0
+ 166 0038 2A20     		movs	r0, #42
+ 167 003a FFF7FEFF 		bl	I2C_LIS3MDL
+ 168              	.LVL16:
+ 169 003e 8DF80500 		strb	r0, [sp, #5]
+  84:LIS3MDLMagnitometerSensor.c **** 
+  85:LIS3MDLMagnitometerSensor.c ****     Y_H = I2C_LIS3MDL(LIS3MDL_OUT_Y_H);
+ 170              		.loc 1 85 0
+ 171 0042 2B20     		movs	r0, #43
+ 172 0044 FFF7FEFF 		bl	I2C_LIS3MDL
+ 173              	.LVL17:
+ 174 0048 8DF80400 		strb	r0, [sp, #4]
+  86:LIS3MDLMagnitometerSensor.c **** 
+  87:LIS3MDLMagnitometerSensor.c ****     Z_L = I2C_LIS3MDL(LIS3MDL_OUT_Z_L);
+ 175              		.loc 1 87 0
+ 176 004c 2C20     		movs	r0, #44
+ 177 004e FFF7FEFF 		bl	I2C_LIS3MDL
+ 178              	.LVL18:
+ 179 0052 8DF80300 		strb	r0, [sp, #3]
+  88:LIS3MDLMagnitometerSensor.c **** 
+  89:LIS3MDLMagnitometerSensor.c ****     Z_H = I2C_LIS3MDL(LIS3MDL_OUT_Z_H);
+ 180              		.loc 1 89 0
+ 181 0056 2D20     		movs	r0, #45
+ 182 0058 FFF7FEFF 		bl	I2C_LIS3MDL
+ 183              	.LVL19:
+ 184 005c 8DF80200 		strb	r0, [sp, #2]
+  90:LIS3MDLMagnitometerSensor.c **** 
+  91:LIS3MDLMagnitometerSensor.c ****     *X = (X_L | X_H<<8) - X_Abs;
+ 185              		.loc 1 91 0
+ 186 0060 9DF80720 		ldrb	r2, [sp, #7]	@ zero_extendqisi2
+ 187 0064 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
+ 188 0068 0C49     		ldr	r1, .L11
+ 189 006a 0888     		ldrh	r0, [r1]
+ 190 006c 42EA0323 		orr	r3, r2, r3, lsl #8
+ 191 0070 1B1A     		subs	r3, r3, r0
+ 192 0072 3380     		strh	r3, [r6]	@ movhi
+  92:LIS3MDLMagnitometerSensor.c **** 
+  93:LIS3MDLMagnitometerSensor.c ****     *Y = (Y_L | Y_H<<8) - Y_Abs;
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 6
+
+
+ 193              		.loc 1 93 0
+ 194 0074 9DF80520 		ldrb	r2, [sp, #5]	@ zero_extendqisi2
+ 195 0078 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 196 007c 4888     		ldrh	r0, [r1, #2]
+ 197 007e 42EA0323 		orr	r3, r2, r3, lsl #8
+ 198 0082 1B1A     		subs	r3, r3, r0
+ 199 0084 2B80     		strh	r3, [r5]	@ movhi
+  94:LIS3MDLMagnitometerSensor.c **** 
+  95:LIS3MDLMagnitometerSensor.c ****     *Z = (Z_L | Z_H<<8) - Z_Abs;
+ 200              		.loc 1 95 0
+ 201 0086 9DF80320 		ldrb	r2, [sp, #3]	@ zero_extendqisi2
+ 202 008a 9DF80230 		ldrb	r3, [sp, #2]	@ zero_extendqisi2
+ 203 008e 8988     		ldrh	r1, [r1, #4]
+ 204 0090 42EA0323 		orr	r3, r2, r3, lsl #8
+ 205 0094 5B1A     		subs	r3, r3, r1
+ 206 0096 2380     		strh	r3, [r4]	@ movhi
+  96:LIS3MDLMagnitometerSensor.c **** 
+  97:LIS3MDLMagnitometerSensor.c **** }
+ 207              		.loc 1 97 0
+ 208 0098 02B0     		add	sp, sp, #8
+ 209              		.cfi_def_cfa_offset 16
+ 210              		@ sp needed
+ 211 009a 70BD     		pop	{r4, r5, r6, pc}
+ 212              	.LVL20:
+ 213              	.L12:
+ 214              		.align	2
+ 215              	.L11:
+ 216 009c 00000000 		.word	.LANCHOR0
+ 217              		.cfi_endproc
+ 218              	.LFE65:
+ 219              		.size	LIS3MDL_Read_Magnetiometer, .-LIS3MDL_Read_Magnetiometer
+ 220              		.section	.text.Init_LIS3MDL,"ax",%progbits
+ 221              		.align	2
+ 222              		.global	Init_LIS3MDL
+ 223              		.thumb
+ 224              		.thumb_func
+ 225              		.type	Init_LIS3MDL, %function
+ 226              	Init_LIS3MDL:
+ 227              	.LFB66:
+  98:LIS3MDLMagnitometerSensor.c **** 
+  99:LIS3MDLMagnitometerSensor.c **** 
+ 100:LIS3MDLMagnitometerSensor.c **** void Init_LIS3MDL(){
+ 228              		.loc 1 100 0
+ 229              		.cfi_startproc
+ 230              		@ args = 0, pretend = 0, frame = 8
+ 231              		@ frame_needed = 0, uses_anonymous_args = 0
+ 232 0000 00B5     		push	{lr}
+ 233              		.cfi_def_cfa_offset 4
+ 234              		.cfi_offset 14, -4
+ 235 0002 83B0     		sub	sp, sp, #12
+ 236              		.cfi_def_cfa_offset 16
+ 237              	.LVL21:
+ 101:LIS3MDLMagnitometerSensor.c **** 
+ 102:LIS3MDLMagnitometerSensor.c ****     uint8 WR_Status = 0;
+ 103:LIS3MDLMagnitometerSensor.c ****     uint8 RD_Status = 0;
+ 104:LIS3MDLMagnitometerSensor.c ****     uint8 WR_Buffer[Init_LIS3MDL_WR_BUFFER_SIZE];
+ 105:LIS3MDLMagnitometerSensor.c **** 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 7
+
+
+ 106:LIS3MDLMagnitometerSensor.c ****     WR_Buffer[0] = LIS3MDL_CTRL_REG3;
+ 238              		.loc 1 106 0
+ 239 0004 2223     		movs	r3, #34
+ 240 0006 8DF80430 		strb	r3, [sp, #4]
+ 107:LIS3MDLMagnitometerSensor.c ****     WR_Buffer[1] = LIS3MDL_OP_MD;
+ 241              		.loc 1 107 0
+ 242 000a 0023     		movs	r3, #0
+ 243 000c 8DF80530 		strb	r3, [sp, #5]
+ 244              	.LVL22:
+ 245              	.L14:
+ 108:LIS3MDLMagnitometerSensor.c **** 
+ 109:LIS3MDLMagnitometerSensor.c ****             do
+ 110:LIS3MDLMagnitometerSensor.c ****         {
+ 111:LIS3MDLMagnitometerSensor.c ****             /* The syntax below automatically writes a buffer of data to a slave
+ 112:LIS3MDLMagnitometerSensor.c ****              * device from start to stop.
+ 113:LIS3MDLMagnitometerSensor.c ****               */
+ 114:LIS3MDLMagnitometerSensor.c ****             WR_Status = I2C_1_MasterWriteBuf(I2C_LIS3MDL_Address, (uint8 *)WR_Buffer,
+ 246              		.loc 1 114 0 discriminator 1
+ 247 0010 1E20     		movs	r0, #30
+ 248 0012 01A9     		add	r1, sp, #4
+ 249 0014 0222     		movs	r2, #2
+ 250 0016 0023     		movs	r3, #0
+ 251 0018 FFF7FEFF 		bl	I2C_1_MasterWriteBuf
+ 252              	.LVL23:
+ 115:LIS3MDLMagnitometerSensor.c ****                                         Init_LIS3MDL_WR_BUFFER_SIZE, I2C_1_MODE_COMPLETE_XFER);
+ 116:LIS3MDLMagnitometerSensor.c ****         }
+ 117:LIS3MDLMagnitometerSensor.c ****         while (WR_Status != I2C_1_MSTR_NO_ERROR);
+ 253              		.loc 1 117 0 discriminator 1
+ 254 001c 0028     		cmp	r0, #0
+ 255 001e F7D1     		bne	.L14
+ 256              	.LVL24:
+ 257              	.L15:
+ 118:LIS3MDLMagnitometerSensor.c **** 
+ 119:LIS3MDLMagnitometerSensor.c **** 
+ 120:LIS3MDLMagnitometerSensor.c **** 
+ 121:LIS3MDLMagnitometerSensor.c ****         /* Wait for the data transfer to complete */
+ 122:LIS3MDLMagnitometerSensor.c ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+ 258              		.loc 1 122 0 discriminator 1
+ 259 0020 FFF7FEFF 		bl	I2C_1_MasterStatus
+ 260              	.LVL25:
+ 261 0024 10F0040F 		tst	r0, #4
+ 262 0028 FAD1     		bne	.L15
+ 123:LIS3MDLMagnitometerSensor.c **** 
+ 124:LIS3MDLMagnitometerSensor.c ****         WR_Status = I2C_1_MasterClearStatus();
+ 263              		.loc 1 124 0
+ 264 002a FFF7FEFF 		bl	I2C_1_MasterClearStatus
+ 265              	.LVL26:
+ 125:LIS3MDLMagnitometerSensor.c ****         
+ 126:LIS3MDLMagnitometerSensor.c ****         LIS3MDL_Read_Magnetiometer(&X_Abs, &Y_Abs, &Z_Abs);
+ 266              		.loc 1 126 0
+ 267 002e 044A     		ldr	r2, .L17
+ 268 0030 1046     		mov	r0, r2
+ 269 0032 911C     		adds	r1, r2, #2
+ 270 0034 0432     		adds	r2, r2, #4
+ 271 0036 FFF7FEFF 		bl	LIS3MDL_Read_Magnetiometer
+ 272              	.LVL27:
+ 127:LIS3MDLMagnitometerSensor.c **** 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 8
+
+
+ 128:LIS3MDLMagnitometerSensor.c **** }...
+ 273              		.loc 1 128 0
+ 274 003a 03B0     		add	sp, sp, #12
+ 275              		.cfi_def_cfa_offset 4
+ 276              		@ sp needed
+ 277 003c 5DF804FB 		ldr	pc, [sp], #4
+ 278              	.L18:
+ 279              		.align	2
+ 280              	.L17:
+ 281 0040 00000000 		.word	.LANCHOR0
+ 282              		.cfi_endproc
+ 283              	.LFE66:
+ 284              		.size	Init_LIS3MDL, .-Init_LIS3MDL
+ 285              		.global	Z_Abs
+ 286              		.global	Y_Abs
+ 287              		.global	X_Abs
+ 288              		.bss
+ 289              		.align	1
+ 290              		.set	.LANCHOR0,. + 0
+ 291              		.type	X_Abs, %object
+ 292              		.size	X_Abs, 2
+ 293              	X_Abs:
+ 294 0000 0000     		.space	2
+ 295              		.type	Y_Abs, %object
+ 296              		.size	Y_Abs, 2
+ 297              	Y_Abs:
+ 298 0002 0000     		.space	2
+ 299              		.type	Z_Abs, %object
+ 300              		.size	Z_Abs, 2
+ 301              	Z_Abs:
+ 302 0004 0000     		.space	2
+ 303              		.text
+ 304              	.Letext0:
+ 305              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 306              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 307              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 308              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 309              		.file 6 "Generated_Source\\PSoC5/I2C_1.h"
+ 310              		.section	.debug_info,"",%progbits
+ 311              	.Ldebug_info0:
+ 312 0000 1A040000 		.4byte	0x41a
+ 313 0004 0400     		.2byte	0x4
+ 314 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 315 000a 04       		.byte	0x4
+ 316 000b 01       		.uleb128 0x1
+ 317 000c 01010000 		.4byte	.LASF30
+ 318 0010 01       		.byte	0x1
+ 319 0011 65000000 		.4byte	.LASF31
+ 320 0015 3E020000 		.4byte	.LASF32
+ 321 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 322 001d 00000000 		.4byte	0
+ 323 0021 00000000 		.4byte	.Ldebug_line0
+ 324 0025 02       		.uleb128 0x2
+ 325 0026 01       		.byte	0x1
+ 326 0027 06       		.byte	0x6
+ 327 0028 9C000000 		.4byte	.LASF0
+ 328 002c 02       		.uleb128 0x2
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 9
+
+
+ 329 002d 01       		.byte	0x1
+ 330 002e 08       		.byte	0x8
+ 331 002f A8000000 		.4byte	.LASF1
+ 332 0033 02       		.uleb128 0x2
+ 333 0034 02       		.byte	0x2
+ 334 0035 05       		.byte	0x5
+ 335 0036 FA010000 		.4byte	.LASF2
+ 336 003a 02       		.uleb128 0x2
+ 337 003b 02       		.byte	0x2
+ 338 003c 07       		.byte	0x7
+ 339 003d 2A000000 		.4byte	.LASF3
+ 340 0041 03       		.uleb128 0x3
+ 341 0042 20000000 		.4byte	.LASF9
+ 342 0046 02       		.byte	0x2
+ 343 0047 3F       		.byte	0x3f
+ 344 0048 4C000000 		.4byte	0x4c
+ 345 004c 02       		.uleb128 0x2
+ 346 004d 04       		.byte	0x4
+ 347 004e 05       		.byte	0x5
+ 348 004f 22020000 		.4byte	.LASF4
+ 349 0053 02       		.uleb128 0x2
+ 350 0054 04       		.byte	0x4
+ 351 0055 07       		.byte	0x7
+ 352 0056 B6000000 		.4byte	.LASF5
+ 353 005a 02       		.uleb128 0x2
+ 354 005b 08       		.byte	0x8
+ 355 005c 05       		.byte	0x5
+ 356 005d DD010000 		.4byte	.LASF6
+ 357 0061 02       		.uleb128 0x2
+ 358 0062 08       		.byte	0x8
+ 359 0063 07       		.byte	0x7
+ 360 0064 A2010000 		.4byte	.LASF7
+ 361 0068 04       		.uleb128 0x4
+ 362 0069 04       		.byte	0x4
+ 363 006a 05       		.byte	0x5
+ 364 006b 696E7400 		.ascii	"int\000"
+ 365 006f 02       		.uleb128 0x2
+ 366 0070 04       		.byte	0x4
+ 367 0071 07       		.byte	0x7
+ 368 0072 8F010000 		.4byte	.LASF8
+ 369 0076 03       		.uleb128 0x3
+ 370 0077 CC010000 		.4byte	.LASF10
+ 371 007b 03       		.byte	0x3
+ 372 007c 2C       		.byte	0x2c
+ 373 007d 41000000 		.4byte	0x41
+ 374 0081 05       		.uleb128 0x5
+ 375 0082 1C020000 		.4byte	.LASF11
+ 376 0086 04       		.byte	0x4
+ 377 0087 9201     		.2byte	0x192
+ 378 0089 2C000000 		.4byte	0x2c
+ 379 008d 05       		.uleb128 0x5
+ 380 008e FA000000 		.4byte	.LASF12
+ 381 0092 04       		.byte	0x4
+ 382 0093 9301     		.2byte	0x193
+ 383 0095 3A000000 		.4byte	0x3a
+ 384 0099 02       		.uleb128 0x2
+ 385 009a 04       		.byte	0x4
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 10
+
+
+ 386 009b 04       		.byte	0x4
+ 387 009c 96000000 		.4byte	.LASF13
+ 388 00a0 02       		.uleb128 0x2
+ 389 00a1 08       		.byte	0x8
+ 390 00a2 04       		.byte	0x4
+ 391 00a3 DF000000 		.4byte	.LASF14
+ 392 00a7 02       		.uleb128 0x2
+ 393 00a8 01       		.byte	0x1
+ 394 00a9 08       		.byte	0x8
+ 395 00aa EB010000 		.4byte	.LASF15
+ 396 00ae 06       		.uleb128 0x6
+ 397 00af 81000000 		.4byte	0x81
+ 398 00b3 02       		.uleb128 0x2
+ 399 00b4 04       		.byte	0x4
+ 400 00b5 07       		.byte	0x7
+ 401 00b6 D4010000 		.4byte	.LASF16
+ 402 00ba 07       		.uleb128 0x7
+ 403 00bb 9C020000 		.4byte	.LASF33
+ 404 00bf 01       		.byte	0x1
+ 405 00c0 10       		.byte	0x10
+ 406 00c1 81000000 		.4byte	0x81
+ 407 00c5 00000000 		.4byte	.LFB63
+ 408 00c9 4E000000 		.4byte	.LFE63-.LFB63
+ 409 00cd 01       		.uleb128 0x1
+ 410 00ce 9C       		.byte	0x9c
+ 411 00cf 87010000 		.4byte	0x187
+ 412 00d3 08       		.uleb128 0x8
+ 413 00d4 14000000 		.4byte	.LASF23
+ 414 00d8 01       		.byte	0x1
+ 415 00d9 10       		.byte	0x10
+ 416 00da 81000000 		.4byte	0x81
+ 417 00de 00000000 		.4byte	.LLST0
+ 418 00e2 09       		.uleb128 0x9
+ 419 00e3 C8000000 		.4byte	.LASF17
+ 420 00e7 01       		.byte	0x1
+ 421 00e8 12       		.byte	0x12
+ 422 00e9 81000000 		.4byte	0x81
+ 423 00ed 21000000 		.4byte	.LLST1
+ 424 00f1 09       		.uleb128 0x9
+ 425 00f2 0A000000 		.4byte	.LASF18
+ 426 00f6 01       		.byte	0x1
+ 427 00f7 13       		.byte	0x13
+ 428 00f8 81000000 		.4byte	0x81
+ 429 00fc 40000000 		.4byte	.LLST2
+ 430 0100 0A       		.uleb128 0xa
+ 431 0101 00000000 		.4byte	.LASF19
+ 432 0105 01       		.byte	0x1
+ 433 0106 14       		.byte	0x14
+ 434 0107 87010000 		.4byte	0x187
+ 435 010b 02       		.uleb128 0x2
+ 436 010c 91       		.byte	0x91
+ 437 010d 74       		.sleb128 -12
+ 438 010e 0A       		.uleb128 0xa
+ 439 010f F0010000 		.4byte	.LASF20
+ 440 0113 01       		.byte	0x1
+ 441 0114 15       		.byte	0x15
+ 442 0115 87010000 		.4byte	0x187
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 11
+
+
+ 443 0119 02       		.uleb128 0x2
+ 444 011a 91       		.byte	0x91
+ 445 011b 70       		.sleb128 -16
+ 446 011c 0B       		.uleb128 0xb
+ 447 011d 14000000 		.4byte	.LVL3
+ 448 0121 BD030000 		.4byte	0x3bd
+ 449 0125 3F010000 		.4byte	0x13f
+ 450 0129 0C       		.uleb128 0xc
+ 451 012a 01       		.uleb128 0x1
+ 452 012b 53       		.byte	0x53
+ 453 012c 01       		.uleb128 0x1
+ 454 012d 30       		.byte	0x30
+ 455 012e 0C       		.uleb128 0xc
+ 456 012f 01       		.uleb128 0x1
+ 457 0130 52       		.byte	0x52
+ 458 0131 01       		.uleb128 0x1
+ 459 0132 31       		.byte	0x31
+ 460 0133 0C       		.uleb128 0xc
+ 461 0134 01       		.uleb128 0x1
+ 462 0135 51       		.byte	0x51
+ 463 0136 02       		.uleb128 0x2
+ 464 0137 91       		.byte	0x91
+ 465 0138 74       		.sleb128 -12
+ 466 0139 0C       		.uleb128 0xc
+ 467 013a 01       		.uleb128 0x1
+ 468 013b 50       		.byte	0x50
+ 469 013c 01       		.uleb128 0x1
+ 470 013d 4E       		.byte	0x4e
+ 471 013e 00       		.byte	0
+ 472 013f 0D       		.uleb128 0xd
+ 473 0140 1C000000 		.4byte	.LVL5
+ 474 0144 E7030000 		.4byte	0x3e7
+ 475 0148 0D       		.uleb128 0xd
+ 476 0149 26000000 		.4byte	.LVL6
+ 477 014d F2030000 		.4byte	0x3f2
+ 478 0151 0B       		.uleb128 0xb
+ 479 0152 32000000 		.4byte	.LVL7
+ 480 0156 FD030000 		.4byte	0x3fd
+ 481 015a 74010000 		.4byte	0x174
+ 482 015e 0C       		.uleb128 0xc
+ 483 015f 01       		.uleb128 0x1
+ 484 0160 53       		.byte	0x53
+ 485 0161 01       		.uleb128 0x1
+ 486 0162 30       		.byte	0x30
+ 487 0163 0C       		.uleb128 0xc
+ 488 0164 01       		.uleb128 0x1
+ 489 0165 52       		.byte	0x52
+ 490 0166 01       		.uleb128 0x1
+ 491 0167 31       		.byte	0x31
+ 492 0168 0C       		.uleb128 0xc
+ 493 0169 01       		.uleb128 0x1
+ 494 016a 51       		.byte	0x51
+ 495 016b 02       		.uleb128 0x2
+ 496 016c 7D       		.byte	0x7d
+ 497 016d 00       		.sleb128 0
+ 498 016e 0C       		.uleb128 0xc
+ 499 016f 01       		.uleb128 0x1
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 12
+
+
+ 500 0170 50       		.byte	0x50
+ 501 0171 01       		.uleb128 0x1
+ 502 0172 4E       		.byte	0x4e
+ 503 0173 00       		.byte	0
+ 504 0174 0D       		.uleb128 0xd
+ 505 0175 3A000000 		.4byte	.LVL9
+ 506 0179 E7030000 		.4byte	0x3e7
+ 507 017d 0D       		.uleb128 0xd
+ 508 017e 44000000 		.4byte	.LVL10
+ 509 0182 F2030000 		.4byte	0x3f2
+ 510 0186 00       		.byte	0
+ 511 0187 0E       		.uleb128 0xe
+ 512 0188 81000000 		.4byte	0x81
+ 513 018c 97010000 		.4byte	0x197
+ 514 0190 0F       		.uleb128 0xf
+ 515 0191 B3000000 		.4byte	0xb3
+ 516 0195 00       		.byte	0
+ 517 0196 00       		.byte	0
+ 518 0197 10       		.uleb128 0x10
+ 519 0198 B9010000 		.4byte	.LASF21
+ 520 019c 01       		.byte	0x1
+ 521 019d 39       		.byte	0x39
+ 522 019e 8D000000 		.4byte	0x8d
+ 523 01a2 00000000 		.4byte	.LFB64
+ 524 01a6 0A000000 		.4byte	.LFE64-.LFB64
+ 525 01aa 01       		.uleb128 0x1
+ 526 01ab 9C       		.byte	0x9c
+ 527 01ac C0010000 		.4byte	0x1c0
+ 528 01b0 11       		.uleb128 0x11
+ 529 01b1 08000000 		.4byte	.LVL11
+ 530 01b5 BA000000 		.4byte	0xba
+ 531 01b9 0C       		.uleb128 0xc
+ 532 01ba 01       		.uleb128 0x1
+ 533 01bb 50       		.byte	0x50
+ 534 01bc 01       		.uleb128 0x1
+ 535 01bd 3F       		.byte	0x3f
+ 536 01be 00       		.byte	0
+ 537 01bf 00       		.byte	0
+ 538 01c0 12       		.uleb128 0x12
+ 539 01c1 3D000000 		.4byte	.LASF22
+ 540 01c5 01       		.byte	0x1
+ 541 01c6 41       		.byte	0x41
+ 542 01c7 00000000 		.4byte	.LFB65
+ 543 01cb A0000000 		.4byte	.LFE65-.LFB65
+ 544 01cf 01       		.uleb128 0x1
+ 545 01d0 9C       		.byte	0x9c
+ 546 01d1 C5020000 		.4byte	0x2c5
+ 547 01d5 13       		.uleb128 0x13
+ 548 01d6 5800     		.ascii	"X\000"
+ 549 01d8 01       		.byte	0x1
+ 550 01d9 41       		.byte	0x41
+ 551 01da C5020000 		.4byte	0x2c5
+ 552 01de 5F000000 		.4byte	.LLST3
+ 553 01e2 13       		.uleb128 0x13
+ 554 01e3 5900     		.ascii	"Y\000"
+ 555 01e5 01       		.byte	0x1
+ 556 01e6 41       		.byte	0x41
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 13
+
+
+ 557 01e7 C5020000 		.4byte	0x2c5
+ 558 01eb 8B000000 		.4byte	.LLST4
+ 559 01ef 13       		.uleb128 0x13
+ 560 01f0 5A00     		.ascii	"Z\000"
+ 561 01f2 01       		.byte	0x1
+ 562 01f3 41       		.byte	0x41
+ 563 01f4 C5020000 		.4byte	0x2c5
+ 564 01f8 B7000000 		.4byte	.LLST5
+ 565 01fc 14       		.uleb128 0x14
+ 566 01fd 585F4C00 		.ascii	"X_L\000"
+ 567 0201 01       		.byte	0x1
+ 568 0202 43       		.byte	0x43
+ 569 0203 AE000000 		.4byte	0xae
+ 570 0207 02       		.uleb128 0x2
+ 571 0208 91       		.byte	0x91
+ 572 0209 6F       		.sleb128 -17
+ 573 020a 14       		.uleb128 0x14
+ 574 020b 585F4800 		.ascii	"X_H\000"
+ 575 020f 01       		.byte	0x1
+ 576 0210 45       		.byte	0x45
+ 577 0211 AE000000 		.4byte	0xae
+ 578 0215 02       		.uleb128 0x2
+ 579 0216 91       		.byte	0x91
+ 580 0217 6E       		.sleb128 -18
+ 581 0218 14       		.uleb128 0x14
+ 582 0219 595F4C00 		.ascii	"Y_L\000"
+ 583 021d 01       		.byte	0x1
+ 584 021e 47       		.byte	0x47
+ 585 021f AE000000 		.4byte	0xae
+ 586 0223 02       		.uleb128 0x2
+ 587 0224 91       		.byte	0x91
+ 588 0225 6D       		.sleb128 -19
+ 589 0226 14       		.uleb128 0x14
+ 590 0227 595F4800 		.ascii	"Y_H\000"
+ 591 022b 01       		.byte	0x1
+ 592 022c 49       		.byte	0x49
+ 593 022d AE000000 		.4byte	0xae
+ 594 0231 02       		.uleb128 0x2
+ 595 0232 91       		.byte	0x91
+ 596 0233 6C       		.sleb128 -20
+ 597 0234 14       		.uleb128 0x14
+ 598 0235 5A5F4C00 		.ascii	"Z_L\000"
+ 599 0239 01       		.byte	0x1
+ 600 023a 4B       		.byte	0x4b
+ 601 023b AE000000 		.4byte	0xae
+ 602 023f 02       		.uleb128 0x2
+ 603 0240 91       		.byte	0x91
+ 604 0241 6B       		.sleb128 -21
+ 605 0242 14       		.uleb128 0x14
+ 606 0243 5A5F4800 		.ascii	"Z_H\000"
+ 607 0247 01       		.byte	0x1
+ 608 0248 4D       		.byte	0x4d
+ 609 0249 AE000000 		.4byte	0xae
+ 610 024d 02       		.uleb128 0x2
+ 611 024e 91       		.byte	0x91
+ 612 024f 6A       		.sleb128 -22
+ 613 0250 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 14
+
+
+ 614 0251 2A000000 		.4byte	.LVL14
+ 615 0255 BA000000 		.4byte	0xba
+ 616 0259 64020000 		.4byte	0x264
+ 617 025d 0C       		.uleb128 0xc
+ 618 025e 01       		.uleb128 0x1
+ 619 025f 50       		.byte	0x50
+ 620 0260 02       		.uleb128 0x2
+ 621 0261 08       		.byte	0x8
+ 622 0262 28       		.byte	0x28
+ 623 0263 00       		.byte	0
+ 624 0264 0B       		.uleb128 0xb
+ 625 0265 34000000 		.4byte	.LVL15
+ 626 0269 BA000000 		.4byte	0xba
+ 627 026d 78020000 		.4byte	0x278
+ 628 0271 0C       		.uleb128 0xc
+ 629 0272 01       		.uleb128 0x1
+ 630 0273 50       		.byte	0x50
+ 631 0274 02       		.uleb128 0x2
+ 632 0275 08       		.byte	0x8
+ 633 0276 29       		.byte	0x29
+ 634 0277 00       		.byte	0
+ 635 0278 0B       		.uleb128 0xb
+ 636 0279 3E000000 		.4byte	.LVL16
+ 637 027d BA000000 		.4byte	0xba
+ 638 0281 8C020000 		.4byte	0x28c
+ 639 0285 0C       		.uleb128 0xc
+ 640 0286 01       		.uleb128 0x1
+ 641 0287 50       		.byte	0x50
+ 642 0288 02       		.uleb128 0x2
+ 643 0289 08       		.byte	0x8
+ 644 028a 2A       		.byte	0x2a
+ 645 028b 00       		.byte	0
+ 646 028c 0B       		.uleb128 0xb
+ 647 028d 48000000 		.4byte	.LVL17
+ 648 0291 BA000000 		.4byte	0xba
+ 649 0295 A0020000 		.4byte	0x2a0
+ 650 0299 0C       		.uleb128 0xc
+ 651 029a 01       		.uleb128 0x1
+ 652 029b 50       		.byte	0x50
+ 653 029c 02       		.uleb128 0x2
+ 654 029d 08       		.byte	0x8
+ 655 029e 2B       		.byte	0x2b
+ 656 029f 00       		.byte	0
+ 657 02a0 0B       		.uleb128 0xb
+ 658 02a1 52000000 		.4byte	.LVL18
+ 659 02a5 BA000000 		.4byte	0xba
+ 660 02a9 B4020000 		.4byte	0x2b4
+ 661 02ad 0C       		.uleb128 0xc
+ 662 02ae 01       		.uleb128 0x1
+ 663 02af 50       		.byte	0x50
+ 664 02b0 02       		.uleb128 0x2
+ 665 02b1 08       		.byte	0x8
+ 666 02b2 2C       		.byte	0x2c
+ 667 02b3 00       		.byte	0
+ 668 02b4 11       		.uleb128 0x11
+ 669 02b5 5C000000 		.4byte	.LVL19
+ 670 02b9 BA000000 		.4byte	0xba
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 15
+
+
+ 671 02bd 0C       		.uleb128 0xc
+ 672 02be 01       		.uleb128 0x1
+ 673 02bf 50       		.byte	0x50
+ 674 02c0 02       		.uleb128 0x2
+ 675 02c1 08       		.byte	0x8
+ 676 02c2 2D       		.byte	0x2d
+ 677 02c3 00       		.byte	0
+ 678 02c4 00       		.byte	0
+ 679 02c5 15       		.uleb128 0x15
+ 680 02c6 04       		.byte	0x4
+ 681 02c7 33000000 		.4byte	0x33
+ 682 02cb 16       		.uleb128 0x16
+ 683 02cc 58000000 		.4byte	.LASF34
+ 684 02d0 01       		.byte	0x1
+ 685 02d1 64       		.byte	0x64
+ 686 02d2 00000000 		.4byte	.LFB66
+ 687 02d6 44000000 		.4byte	.LFE66-.LFB66
+ 688 02da 01       		.uleb128 0x1
+ 689 02db 9C       		.byte	0x9c
+ 690 02dc 64030000 		.4byte	0x364
+ 691 02e0 09       		.uleb128 0x9
+ 692 02e1 C8000000 		.4byte	.LASF17
+ 693 02e5 01       		.byte	0x1
+ 694 02e6 66       		.byte	0x66
+ 695 02e7 81000000 		.4byte	0x81
+ 696 02eb E3000000 		.4byte	.LLST6
+ 697 02ef 17       		.uleb128 0x17
+ 698 02f0 0A000000 		.4byte	.LASF18
+ 699 02f4 01       		.byte	0x1
+ 700 02f5 67       		.byte	0x67
+ 701 02f6 81000000 		.4byte	0x81
+ 702 02fa 00       		.byte	0
+ 703 02fb 0A       		.uleb128 0xa
+ 704 02fc 00000000 		.4byte	.LASF19
+ 705 0300 01       		.byte	0x1
+ 706 0301 68       		.byte	0x68
+ 707 0302 64030000 		.4byte	0x364
+ 708 0306 02       		.uleb128 0x2
+ 709 0307 91       		.byte	0x91
+ 710 0308 74       		.sleb128 -12
+ 711 0309 0B       		.uleb128 0xb
+ 712 030a 1C000000 		.4byte	.LVL23
+ 713 030e BD030000 		.4byte	0x3bd
+ 714 0312 2C030000 		.4byte	0x32c
+ 715 0316 0C       		.uleb128 0xc
+ 716 0317 01       		.uleb128 0x1
+ 717 0318 53       		.byte	0x53
+ 718 0319 01       		.uleb128 0x1
+ 719 031a 30       		.byte	0x30
+ 720 031b 0C       		.uleb128 0xc
+ 721 031c 01       		.uleb128 0x1
+ 722 031d 52       		.byte	0x52
+ 723 031e 01       		.uleb128 0x1
+ 724 031f 32       		.byte	0x32
+ 725 0320 0C       		.uleb128 0xc
+ 726 0321 01       		.uleb128 0x1
+ 727 0322 51       		.byte	0x51
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 16
+
+
+ 728 0323 02       		.uleb128 0x2
+ 729 0324 91       		.byte	0x91
+ 730 0325 74       		.sleb128 -12
+ 731 0326 0C       		.uleb128 0xc
+ 732 0327 01       		.uleb128 0x1
+ 733 0328 50       		.byte	0x50
+ 734 0329 01       		.uleb128 0x1
+ 735 032a 4E       		.byte	0x4e
+ 736 032b 00       		.byte	0
+ 737 032c 0D       		.uleb128 0xd
+ 738 032d 24000000 		.4byte	.LVL25
+ 739 0331 E7030000 		.4byte	0x3e7
+ 740 0335 0D       		.uleb128 0xd
+ 741 0336 2E000000 		.4byte	.LVL26
+ 742 033a F2030000 		.4byte	0x3f2
+ 743 033e 11       		.uleb128 0x11
+ 744 033f 3A000000 		.4byte	.LVL27
+ 745 0343 C0010000 		.4byte	0x1c0
+ 746 0347 0C       		.uleb128 0xc
+ 747 0348 01       		.uleb128 0x1
+ 748 0349 52       		.byte	0x52
+ 749 034a 05       		.uleb128 0x5
+ 750 034b 03       		.byte	0x3
+ 751 034c 04000000 		.4byte	.LANCHOR0+4
+ 752 0350 0C       		.uleb128 0xc
+ 753 0351 01       		.uleb128 0x1
+ 754 0352 51       		.byte	0x51
+ 755 0353 05       		.uleb128 0x5
+ 756 0354 03       		.byte	0x3
+ 757 0355 02000000 		.4byte	.LANCHOR0+2
+ 758 0359 0C       		.uleb128 0xc
+ 759 035a 01       		.uleb128 0x1
+ 760 035b 50       		.byte	0x50
+ 761 035c 05       		.uleb128 0x5
+ 762 035d 03       		.byte	0x3
+ 763 035e 00000000 		.4byte	.LANCHOR0
+ 764 0362 00       		.byte	0
+ 765 0363 00       		.byte	0
+ 766 0364 0E       		.uleb128 0xe
+ 767 0365 81000000 		.4byte	0x81
+ 768 0369 74030000 		.4byte	0x374
+ 769 036d 0F       		.uleb128 0xf
+ 770 036e B3000000 		.4byte	0xb3
+ 771 0372 01       		.byte	0x1
+ 772 0373 00       		.byte	0
+ 773 0374 18       		.uleb128 0x18
+ 774 0375 D2000000 		.4byte	.LASF24
+ 775 0379 05       		.byte	0x5
+ 776 037a 9606     		.2byte	0x696
+ 777 037c 80030000 		.4byte	0x380
+ 778 0380 06       		.uleb128 0x6
+ 779 0381 76000000 		.4byte	0x76
+ 780 0385 19       		.uleb128 0x19
+ 781 0386 C6010000 		.4byte	.LASF25
+ 782 038a 01       		.byte	0x1
+ 783 038b 0A       		.byte	0xa
+ 784 038c 96030000 		.4byte	0x396
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 17
+
+
+ 785 0390 05       		.uleb128 0x5
+ 786 0391 03       		.byte	0x3
+ 787 0392 00000000 		.4byte	X_Abs
+ 788 0396 06       		.uleb128 0x6
+ 789 0397 33000000 		.4byte	0x33
+ 790 039b 19       		.uleb128 0x19
+ 791 039c 96020000 		.4byte	.LASF26
+ 792 03a0 01       		.byte	0x1
+ 793 03a1 0C       		.byte	0xc
+ 794 03a2 96030000 		.4byte	0x396
+ 795 03a6 05       		.uleb128 0x5
+ 796 03a7 03       		.byte	0x3
+ 797 03a8 00000000 		.4byte	Y_Abs
+ 798 03ac 19       		.uleb128 0x19
+ 799 03ad 9C010000 		.4byte	.LASF27
+ 800 03b1 01       		.byte	0x1
+ 801 03b2 0E       		.byte	0xe
+ 802 03b3 96030000 		.4byte	0x396
+ 803 03b7 05       		.uleb128 0x5
+ 804 03b8 03       		.byte	0x3
+ 805 03b9 00000000 		.4byte	Z_Abs
+ 806 03bd 1A       		.uleb128 0x1a
+ 807 03be 81000000 		.4byte	.LASF35
+ 808 03c2 06       		.byte	0x6
+ 809 03c3 A7       		.byte	0xa7
+ 810 03c4 81000000 		.4byte	0x81
+ 811 03c8 E1030000 		.4byte	0x3e1
+ 812 03cc 1B       		.uleb128 0x1b
+ 813 03cd 81000000 		.4byte	0x81
+ 814 03d1 1B       		.uleb128 0x1b
+ 815 03d2 E1030000 		.4byte	0x3e1
+ 816 03d6 1B       		.uleb128 0x1b
+ 817 03d7 81000000 		.4byte	0x81
+ 818 03db 1B       		.uleb128 0x1b
+ 819 03dc 81000000 		.4byte	0x81
+ 820 03e0 00       		.byte	0
+ 821 03e1 15       		.uleb128 0x15
+ 822 03e2 04       		.byte	0x4
+ 823 03e3 81000000 		.4byte	0x81
+ 824 03e7 1C       		.uleb128 0x1c
+ 825 03e8 2B020000 		.4byte	.LASF28
+ 826 03ec 06       		.byte	0x6
+ 827 03ed A3       		.byte	0xa3
+ 828 03ee 81000000 		.4byte	0x81
+ 829 03f2 1C       		.uleb128 0x1c
+ 830 03f3 04020000 		.4byte	.LASF29
+ 831 03f7 06       		.byte	0x6
+ 832 03f8 A4       		.byte	0xa4
+ 833 03f9 81000000 		.4byte	0x81
+ 834 03fd 1D       		.uleb128 0x1d
+ 835 03fe E6000000 		.4byte	.LASF36
+ 836 0402 06       		.byte	0x6
+ 837 0403 A9       		.byte	0xa9
+ 838 0404 81000000 		.4byte	0x81
+ 839 0408 1B       		.uleb128 0x1b
+ 840 0409 81000000 		.4byte	0x81
+ 841 040d 1B       		.uleb128 0x1b
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 18
+
+
+ 842 040e E1030000 		.4byte	0x3e1
+ 843 0412 1B       		.uleb128 0x1b
+ 844 0413 81000000 		.4byte	0x81
+ 845 0417 1B       		.uleb128 0x1b
+ 846 0418 81000000 		.4byte	0x81
+ 847 041c 00       		.byte	0
+ 848 041d 00       		.byte	0
+ 849              		.section	.debug_abbrev,"",%progbits
+ 850              	.Ldebug_abbrev0:
+ 851 0000 01       		.uleb128 0x1
+ 852 0001 11       		.uleb128 0x11
+ 853 0002 01       		.byte	0x1
+ 854 0003 25       		.uleb128 0x25
+ 855 0004 0E       		.uleb128 0xe
+ 856 0005 13       		.uleb128 0x13
+ 857 0006 0B       		.uleb128 0xb
+ 858 0007 03       		.uleb128 0x3
+ 859 0008 0E       		.uleb128 0xe
+ 860 0009 1B       		.uleb128 0x1b
+ 861 000a 0E       		.uleb128 0xe
+ 862 000b 55       		.uleb128 0x55
+ 863 000c 17       		.uleb128 0x17
+ 864 000d 11       		.uleb128 0x11
+ 865 000e 01       		.uleb128 0x1
+ 866 000f 10       		.uleb128 0x10
+ 867 0010 17       		.uleb128 0x17
+ 868 0011 00       		.byte	0
+ 869 0012 00       		.byte	0
+ 870 0013 02       		.uleb128 0x2
+ 871 0014 24       		.uleb128 0x24
+ 872 0015 00       		.byte	0
+ 873 0016 0B       		.uleb128 0xb
+ 874 0017 0B       		.uleb128 0xb
+ 875 0018 3E       		.uleb128 0x3e
+ 876 0019 0B       		.uleb128 0xb
+ 877 001a 03       		.uleb128 0x3
+ 878 001b 0E       		.uleb128 0xe
+ 879 001c 00       		.byte	0
+ 880 001d 00       		.byte	0
+ 881 001e 03       		.uleb128 0x3
+ 882 001f 16       		.uleb128 0x16
+ 883 0020 00       		.byte	0
+ 884 0021 03       		.uleb128 0x3
+ 885 0022 0E       		.uleb128 0xe
+ 886 0023 3A       		.uleb128 0x3a
+ 887 0024 0B       		.uleb128 0xb
+ 888 0025 3B       		.uleb128 0x3b
+ 889 0026 0B       		.uleb128 0xb
+ 890 0027 49       		.uleb128 0x49
+ 891 0028 13       		.uleb128 0x13
+ 892 0029 00       		.byte	0
+ 893 002a 00       		.byte	0
+ 894 002b 04       		.uleb128 0x4
+ 895 002c 24       		.uleb128 0x24
+ 896 002d 00       		.byte	0
+ 897 002e 0B       		.uleb128 0xb
+ 898 002f 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 19
+
+
+ 899 0030 3E       		.uleb128 0x3e
+ 900 0031 0B       		.uleb128 0xb
+ 901 0032 03       		.uleb128 0x3
+ 902 0033 08       		.uleb128 0x8
+ 903 0034 00       		.byte	0
+ 904 0035 00       		.byte	0
+ 905 0036 05       		.uleb128 0x5
+ 906 0037 16       		.uleb128 0x16
+ 907 0038 00       		.byte	0
+ 908 0039 03       		.uleb128 0x3
+ 909 003a 0E       		.uleb128 0xe
+ 910 003b 3A       		.uleb128 0x3a
+ 911 003c 0B       		.uleb128 0xb
+ 912 003d 3B       		.uleb128 0x3b
+ 913 003e 05       		.uleb128 0x5
+ 914 003f 49       		.uleb128 0x49
+ 915 0040 13       		.uleb128 0x13
+ 916 0041 00       		.byte	0
+ 917 0042 00       		.byte	0
+ 918 0043 06       		.uleb128 0x6
+ 919 0044 35       		.uleb128 0x35
+ 920 0045 00       		.byte	0
+ 921 0046 49       		.uleb128 0x49
+ 922 0047 13       		.uleb128 0x13
+ 923 0048 00       		.byte	0
+ 924 0049 00       		.byte	0
+ 925 004a 07       		.uleb128 0x7
+ 926 004b 2E       		.uleb128 0x2e
+ 927 004c 01       		.byte	0x1
+ 928 004d 3F       		.uleb128 0x3f
+ 929 004e 19       		.uleb128 0x19
+ 930 004f 03       		.uleb128 0x3
+ 931 0050 0E       		.uleb128 0xe
+ 932 0051 3A       		.uleb128 0x3a
+ 933 0052 0B       		.uleb128 0xb
+ 934 0053 3B       		.uleb128 0x3b
+ 935 0054 0B       		.uleb128 0xb
+ 936 0055 27       		.uleb128 0x27
+ 937 0056 19       		.uleb128 0x19
+ 938 0057 49       		.uleb128 0x49
+ 939 0058 13       		.uleb128 0x13
+ 940 0059 11       		.uleb128 0x11
+ 941 005a 01       		.uleb128 0x1
+ 942 005b 12       		.uleb128 0x12
+ 943 005c 06       		.uleb128 0x6
+ 944 005d 40       		.uleb128 0x40
+ 945 005e 18       		.uleb128 0x18
+ 946 005f 9742     		.uleb128 0x2117
+ 947 0061 19       		.uleb128 0x19
+ 948 0062 01       		.uleb128 0x1
+ 949 0063 13       		.uleb128 0x13
+ 950 0064 00       		.byte	0
+ 951 0065 00       		.byte	0
+ 952 0066 08       		.uleb128 0x8
+ 953 0067 05       		.uleb128 0x5
+ 954 0068 00       		.byte	0
+ 955 0069 03       		.uleb128 0x3
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 20
+
+
+ 956 006a 0E       		.uleb128 0xe
+ 957 006b 3A       		.uleb128 0x3a
+ 958 006c 0B       		.uleb128 0xb
+ 959 006d 3B       		.uleb128 0x3b
+ 960 006e 0B       		.uleb128 0xb
+ 961 006f 49       		.uleb128 0x49
+ 962 0070 13       		.uleb128 0x13
+ 963 0071 02       		.uleb128 0x2
+ 964 0072 17       		.uleb128 0x17
+ 965 0073 00       		.byte	0
+ 966 0074 00       		.byte	0
+ 967 0075 09       		.uleb128 0x9
+ 968 0076 34       		.uleb128 0x34
+ 969 0077 00       		.byte	0
+ 970 0078 03       		.uleb128 0x3
+ 971 0079 0E       		.uleb128 0xe
+ 972 007a 3A       		.uleb128 0x3a
+ 973 007b 0B       		.uleb128 0xb
+ 974 007c 3B       		.uleb128 0x3b
+ 975 007d 0B       		.uleb128 0xb
+ 976 007e 49       		.uleb128 0x49
+ 977 007f 13       		.uleb128 0x13
+ 978 0080 02       		.uleb128 0x2
+ 979 0081 17       		.uleb128 0x17
+ 980 0082 00       		.byte	0
+ 981 0083 00       		.byte	0
+ 982 0084 0A       		.uleb128 0xa
+ 983 0085 34       		.uleb128 0x34
+ 984 0086 00       		.byte	0
+ 985 0087 03       		.uleb128 0x3
+ 986 0088 0E       		.uleb128 0xe
+ 987 0089 3A       		.uleb128 0x3a
+ 988 008a 0B       		.uleb128 0xb
+ 989 008b 3B       		.uleb128 0x3b
+ 990 008c 0B       		.uleb128 0xb
+ 991 008d 49       		.uleb128 0x49
+ 992 008e 13       		.uleb128 0x13
+ 993 008f 02       		.uleb128 0x2
+ 994 0090 18       		.uleb128 0x18
+ 995 0091 00       		.byte	0
+ 996 0092 00       		.byte	0
+ 997 0093 0B       		.uleb128 0xb
+ 998 0094 898201   		.uleb128 0x4109
+ 999 0097 01       		.byte	0x1
+ 1000 0098 11       		.uleb128 0x11
+ 1001 0099 01       		.uleb128 0x1
+ 1002 009a 31       		.uleb128 0x31
+ 1003 009b 13       		.uleb128 0x13
+ 1004 009c 01       		.uleb128 0x1
+ 1005 009d 13       		.uleb128 0x13
+ 1006 009e 00       		.byte	0
+ 1007 009f 00       		.byte	0
+ 1008 00a0 0C       		.uleb128 0xc
+ 1009 00a1 8A8201   		.uleb128 0x410a
+ 1010 00a4 00       		.byte	0
+ 1011 00a5 02       		.uleb128 0x2
+ 1012 00a6 18       		.uleb128 0x18
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 21
+
+
+ 1013 00a7 9142     		.uleb128 0x2111
+ 1014 00a9 18       		.uleb128 0x18
+ 1015 00aa 00       		.byte	0
+ 1016 00ab 00       		.byte	0
+ 1017 00ac 0D       		.uleb128 0xd
+ 1018 00ad 898201   		.uleb128 0x4109
+ 1019 00b0 00       		.byte	0
+ 1020 00b1 11       		.uleb128 0x11
+ 1021 00b2 01       		.uleb128 0x1
+ 1022 00b3 31       		.uleb128 0x31
+ 1023 00b4 13       		.uleb128 0x13
+ 1024 00b5 00       		.byte	0
+ 1025 00b6 00       		.byte	0
+ 1026 00b7 0E       		.uleb128 0xe
+ 1027 00b8 01       		.uleb128 0x1
+ 1028 00b9 01       		.byte	0x1
+ 1029 00ba 49       		.uleb128 0x49
+ 1030 00bb 13       		.uleb128 0x13
+ 1031 00bc 01       		.uleb128 0x1
+ 1032 00bd 13       		.uleb128 0x13
+ 1033 00be 00       		.byte	0
+ 1034 00bf 00       		.byte	0
+ 1035 00c0 0F       		.uleb128 0xf
+ 1036 00c1 21       		.uleb128 0x21
+ 1037 00c2 00       		.byte	0
+ 1038 00c3 49       		.uleb128 0x49
+ 1039 00c4 13       		.uleb128 0x13
+ 1040 00c5 2F       		.uleb128 0x2f
+ 1041 00c6 0B       		.uleb128 0xb
+ 1042 00c7 00       		.byte	0
+ 1043 00c8 00       		.byte	0
+ 1044 00c9 10       		.uleb128 0x10
+ 1045 00ca 2E       		.uleb128 0x2e
+ 1046 00cb 01       		.byte	0x1
+ 1047 00cc 3F       		.uleb128 0x3f
+ 1048 00cd 19       		.uleb128 0x19
+ 1049 00ce 03       		.uleb128 0x3
+ 1050 00cf 0E       		.uleb128 0xe
+ 1051 00d0 3A       		.uleb128 0x3a
+ 1052 00d1 0B       		.uleb128 0xb
+ 1053 00d2 3B       		.uleb128 0x3b
+ 1054 00d3 0B       		.uleb128 0xb
+ 1055 00d4 49       		.uleb128 0x49
+ 1056 00d5 13       		.uleb128 0x13
+ 1057 00d6 11       		.uleb128 0x11
+ 1058 00d7 01       		.uleb128 0x1
+ 1059 00d8 12       		.uleb128 0x12
+ 1060 00d9 06       		.uleb128 0x6
+ 1061 00da 40       		.uleb128 0x40
+ 1062 00db 18       		.uleb128 0x18
+ 1063 00dc 9742     		.uleb128 0x2117
+ 1064 00de 19       		.uleb128 0x19
+ 1065 00df 01       		.uleb128 0x1
+ 1066 00e0 13       		.uleb128 0x13
+ 1067 00e1 00       		.byte	0
+ 1068 00e2 00       		.byte	0
+ 1069 00e3 11       		.uleb128 0x11
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 22
+
+
+ 1070 00e4 898201   		.uleb128 0x4109
+ 1071 00e7 01       		.byte	0x1
+ 1072 00e8 11       		.uleb128 0x11
+ 1073 00e9 01       		.uleb128 0x1
+ 1074 00ea 31       		.uleb128 0x31
+ 1075 00eb 13       		.uleb128 0x13
+ 1076 00ec 00       		.byte	0
+ 1077 00ed 00       		.byte	0
+ 1078 00ee 12       		.uleb128 0x12
+ 1079 00ef 2E       		.uleb128 0x2e
+ 1080 00f0 01       		.byte	0x1
+ 1081 00f1 3F       		.uleb128 0x3f
+ 1082 00f2 19       		.uleb128 0x19
+ 1083 00f3 03       		.uleb128 0x3
+ 1084 00f4 0E       		.uleb128 0xe
+ 1085 00f5 3A       		.uleb128 0x3a
+ 1086 00f6 0B       		.uleb128 0xb
+ 1087 00f7 3B       		.uleb128 0x3b
+ 1088 00f8 0B       		.uleb128 0xb
+ 1089 00f9 27       		.uleb128 0x27
+ 1090 00fa 19       		.uleb128 0x19
+ 1091 00fb 11       		.uleb128 0x11
+ 1092 00fc 01       		.uleb128 0x1
+ 1093 00fd 12       		.uleb128 0x12
+ 1094 00fe 06       		.uleb128 0x6
+ 1095 00ff 40       		.uleb128 0x40
+ 1096 0100 18       		.uleb128 0x18
+ 1097 0101 9742     		.uleb128 0x2117
+ 1098 0103 19       		.uleb128 0x19
+ 1099 0104 01       		.uleb128 0x1
+ 1100 0105 13       		.uleb128 0x13
+ 1101 0106 00       		.byte	0
+ 1102 0107 00       		.byte	0
+ 1103 0108 13       		.uleb128 0x13
+ 1104 0109 05       		.uleb128 0x5
+ 1105 010a 00       		.byte	0
+ 1106 010b 03       		.uleb128 0x3
+ 1107 010c 08       		.uleb128 0x8
+ 1108 010d 3A       		.uleb128 0x3a
+ 1109 010e 0B       		.uleb128 0xb
+ 1110 010f 3B       		.uleb128 0x3b
+ 1111 0110 0B       		.uleb128 0xb
+ 1112 0111 49       		.uleb128 0x49
+ 1113 0112 13       		.uleb128 0x13
+ 1114 0113 02       		.uleb128 0x2
+ 1115 0114 17       		.uleb128 0x17
+ 1116 0115 00       		.byte	0
+ 1117 0116 00       		.byte	0
+ 1118 0117 14       		.uleb128 0x14
+ 1119 0118 34       		.uleb128 0x34
+ 1120 0119 00       		.byte	0
+ 1121 011a 03       		.uleb128 0x3
+ 1122 011b 08       		.uleb128 0x8
+ 1123 011c 3A       		.uleb128 0x3a
+ 1124 011d 0B       		.uleb128 0xb
+ 1125 011e 3B       		.uleb128 0x3b
+ 1126 011f 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 23
+
+
+ 1127 0120 49       		.uleb128 0x49
+ 1128 0121 13       		.uleb128 0x13
+ 1129 0122 02       		.uleb128 0x2
+ 1130 0123 18       		.uleb128 0x18
+ 1131 0124 00       		.byte	0
+ 1132 0125 00       		.byte	0
+ 1133 0126 15       		.uleb128 0x15
+ 1134 0127 0F       		.uleb128 0xf
+ 1135 0128 00       		.byte	0
+ 1136 0129 0B       		.uleb128 0xb
+ 1137 012a 0B       		.uleb128 0xb
+ 1138 012b 49       		.uleb128 0x49
+ 1139 012c 13       		.uleb128 0x13
+ 1140 012d 00       		.byte	0
+ 1141 012e 00       		.byte	0
+ 1142 012f 16       		.uleb128 0x16
+ 1143 0130 2E       		.uleb128 0x2e
+ 1144 0131 01       		.byte	0x1
+ 1145 0132 3F       		.uleb128 0x3f
+ 1146 0133 19       		.uleb128 0x19
+ 1147 0134 03       		.uleb128 0x3
+ 1148 0135 0E       		.uleb128 0xe
+ 1149 0136 3A       		.uleb128 0x3a
+ 1150 0137 0B       		.uleb128 0xb
+ 1151 0138 3B       		.uleb128 0x3b
+ 1152 0139 0B       		.uleb128 0xb
+ 1153 013a 11       		.uleb128 0x11
+ 1154 013b 01       		.uleb128 0x1
+ 1155 013c 12       		.uleb128 0x12
+ 1156 013d 06       		.uleb128 0x6
+ 1157 013e 40       		.uleb128 0x40
+ 1158 013f 18       		.uleb128 0x18
+ 1159 0140 9742     		.uleb128 0x2117
+ 1160 0142 19       		.uleb128 0x19
+ 1161 0143 01       		.uleb128 0x1
+ 1162 0144 13       		.uleb128 0x13
+ 1163 0145 00       		.byte	0
+ 1164 0146 00       		.byte	0
+ 1165 0147 17       		.uleb128 0x17
+ 1166 0148 34       		.uleb128 0x34
+ 1167 0149 00       		.byte	0
+ 1168 014a 03       		.uleb128 0x3
+ 1169 014b 0E       		.uleb128 0xe
+ 1170 014c 3A       		.uleb128 0x3a
+ 1171 014d 0B       		.uleb128 0xb
+ 1172 014e 3B       		.uleb128 0x3b
+ 1173 014f 0B       		.uleb128 0xb
+ 1174 0150 49       		.uleb128 0x49
+ 1175 0151 13       		.uleb128 0x13
+ 1176 0152 1C       		.uleb128 0x1c
+ 1177 0153 0B       		.uleb128 0xb
+ 1178 0154 00       		.byte	0
+ 1179 0155 00       		.byte	0
+ 1180 0156 18       		.uleb128 0x18
+ 1181 0157 34       		.uleb128 0x34
+ 1182 0158 00       		.byte	0
+ 1183 0159 03       		.uleb128 0x3
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 24
+
+
+ 1184 015a 0E       		.uleb128 0xe
+ 1185 015b 3A       		.uleb128 0x3a
+ 1186 015c 0B       		.uleb128 0xb
+ 1187 015d 3B       		.uleb128 0x3b
+ 1188 015e 05       		.uleb128 0x5
+ 1189 015f 49       		.uleb128 0x49
+ 1190 0160 13       		.uleb128 0x13
+ 1191 0161 3F       		.uleb128 0x3f
+ 1192 0162 19       		.uleb128 0x19
+ 1193 0163 3C       		.uleb128 0x3c
+ 1194 0164 19       		.uleb128 0x19
+ 1195 0165 00       		.byte	0
+ 1196 0166 00       		.byte	0
+ 1197 0167 19       		.uleb128 0x19
+ 1198 0168 34       		.uleb128 0x34
+ 1199 0169 00       		.byte	0
+ 1200 016a 03       		.uleb128 0x3
+ 1201 016b 0E       		.uleb128 0xe
+ 1202 016c 3A       		.uleb128 0x3a
+ 1203 016d 0B       		.uleb128 0xb
+ 1204 016e 3B       		.uleb128 0x3b
+ 1205 016f 0B       		.uleb128 0xb
+ 1206 0170 49       		.uleb128 0x49
+ 1207 0171 13       		.uleb128 0x13
+ 1208 0172 3F       		.uleb128 0x3f
+ 1209 0173 19       		.uleb128 0x19
+ 1210 0174 02       		.uleb128 0x2
+ 1211 0175 18       		.uleb128 0x18
+ 1212 0176 00       		.byte	0
+ 1213 0177 00       		.byte	0
+ 1214 0178 1A       		.uleb128 0x1a
+ 1215 0179 2E       		.uleb128 0x2e
+ 1216 017a 01       		.byte	0x1
+ 1217 017b 3F       		.uleb128 0x3f
+ 1218 017c 19       		.uleb128 0x19
+ 1219 017d 03       		.uleb128 0x3
+ 1220 017e 0E       		.uleb128 0xe
+ 1221 017f 3A       		.uleb128 0x3a
+ 1222 0180 0B       		.uleb128 0xb
+ 1223 0181 3B       		.uleb128 0x3b
+ 1224 0182 0B       		.uleb128 0xb
+ 1225 0183 27       		.uleb128 0x27
+ 1226 0184 19       		.uleb128 0x19
+ 1227 0185 49       		.uleb128 0x49
+ 1228 0186 13       		.uleb128 0x13
+ 1229 0187 3C       		.uleb128 0x3c
+ 1230 0188 19       		.uleb128 0x19
+ 1231 0189 01       		.uleb128 0x1
+ 1232 018a 13       		.uleb128 0x13
+ 1233 018b 00       		.byte	0
+ 1234 018c 00       		.byte	0
+ 1235 018d 1B       		.uleb128 0x1b
+ 1236 018e 05       		.uleb128 0x5
+ 1237 018f 00       		.byte	0
+ 1238 0190 49       		.uleb128 0x49
+ 1239 0191 13       		.uleb128 0x13
+ 1240 0192 00       		.byte	0
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 25
+
+
+ 1241 0193 00       		.byte	0
+ 1242 0194 1C       		.uleb128 0x1c
+ 1243 0195 2E       		.uleb128 0x2e
+ 1244 0196 00       		.byte	0
+ 1245 0197 3F       		.uleb128 0x3f
+ 1246 0198 19       		.uleb128 0x19
+ 1247 0199 03       		.uleb128 0x3
+ 1248 019a 0E       		.uleb128 0xe
+ 1249 019b 3A       		.uleb128 0x3a
+ 1250 019c 0B       		.uleb128 0xb
+ 1251 019d 3B       		.uleb128 0x3b
+ 1252 019e 0B       		.uleb128 0xb
+ 1253 019f 27       		.uleb128 0x27
+ 1254 01a0 19       		.uleb128 0x19
+ 1255 01a1 49       		.uleb128 0x49
+ 1256 01a2 13       		.uleb128 0x13
+ 1257 01a3 3C       		.uleb128 0x3c
+ 1258 01a4 19       		.uleb128 0x19
+ 1259 01a5 00       		.byte	0
+ 1260 01a6 00       		.byte	0
+ 1261 01a7 1D       		.uleb128 0x1d
+ 1262 01a8 2E       		.uleb128 0x2e
+ 1263 01a9 01       		.byte	0x1
+ 1264 01aa 3F       		.uleb128 0x3f
+ 1265 01ab 19       		.uleb128 0x19
+ 1266 01ac 03       		.uleb128 0x3
+ 1267 01ad 0E       		.uleb128 0xe
+ 1268 01ae 3A       		.uleb128 0x3a
+ 1269 01af 0B       		.uleb128 0xb
+ 1270 01b0 3B       		.uleb128 0x3b
+ 1271 01b1 0B       		.uleb128 0xb
+ 1272 01b2 27       		.uleb128 0x27
+ 1273 01b3 19       		.uleb128 0x19
+ 1274 01b4 49       		.uleb128 0x49
+ 1275 01b5 13       		.uleb128 0x13
+ 1276 01b6 3C       		.uleb128 0x3c
+ 1277 01b7 19       		.uleb128 0x19
+ 1278 01b8 00       		.byte	0
+ 1279 01b9 00       		.byte	0
+ 1280 01ba 00       		.byte	0
+ 1281              		.section	.debug_loc,"",%progbits
+ 1282              	.Ldebug_loc0:
+ 1283              	.LLST0:
+ 1284 0000 00000000 		.4byte	.LVL0
+ 1285 0004 08000000 		.4byte	.LVL2
+ 1286 0008 0100     		.2byte	0x1
+ 1287 000a 50       		.byte	0x50
+ 1288 000b 08000000 		.4byte	.LVL2
+ 1289 000f 4E000000 		.4byte	.LFE63
+ 1290 0013 0400     		.2byte	0x4
+ 1291 0015 F3       		.byte	0xf3
+ 1292 0016 01       		.uleb128 0x1
+ 1293 0017 50       		.byte	0x50
+ 1294 0018 9F       		.byte	0x9f
+ 1295 0019 00000000 		.4byte	0
+ 1296 001d 00000000 		.4byte	0
+ 1297              	.LLST1:
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 26
+
+
+ 1298 0021 04000000 		.4byte	.LVL1
+ 1299 0025 08000000 		.4byte	.LVL2
+ 1300 0029 0200     		.2byte	0x2
+ 1301 002b 30       		.byte	0x30
+ 1302 002c 9F       		.byte	0x9f
+ 1303 002d 14000000 		.4byte	.LVL3
+ 1304 0031 18000000 		.4byte	.LVL4
+ 1305 0035 0100     		.2byte	0x1
+ 1306 0037 50       		.byte	0x50
+ 1307 0038 00000000 		.4byte	0
+ 1308 003c 00000000 		.4byte	0
+ 1309              	.LLST2:
+ 1310 0040 04000000 		.4byte	.LVL1
+ 1311 0044 32000000 		.4byte	.LVL7
+ 1312 0048 0200     		.2byte	0x2
+ 1313 004a 30       		.byte	0x30
+ 1314 004b 9F       		.byte	0x9f
+ 1315 004c 32000000 		.4byte	.LVL7
+ 1316 0050 36000000 		.4byte	.LVL8
+ 1317 0054 0100     		.2byte	0x1
+ 1318 0056 50       		.byte	0x50
+ 1319 0057 00000000 		.4byte	0
+ 1320 005b 00000000 		.4byte	0
+ 1321              	.LLST3:
+ 1322 005f 00000000 		.4byte	.LVL12
+ 1323 0063 26000000 		.4byte	.LVL13
+ 1324 0067 0100     		.2byte	0x1
+ 1325 0069 50       		.byte	0x50
+ 1326 006a 26000000 		.4byte	.LVL13
+ 1327 006e 9C000000 		.4byte	.LVL20
+ 1328 0072 0100     		.2byte	0x1
+ 1329 0074 56       		.byte	0x56
+ 1330 0075 9C000000 		.4byte	.LVL20
+ 1331 0079 A0000000 		.4byte	.LFE65
+ 1332 007d 0400     		.2byte	0x4
+ 1333 007f F3       		.byte	0xf3
+ 1334 0080 01       		.uleb128 0x1
+ 1335 0081 50       		.byte	0x50
+ 1336 0082 9F       		.byte	0x9f
+ 1337 0083 00000000 		.4byte	0
+ 1338 0087 00000000 		.4byte	0
+ 1339              	.LLST4:
+ 1340 008b 00000000 		.4byte	.LVL12
+ 1341 008f 29000000 		.4byte	.LVL14-1
+ 1342 0093 0100     		.2byte	0x1
+ 1343 0095 51       		.byte	0x51
+ 1344 0096 29000000 		.4byte	.LVL14-1
+ 1345 009a 9C000000 		.4byte	.LVL20
+ 1346 009e 0100     		.2byte	0x1
+ 1347 00a0 55       		.byte	0x55
+ 1348 00a1 9C000000 		.4byte	.LVL20
+ 1349 00a5 A0000000 		.4byte	.LFE65
+ 1350 00a9 0400     		.2byte	0x4
+ 1351 00ab F3       		.byte	0xf3
+ 1352 00ac 01       		.uleb128 0x1
+ 1353 00ad 51       		.byte	0x51
+ 1354 00ae 9F       		.byte	0x9f
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 27
+
+
+ 1355 00af 00000000 		.4byte	0
+ 1356 00b3 00000000 		.4byte	0
+ 1357              	.LLST5:
+ 1358 00b7 00000000 		.4byte	.LVL12
+ 1359 00bb 29000000 		.4byte	.LVL14-1
+ 1360 00bf 0100     		.2byte	0x1
+ 1361 00c1 52       		.byte	0x52
+ 1362 00c2 29000000 		.4byte	.LVL14-1
+ 1363 00c6 9C000000 		.4byte	.LVL20
+ 1364 00ca 0100     		.2byte	0x1
+ 1365 00cc 54       		.byte	0x54
+ 1366 00cd 9C000000 		.4byte	.LVL20
+ 1367 00d1 A0000000 		.4byte	.LFE65
+ 1368 00d5 0400     		.2byte	0x4
+ 1369 00d7 F3       		.byte	0xf3
+ 1370 00d8 01       		.uleb128 0x1
+ 1371 00d9 52       		.byte	0x52
+ 1372 00da 9F       		.byte	0x9f
+ 1373 00db 00000000 		.4byte	0
+ 1374 00df 00000000 		.4byte	0
+ 1375              	.LLST6:
+ 1376 00e3 04000000 		.4byte	.LVL21
+ 1377 00e7 10000000 		.4byte	.LVL22
+ 1378 00eb 0200     		.2byte	0x2
+ 1379 00ed 30       		.byte	0x30
+ 1380 00ee 9F       		.byte	0x9f
+ 1381 00ef 1C000000 		.4byte	.LVL23
+ 1382 00f3 20000000 		.4byte	.LVL24
+ 1383 00f7 0100     		.2byte	0x1
+ 1384 00f9 50       		.byte	0x50
+ 1385 00fa 00000000 		.4byte	0
+ 1386 00fe 00000000 		.4byte	0
+ 1387              		.section	.debug_aranges,"",%progbits
+ 1388 0000 34000000 		.4byte	0x34
+ 1389 0004 0200     		.2byte	0x2
+ 1390 0006 00000000 		.4byte	.Ldebug_info0
+ 1391 000a 04       		.byte	0x4
+ 1392 000b 00       		.byte	0
+ 1393 000c 0000     		.2byte	0
+ 1394 000e 0000     		.2byte	0
+ 1395 0010 00000000 		.4byte	.LFB63
+ 1396 0014 4E000000 		.4byte	.LFE63-.LFB63
+ 1397 0018 00000000 		.4byte	.LFB64
+ 1398 001c 0A000000 		.4byte	.LFE64-.LFB64
+ 1399 0020 00000000 		.4byte	.LFB65
+ 1400 0024 A0000000 		.4byte	.LFE65-.LFB65
+ 1401 0028 00000000 		.4byte	.LFB66
+ 1402 002c 44000000 		.4byte	.LFE66-.LFB66
+ 1403 0030 00000000 		.4byte	0
+ 1404 0034 00000000 		.4byte	0
+ 1405              		.section	.debug_ranges,"",%progbits
+ 1406              	.Ldebug_ranges0:
+ 1407 0000 00000000 		.4byte	.LFB63
+ 1408 0004 4E000000 		.4byte	.LFE63
+ 1409 0008 00000000 		.4byte	.LFB64
+ 1410 000c 0A000000 		.4byte	.LFE64
+ 1411 0010 00000000 		.4byte	.LFB65
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 28
+
+
+ 1412 0014 A0000000 		.4byte	.LFE65
+ 1413 0018 00000000 		.4byte	.LFB66
+ 1414 001c 44000000 		.4byte	.LFE66
+ 1415 0020 00000000 		.4byte	0
+ 1416 0024 00000000 		.4byte	0
+ 1417              		.section	.debug_line,"",%progbits
+ 1418              	.Ldebug_line0:
+ 1419 0000 EF010000 		.section	.debug_str,"MS",%progbits,1
+ 1419      02006701 
+ 1419      00000201 
+ 1419      FB0E0D00 
+ 1419      01010101 
+ 1420              	.LASF19:
+ 1421 0000 57525F42 		.ascii	"WR_Buffer\000"
+ 1421      75666665 
+ 1421      7200
+ 1422              	.LASF18:
+ 1423 000a 52445F53 		.ascii	"RD_Status\000"
+ 1423      74617475 
+ 1423      7300
+ 1424              	.LASF23:
+ 1425 0014 5265665F 		.ascii	"Ref_Address\000"
+ 1425      41646472 
+ 1425      65737300 
+ 1426              	.LASF9:
+ 1427 0020 5F5F696E 		.ascii	"__int32_t\000"
+ 1427      7433325F 
+ 1427      7400
+ 1428              	.LASF3:
+ 1429 002a 73686F72 		.ascii	"short unsigned int\000"
+ 1429      7420756E 
+ 1429      7369676E 
+ 1429      65642069 
+ 1429      6E7400
+ 1430              	.LASF22:
+ 1431 003d 4C495333 		.ascii	"LIS3MDL_Read_Magnetiometer\000"
+ 1431      4D444C5F 
+ 1431      52656164 
+ 1431      5F4D6167 
+ 1431      6E657469 
+ 1432              	.LASF34:
+ 1433 0058 496E6974 		.ascii	"Init_LIS3MDL\000"
+ 1433      5F4C4953 
+ 1433      334D444C 
+ 1433      00
+ 1434              	.LASF31:
+ 1435 0065 4C495333 		.ascii	"LIS3MDLMagnitometerSensor.c\000"
+ 1435      4D444C4D 
+ 1435      61676E69 
+ 1435      746F6D65 
+ 1435      74657253 
+ 1436              	.LASF35:
+ 1437 0081 4932435F 		.ascii	"I2C_1_MasterWriteBuf\000"
+ 1437      315F4D61 
+ 1437      73746572 
+ 1437      57726974 
+ 1437      65427566 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 29
+
+
+ 1438              	.LASF13:
+ 1439 0096 666C6F61 		.ascii	"float\000"
+ 1439      7400
+ 1440              	.LASF0:
+ 1441 009c 7369676E 		.ascii	"signed char\000"
+ 1441      65642063 
+ 1441      68617200 
+ 1442              	.LASF1:
+ 1443 00a8 756E7369 		.ascii	"unsigned char\000"
+ 1443      676E6564 
+ 1443      20636861 
+ 1443      7200
+ 1444              	.LASF5:
+ 1445 00b6 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1445      20756E73 
+ 1445      69676E65 
+ 1445      6420696E 
+ 1445      7400
+ 1446              	.LASF17:
+ 1447 00c8 57525F53 		.ascii	"WR_Status\000"
+ 1447      74617475 
+ 1447      7300
+ 1448              	.LASF24:
+ 1449 00d2 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1449      52784275 
+ 1449      66666572 
+ 1449      00
+ 1450              	.LASF14:
+ 1451 00df 646F7562 		.ascii	"double\000"
+ 1451      6C6500
+ 1452              	.LASF36:
+ 1453 00e6 4932435F 		.ascii	"I2C_1_MasterReadBuf\000"
+ 1453      315F4D61 
+ 1453      73746572 
+ 1453      52656164 
+ 1453      42756600 
+ 1454              	.LASF12:
+ 1455 00fa 75696E74 		.ascii	"uint16\000"
+ 1455      313600
+ 1456              	.LASF30:
+ 1457 0101 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1457      4320342E 
+ 1457      392E3320 
+ 1457      32303135 
+ 1457      30333033 
+ 1458 0134 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1458      20726576 
+ 1458      6973696F 
+ 1458      6E203232 
+ 1458      31323230 
+ 1459 0167 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1459      66756E63 
+ 1459      74696F6E 
+ 1459      2D736563 
+ 1459      74696F6E 
+ 1460              	.LASF8:
+ 1461 018f 756E7369 		.ascii	"unsigned int\000"
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 30
+
+
+ 1461      676E6564 
+ 1461      20696E74 
+ 1461      00
+ 1462              	.LASF27:
+ 1463 019c 5A5F4162 		.ascii	"Z_Abs\000"
+ 1463      7300
+ 1464              	.LASF7:
+ 1465 01a2 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1465      206C6F6E 
+ 1465      6720756E 
+ 1465      7369676E 
+ 1465      65642069 
+ 1466              	.LASF21:
+ 1467 01b9 4C495333 		.ascii	"LIS3MDL_TEST\000"
+ 1467      4D444C5F 
+ 1467      54455354 
+ 1467      00
+ 1468              	.LASF25:
+ 1469 01c6 585F4162 		.ascii	"X_Abs\000"
+ 1469      7300
+ 1470              	.LASF10:
+ 1471 01cc 696E7433 		.ascii	"int32_t\000"
+ 1471      325F7400 
+ 1472              	.LASF16:
+ 1473 01d4 73697A65 		.ascii	"sizetype\000"
+ 1473      74797065 
+ 1473      00
+ 1474              	.LASF6:
+ 1475 01dd 6C6F6E67 		.ascii	"long long int\000"
+ 1475      206C6F6E 
+ 1475      6720696E 
+ 1475      7400
+ 1476              	.LASF15:
+ 1477 01eb 63686172 		.ascii	"char\000"
+ 1477      00
+ 1478              	.LASF20:
+ 1479 01f0 52445F42 		.ascii	"RD_Buffer\000"
+ 1479      75666665 
+ 1479      7200
+ 1480              	.LASF2:
+ 1481 01fa 73686F72 		.ascii	"short int\000"
+ 1481      7420696E 
+ 1481      7400
+ 1482              	.LASF29:
+ 1483 0204 4932435F 		.ascii	"I2C_1_MasterClearStatus\000"
+ 1483      315F4D61 
+ 1483      73746572 
+ 1483      436C6561 
+ 1483      72537461 
+ 1484              	.LASF11:
+ 1485 021c 75696E74 		.ascii	"uint8\000"
+ 1485      3800
+ 1486              	.LASF4:
+ 1487 0222 6C6F6E67 		.ascii	"long int\000"
+ 1487      20696E74 
+ 1487      00
+ 1488              	.LASF28:
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccPFFhbW.s 			page 31
+
+
+ 1489 022b 4932435F 		.ascii	"I2C_1_MasterStatus\000"
+ 1489      315F4D61 
+ 1489      73746572 
+ 1489      53746174 
+ 1489      757300
+ 1490              	.LASF32:
+ 1491 023e 433A5C55 		.ascii	"C:\\Users\\Hesham\\Documents\\PSoC Creator\\PrISM_L"
+ 1491      73657273 
+ 1491      5C486573 
+ 1491      68616D5C 
+ 1491      446F6375 
+ 1492 026c 65643031 		.ascii	"ed01\\UART\\Lab_1_PreCourses\\Design01.cydsn\000"
+ 1492      5C554152 
+ 1492      545C4C61 
+ 1492      625F315F 
+ 1492      50726543 
+ 1493              	.LASF26:
+ 1494 0296 595F4162 		.ascii	"Y_Abs\000"
+ 1494      7300
+ 1495              	.LASF33:
+ 1496 029c 4932435F 		.ascii	"I2C_LIS3MDL\000"
+ 1496      4C495333 
+ 1496      4D444C00 
+ 1497              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

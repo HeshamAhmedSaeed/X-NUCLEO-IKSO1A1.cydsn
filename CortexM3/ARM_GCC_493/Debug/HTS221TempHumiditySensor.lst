@@ -1,0 +1,2345 @@
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"HTS221TempHumiditySensor.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.I2C_HTS221,"ax",%progbits
+  19              		.align	2
+  20              		.global	I2C_HTS221
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	I2C_HTS221, %function
+  24              	I2C_HTS221:
+  25              	.LFB63:
+  26              		.file 1 "HTS221TempHumiditySensor.c"
+   1:HTS221TempHumiditySensor.c **** /*
+   2:HTS221TempHumiditySensor.c ****  * HTS221TempHumidity.cpp
+   3:HTS221TempHumiditySensor.c ****  *
+   4:HTS221TempHumiditySensor.c ****  *  Created on: Mar 12, 2017
+   5:HTS221TempHumiditySensor.c ****  *      Author: Hesham
+   6:HTS221TempHumiditySensor.c ****  */
+   7:HTS221TempHumiditySensor.c **** 
+   8:HTS221TempHumiditySensor.c **** #include "HTS221TempHumiditySensor.h"
+   9:HTS221TempHumiditySensor.c **** 
+  10:HTS221TempHumiditySensor.c **** //Temperature and Humidity Sensor
+  11:HTS221TempHumiditySensor.c **** 
+  12:HTS221TempHumiditySensor.c **** uint8 I2C_HTS221(uint8 Ref_Address){
+  27              		.loc 1 12 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 00B5     		push	{lr}
+  33              		.cfi_def_cfa_offset 4
+  34              		.cfi_offset 14, -4
+  35 0002 83B0     		sub	sp, sp, #12
+  36              		.cfi_def_cfa_offset 16
+  37              	.LVL1:
+  13:HTS221TempHumiditySensor.c **** 
+  14:HTS221TempHumiditySensor.c ****     uint8 WR_Status = 0;
+  15:HTS221TempHumiditySensor.c ****     uint8 RD_Status = 0;
+  16:HTS221TempHumiditySensor.c ****     uint8 WR_Buffer[HTS221_WR_BUFFER_SIZE];
+  17:HTS221TempHumiditySensor.c ****     uint8 RD_Buffer[HTS221_RD_BUFFER_SIZE];
+  18:HTS221TempHumiditySensor.c **** 
+  19:HTS221TempHumiditySensor.c ****     WR_Buffer[0] = Ref_Address;
+  38              		.loc 1 19 0
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 2
+
+
+  39 0004 8DF80400 		strb	r0, [sp, #4]
+  40              	.LVL2:
+  41              	.L2:
+  20:HTS221TempHumiditySensor.c **** 
+  21:HTS221TempHumiditySensor.c ****             do
+  22:HTS221TempHumiditySensor.c ****         {
+  23:HTS221TempHumiditySensor.c ****             /* The syntax below automatically writes a buffer of data to a slave
+  24:HTS221TempHumiditySensor.c ****              * device from start to stop.
+  25:HTS221TempHumiditySensor.c ****               */
+  26:HTS221TempHumiditySensor.c ****             WR_Status = I2C_1_MasterWriteBuf(I2C_HTS221_Address, (uint8 *)WR_Buffer,
+  42              		.loc 1 26 0 discriminator 1
+  43 0008 5F20     		movs	r0, #95
+  44 000a 01A9     		add	r1, sp, #4
+  45 000c 0122     		movs	r2, #1
+  46 000e 0023     		movs	r3, #0
+  47 0010 FFF7FEFF 		bl	I2C_1_MasterWriteBuf
+  48              	.LVL3:
+  27:HTS221TempHumiditySensor.c ****                                         HTS221_WR_BUFFER_SIZE, I2C_1_MODE_COMPLETE_XFER);
+  28:HTS221TempHumiditySensor.c ****         }
+  29:HTS221TempHumiditySensor.c ****         while (WR_Status != I2C_1_MSTR_NO_ERROR);
+  49              		.loc 1 29 0 discriminator 1
+  50 0014 0028     		cmp	r0, #0
+  51 0016 F7D1     		bne	.L2
+  52              	.LVL4:
+  53              	.L3:
+  30:HTS221TempHumiditySensor.c **** 
+  31:HTS221TempHumiditySensor.c **** 
+  32:HTS221TempHumiditySensor.c **** 
+  33:HTS221TempHumiditySensor.c ****         /* Wait for the data transfer to complete */
+  34:HTS221TempHumiditySensor.c ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+  54              		.loc 1 34 0 discriminator 1
+  55 0018 FFF7FEFF 		bl	I2C_1_MasterStatus
+  56              	.LVL5:
+  57 001c 10F0040F 		tst	r0, #4
+  58 0020 FAD1     		bne	.L3
+  35:HTS221TempHumiditySensor.c **** 
+  36:HTS221TempHumiditySensor.c ****         WR_Status = I2C_1_MasterClearStatus();
+  59              		.loc 1 36 0
+  60 0022 FFF7FEFF 		bl	I2C_1_MasterClearStatus
+  61              	.LVL6:
+  37:HTS221TempHumiditySensor.c **** 
+  38:HTS221TempHumiditySensor.c ****         RD_Status = I2C_1_MasterReadBuf(I2C_HTS221_Address, (uint8 *)RD_Buffer,
+  62              		.loc 1 38 0
+  63 0026 5F20     		movs	r0, #95
+  64 0028 6946     		mov	r1, sp
+  65 002a 0122     		movs	r2, #1
+  66 002c 0023     		movs	r3, #0
+  67 002e FFF7FEFF 		bl	I2C_1_MasterReadBuf
+  68              	.LVL7:
+  69              	.L4:
+  39:HTS221TempHumiditySensor.c ****                     HTS221_RD_BUFFER_SIZE, I2C_1_MODE_COMPLETE_XFER);
+  40:HTS221TempHumiditySensor.c **** 
+  41:HTS221TempHumiditySensor.c ****         while (RD_Status != I2C_1_MSTR_NO_ERROR);
+  70              		.loc 1 41 0 discriminator 1
+  71 0032 0028     		cmp	r0, #0
+  72 0034 FDD1     		bne	.L4
+  73              	.LVL8:
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 3
+
+
+  74              	.L5:
+  42:HTS221TempHumiditySensor.c **** 
+  43:HTS221TempHumiditySensor.c ****         /* Wait for the data transfer to complete */
+  44:HTS221TempHumiditySensor.c ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+  75              		.loc 1 44 0 discriminator 1
+  76 0036 FFF7FEFF 		bl	I2C_1_MasterStatus
+  77              	.LVL9:
+  78 003a 10F0040F 		tst	r0, #4
+  79 003e FAD1     		bne	.L5
+  45:HTS221TempHumiditySensor.c **** 
+  46:HTS221TempHumiditySensor.c ****         RD_Status = I2C_1_MasterClearStatus();
+  80              		.loc 1 46 0
+  81 0040 FFF7FEFF 		bl	I2C_1_MasterClearStatus
+  82              	.LVL10:
+  47:HTS221TempHumiditySensor.c **** 
+  48:HTS221TempHumiditySensor.c ****         return RD_Buffer[0];
+  49:HTS221TempHumiditySensor.c **** }
+  83              		.loc 1 49 0
+  84 0044 9DF80000 		ldrb	r0, [sp]	@ zero_extendqisi2
+  85 0048 03B0     		add	sp, sp, #12
+  86              		.cfi_def_cfa_offset 4
+  87              		@ sp needed
+  88 004a 5DF804FB 		ldr	pc, [sp], #4
+  89              		.cfi_endproc
+  90              	.LFE63:
+  91              		.size	I2C_HTS221, .-I2C_HTS221
+  92 004e 00BF     		.section	.text.Init_HTS221,"ax",%progbits
+  93              		.align	2
+  94              		.global	Init_HTS221
+  95              		.thumb
+  96              		.thumb_func
+  97              		.type	Init_HTS221, %function
+  98              	Init_HTS221:
+  99              	.LFB64:
+  50:HTS221TempHumiditySensor.c **** 
+  51:HTS221TempHumiditySensor.c **** void Init_HTS221(){
+ 100              		.loc 1 51 0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 8
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+ 104 0000 00B5     		push	{lr}
+ 105              		.cfi_def_cfa_offset 4
+ 106              		.cfi_offset 14, -4
+ 107 0002 83B0     		sub	sp, sp, #12
+ 108              		.cfi_def_cfa_offset 16
+ 109              	.LVL11:
+  52:HTS221TempHumiditySensor.c **** 
+  53:HTS221TempHumiditySensor.c ****     uint8 WR_Status = 0;
+  54:HTS221TempHumiditySensor.c ****     uint8 RD_Status = 0;
+  55:HTS221TempHumiditySensor.c ****     uint8 WR_Buffer[Init_HTS221_WR_BUFFER_SIZE];
+  56:HTS221TempHumiditySensor.c **** 
+  57:HTS221TempHumiditySensor.c ****     WR_Buffer[0] = HTS221_CTRL_REG1;
+ 110              		.loc 1 57 0
+ 111 0004 2023     		movs	r3, #32
+ 112 0006 8DF80430 		strb	r3, [sp, #4]
+  58:HTS221TempHumiditySensor.c ****     WR_Buffer[1] = HTS221_TEMP_EN | HTS221_OM_UH_PERF | HTS221_Fast_ODR | HTS221_ST_EN;
+ 113              		.loc 1 58 0
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 4
+
+
+ 114 000a E323     		movs	r3, #227
+ 115 000c 8DF80530 		strb	r3, [sp, #5]
+ 116              	.LVL12:
+ 117              	.L8:
+  59:HTS221TempHumiditySensor.c **** 
+  60:HTS221TempHumiditySensor.c ****             do
+  61:HTS221TempHumiditySensor.c ****         {
+  62:HTS221TempHumiditySensor.c ****             /* The syntax below automatically writes a buffer of data to a slave
+  63:HTS221TempHumiditySensor.c ****              * device from start to stop.
+  64:HTS221TempHumiditySensor.c ****               */
+  65:HTS221TempHumiditySensor.c ****             WR_Status = I2C_1_MasterWriteBuf(I2C_HTS221_Address, (uint8 *)WR_Buffer,
+ 118              		.loc 1 65 0 discriminator 1
+ 119 0010 5F20     		movs	r0, #95
+ 120 0012 01A9     		add	r1, sp, #4
+ 121 0014 0222     		movs	r2, #2
+ 122 0016 0023     		movs	r3, #0
+ 123 0018 FFF7FEFF 		bl	I2C_1_MasterWriteBuf
+ 124              	.LVL13:
+  66:HTS221TempHumiditySensor.c ****                                         Init_HTS221_WR_BUFFER_SIZE, I2C_1_MODE_COMPLETE_XFER);
+  67:HTS221TempHumiditySensor.c ****         }
+  68:HTS221TempHumiditySensor.c ****         while (WR_Status != I2C_1_MSTR_NO_ERROR);
+ 125              		.loc 1 68 0 discriminator 1
+ 126 001c 0028     		cmp	r0, #0
+ 127 001e F7D1     		bne	.L8
+ 128              	.LVL14:
+ 129              	.L9:
+  69:HTS221TempHumiditySensor.c **** 
+  70:HTS221TempHumiditySensor.c **** 
+  71:HTS221TempHumiditySensor.c **** 
+  72:HTS221TempHumiditySensor.c ****         /* Wait for the data transfer to complete */
+  73:HTS221TempHumiditySensor.c ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+ 130              		.loc 1 73 0 discriminator 1
+ 131 0020 FFF7FEFF 		bl	I2C_1_MasterStatus
+ 132              	.LVL15:
+ 133 0024 10F0040F 		tst	r0, #4
+ 134 0028 FAD1     		bne	.L9
+  74:HTS221TempHumiditySensor.c **** 
+  75:HTS221TempHumiditySensor.c ****         WR_Status = I2C_1_MasterClearStatus();
+ 135              		.loc 1 75 0
+ 136 002a FFF7FEFF 		bl	I2C_1_MasterClearStatus
+ 137              	.LVL16:
+  76:HTS221TempHumiditySensor.c **** 
+  77:HTS221TempHumiditySensor.c **** }
+ 138              		.loc 1 77 0
+ 139 002e 03B0     		add	sp, sp, #12
+ 140              		.cfi_def_cfa_offset 4
+ 141              		@ sp needed
+ 142 0030 5DF804FB 		ldr	pc, [sp], #4
+ 143              		.cfi_endproc
+ 144              	.LFE64:
+ 145              		.size	Init_HTS221, .-Init_HTS221
+ 146              		.global	__aeabi_i2d
+ 147              		.global	__aeabi_dmul
+ 148              		.global	__aeabi_dsub
+ 149              		.global	__aeabi_ddiv
+ 150              		.global	__aeabi_dadd
+ 151              		.global	__aeabi_d2uiz
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 5
+
+
+ 152              		.section	.text.HTS221_Read_Temperature,"ax",%progbits
+ 153              		.align	2
+ 154              		.global	HTS221_Read_Temperature
+ 155              		.thumb
+ 156              		.thumb_func
+ 157              		.type	HTS221_Read_Temperature, %function
+ 158              	HTS221_Read_Temperature:
+ 159              	.LFB65:
+  78:HTS221TempHumiditySensor.c **** 
+  79:HTS221TempHumiditySensor.c **** //Read Temperature
+  80:HTS221TempHumiditySensor.c **** 
+  81:HTS221TempHumiditySensor.c **** uint8 HTS221_Read_Temperature(){
+ 160              		.loc 1 81 0
+ 161              		.cfi_startproc
+ 162              		@ args = 0, pretend = 0, frame = 0
+ 163              		@ frame_needed = 0, uses_anonymous_args = 0
+ 164 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 165              		.cfi_def_cfa_offset 32
+ 166              		.cfi_offset 4, -32
+ 167              		.cfi_offset 5, -28
+ 168              		.cfi_offset 6, -24
+ 169              		.cfi_offset 7, -20
+ 170              		.cfi_offset 8, -16
+ 171              		.cfi_offset 9, -12
+ 172              		.cfi_offset 10, -8
+ 173              		.cfi_offset 14, -4
+  82:HTS221TempHumiditySensor.c **** 
+  83:HTS221TempHumiditySensor.c ****         int16 T0_OUT = (int16) I2C_HTS221(HTS221_T0_OUT_0) | (int16)(I2C_HTS221(HTS221_T0_OUT_1) <<
+ 174              		.loc 1 83 0
+ 175 0004 3C20     		movs	r0, #60
+ 176 0006 FFF7FEFF 		bl	I2C_HTS221
+ 177              	.LVL17:
+ 178 000a 0446     		mov	r4, r0
+ 179 000c 3D20     		movs	r0, #61
+ 180 000e FFF7FEFF 		bl	I2C_HTS221
+ 181              	.LVL18:
+ 182 0012 0002     		lsls	r0, r0, #8
+ 183 0014 80B2     		uxth	r0, r0
+ 184 0016 0443     		orrs	r4, r4, r0
+ 185 0018 A4B2     		uxth	r4, r4
+ 186              	.LVL19:
+  84:HTS221TempHumiditySensor.c **** 
+  85:HTS221TempHumiditySensor.c ****         int16 T1_OUT = (int16) I2C_HTS221(HTS221_T1_OUT_0) | (int16)(I2C_HTS221(HTS221_T1_OUT_1) <<
+ 187              		.loc 1 85 0
+ 188 001a 3E20     		movs	r0, #62
+ 189 001c FFF7FEFF 		bl	I2C_HTS221
+ 190              	.LVL20:
+ 191 0020 8246     		mov	r10, r0
+ 192 0022 3F20     		movs	r0, #63
+ 193 0024 FFF7FEFF 		bl	I2C_HTS221
+ 194              	.LVL21:
+ 195 0028 0002     		lsls	r0, r0, #8
+ 196 002a 80B2     		uxth	r0, r0
+ 197 002c 4AEA000A 		orr	r10, r10, r0
+ 198 0030 1FFA8AFA 		uxth	r10, r10
+ 199              	.LVL22:
+  86:HTS221TempHumiditySensor.c **** 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 6
+
+
+  87:HTS221TempHumiditySensor.c ****         int16 T_OUT = (int16) I2C_HTS221(HTS221_TEMP_OUT_L) | (int16)(I2C_HTS221(HTS221_TEMP_OUT_H)
+ 200              		.loc 1 87 0
+ 201 0034 2A20     		movs	r0, #42
+ 202 0036 FFF7FEFF 		bl	I2C_HTS221
+ 203              	.LVL23:
+ 204 003a 0546     		mov	r5, r0
+ 205 003c 2B20     		movs	r0, #43
+ 206 003e FFF7FEFF 		bl	I2C_HTS221
+ 207              	.LVL24:
+ 208 0042 0002     		lsls	r0, r0, #8
+ 209 0044 80B2     		uxth	r0, r0
+ 210 0046 0543     		orrs	r5, r5, r0
+ 211 0048 ADB2     		uxth	r5, r5
+ 212              	.LVL25:
+  88:HTS221TempHumiditySensor.c **** 
+  89:HTS221TempHumiditySensor.c ****         uint16 MSB = I2C_HTS221(HTS221_T1_T0_MSB);
+ 213              		.loc 1 89 0
+ 214 004a 3520     		movs	r0, #53
+ 215 004c FFF7FEFF 		bl	I2C_HTS221
+ 216              	.LVL26:
+  90:HTS221TempHumiditySensor.c **** 
+  91:HTS221TempHumiditySensor.c ****         uint16 MSB_T0 = MSB & 0x03;
+ 217              		.loc 1 91 0
+ 218 0050 00F00306 		and	r6, r0, #3
+ 219              	.LVL27:
+  92:HTS221TempHumiditySensor.c **** 
+  93:HTS221TempHumiditySensor.c ****         uint16 MSB_T1 = MSB & 0x0C;
+ 220              		.loc 1 93 0
+ 221 0054 00F00C08 		and	r8, r0, #12
+ 222              	.LVL28:
+  94:HTS221TempHumiditySensor.c **** 
+  95:HTS221TempHumiditySensor.c ****         uint8 T0_DegC_x8 =  I2C_HTS221(HTS221_T0_degC_x8);
+ 223              		.loc 1 95 0
+ 224 0058 3220     		movs	r0, #50
+ 225              	.LVL29:
+ 226 005a FFF7FEFF 		bl	I2C_HTS221
+ 227              	.LVL30:
+  96:HTS221TempHumiditySensor.c **** 
+  97:HTS221TempHumiditySensor.c ****         double T0_DegC = (T0_DegC_x8 | (MSB_T0 << 8))/8.0;
+ 228              		.loc 1 97 0
+ 229 005e 40EA0620 		orr	r0, r0, r6, lsl #8
+ 230              	.LVL31:
+ 231 0062 FFF7FEFF 		bl	__aeabi_i2d
+ 232              	.LVL32:
+ 233 0066 0022     		movs	r2, #0
+ 234 0068 4FF07F53 		mov	r3, #1069547520
+ 235 006c FFF7FEFF 		bl	__aeabi_dmul
+ 236              	.LVL33:
+ 237 0070 0646     		mov	r6, r0
+ 238              	.LVL34:
+ 239 0072 0F46     		mov	r7, r1
+ 240              	.LVL35:
+  98:HTS221TempHumiditySensor.c **** 
+  99:HTS221TempHumiditySensor.c ****         uint8 T1_DegC_x8 =  I2C_HTS221(HTS221_T1_degC_x8);
+ 241              		.loc 1 99 0
+ 242 0074 3320     		movs	r0, #51
+ 243 0076 FFF7FEFF 		bl	I2C_HTS221
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 7
+
+
+ 244              	.LVL36:
+ 100:HTS221TempHumiditySensor.c **** 
+ 101:HTS221TempHumiditySensor.c ****         double T1_DegC = (T1_DegC_x8 | (MSB_T1 << 6))/8.0;
+ 245              		.loc 1 101 0
+ 246 007a 40EA8810 		orr	r0, r0, r8, lsl #6
+ 247              	.LVL37:
+ 248 007e FFF7FEFF 		bl	__aeabi_i2d
+ 249              	.LVL38:
+ 250 0082 0022     		movs	r2, #0
+ 251 0084 4FF07F53 		mov	r3, #1069547520
+ 252 0088 FFF7FEFF 		bl	__aeabi_dmul
+ 253              	.LVL39:
+ 102:HTS221TempHumiditySensor.c **** 
+ 103:HTS221TempHumiditySensor.c ****         double Diff_DegC = T1_DegC - T0_DegC;
+ 254              		.loc 1 103 0
+ 255 008c 3246     		mov	r2, r6
+ 256 008e 3B46     		mov	r3, r7
+ 257 0090 FFF7FEFF 		bl	__aeabi_dsub
+ 258              	.LVL40:
+ 259 0094 8046     		mov	r8, r0
+ 260              	.LVL41:
+ 261 0096 8946     		mov	r9, r1
+ 262              	.LVL42:
+ 104:HTS221TempHumiditySensor.c **** 
+ 105:HTS221TempHumiditySensor.c ****         double Diff_OUT = T1_OUT - T0_OUT;
+ 263              		.loc 1 105 0
+ 264 0098 24B2     		sxth	r4, r4
+ 265 009a 0FFA8AF0 		sxth	r0, r10
+ 266 009e 001B     		subs	r0, r0, r4
+ 267 00a0 FFF7FEFF 		bl	__aeabi_i2d
+ 268              	.LVL43:
+ 269 00a4 0246     		mov	r2, r0
+ 270 00a6 0B46     		mov	r3, r1
+ 271              	.LVL44:
+ 106:HTS221TempHumiditySensor.c **** 
+ 107:HTS221TempHumiditySensor.c ****         double slope =(double) (Diff_DegC/Diff_OUT);
+ 272              		.loc 1 107 0
+ 273 00a8 4046     		mov	r0, r8
+ 274 00aa 4946     		mov	r1, r9
+ 275 00ac FFF7FEFF 		bl	__aeabi_ddiv
+ 276              	.LVL45:
+ 277 00b0 8046     		mov	r8, r0
+ 278              	.LVL46:
+ 279 00b2 8946     		mov	r9, r1
+ 280              	.LVL47:
+ 108:HTS221TempHumiditySensor.c **** 
+ 109:HTS221TempHumiditySensor.c ****         return (uint8)((slope*(T_OUT - T0_OUT)) + T0_DegC);
+ 281              		.loc 1 109 0
+ 282 00b4 28B2     		sxth	r0, r5
+ 283 00b6 001B     		subs	r0, r0, r4
+ 284 00b8 FFF7FEFF 		bl	__aeabi_i2d
+ 285              	.LVL48:
+ 286 00bc 4246     		mov	r2, r8
+ 287 00be 4B46     		mov	r3, r9
+ 288 00c0 FFF7FEFF 		bl	__aeabi_dmul
+ 289              	.LVL49:
+ 290 00c4 3246     		mov	r2, r6
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 8
+
+
+ 291 00c6 3B46     		mov	r3, r7
+ 292 00c8 FFF7FEFF 		bl	__aeabi_dadd
+ 293              	.LVL50:
+ 294 00cc FFF7FEFF 		bl	__aeabi_d2uiz
+ 295              	.LVL51:
+ 110:HTS221TempHumiditySensor.c **** 
+ 111:HTS221TempHumiditySensor.c **** 
+ 112:HTS221TempHumiditySensor.c **** }
+ 296              		.loc 1 112 0
+ 297 00d0 C0B2     		uxtb	r0, r0
+ 298 00d2 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 299              		.cfi_endproc
+ 300              	.LFE65:
+ 301              		.size	HTS221_Read_Temperature, .-HTS221_Read_Temperature
+ 302 00d6 00BF     		.section	.text.HTS221_Read_Humidity,"ax",%progbits
+ 303              		.align	2
+ 304              		.global	HTS221_Read_Humidity
+ 305              		.thumb
+ 306              		.thumb_func
+ 307              		.type	HTS221_Read_Humidity, %function
+ 308              	HTS221_Read_Humidity:
+ 309              	.LFB66:
+ 113:HTS221TempHumiditySensor.c **** 
+ 114:HTS221TempHumiditySensor.c **** //Read Humidity
+ 115:HTS221TempHumiditySensor.c **** 
+ 116:HTS221TempHumiditySensor.c **** uint16 HTS221_Read_Humidity(){
+ 310              		.loc 1 116 0
+ 311              		.cfi_startproc
+ 312              		@ args = 0, pretend = 0, frame = 0
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+ 314 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 315              		.cfi_def_cfa_offset 32
+ 316              		.cfi_offset 4, -32
+ 317              		.cfi_offset 5, -28
+ 318              		.cfi_offset 6, -24
+ 319              		.cfi_offset 7, -20
+ 320              		.cfi_offset 8, -16
+ 321              		.cfi_offset 9, -12
+ 322              		.cfi_offset 10, -8
+ 323              		.cfi_offset 14, -4
+ 117:HTS221TempHumiditySensor.c **** 
+ 118:HTS221TempHumiditySensor.c **** 
+ 119:HTS221TempHumiditySensor.c ****     int16 H0_T0_OUT = (int16)I2C_HTS221(HTS221_H0_OUT_0) | (int16)(I2C_HTS221(HTS221_H0_OUT_1)<<8) 
+ 324              		.loc 1 119 0
+ 325 0004 3620     		movs	r0, #54
+ 326 0006 FFF7FEFF 		bl	I2C_HTS221
+ 327              	.LVL52:
+ 328 000a 0446     		mov	r4, r0
+ 329 000c 3720     		movs	r0, #55
+ 330 000e FFF7FEFF 		bl	I2C_HTS221
+ 331              	.LVL53:
+ 332 0012 0002     		lsls	r0, r0, #8
+ 333 0014 80B2     		uxth	r0, r0
+ 334 0016 0443     		orrs	r4, r4, r0
+ 335 0018 A4B2     		uxth	r4, r4
+ 336              	.LVL54:
+ 120:HTS221TempHumiditySensor.c **** 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 9
+
+
+ 121:HTS221TempHumiditySensor.c ****     int16 H1_T0_OUT = (int16)I2C_HTS221(HTS221_H1_OUT_0) | (int16)(I2C_HTS221(HTS221_H1_OUT_1)<<8) 
+ 337              		.loc 1 121 0
+ 338 001a 3A20     		movs	r0, #58
+ 339 001c FFF7FEFF 		bl	I2C_HTS221
+ 340              	.LVL55:
+ 341 0020 8246     		mov	r10, r0
+ 342 0022 3B20     		movs	r0, #59
+ 343 0024 FFF7FEFF 		bl	I2C_HTS221
+ 344              	.LVL56:
+ 345 0028 0002     		lsls	r0, r0, #8
+ 346 002a 80B2     		uxth	r0, r0
+ 347 002c 4AEA000A 		orr	r10, r10, r0
+ 348 0030 1FFA8AFA 		uxth	r10, r10
+ 349              	.LVL57:
+ 122:HTS221TempHumiditySensor.c **** 
+ 123:HTS221TempHumiditySensor.c ****     int16 H_T_OUT = (int16)I2C_HTS221(HTS221_HUMIDITY_OUT_L) | (int16)(I2C_HTS221(HTS221_HUMIDITY_O
+ 350              		.loc 1 123 0
+ 351 0034 2820     		movs	r0, #40
+ 352 0036 FFF7FEFF 		bl	I2C_HTS221
+ 353              	.LVL58:
+ 354 003a 0546     		mov	r5, r0
+ 355 003c 2920     		movs	r0, #41
+ 356 003e FFF7FEFF 		bl	I2C_HTS221
+ 357              	.LVL59:
+ 358 0042 0002     		lsls	r0, r0, #8
+ 359 0044 80B2     		uxth	r0, r0
+ 360 0046 0543     		orrs	r5, r5, r0
+ 361 0048 ADB2     		uxth	r5, r5
+ 362              	.LVL60:
+ 124:HTS221TempHumiditySensor.c **** 
+ 125:HTS221TempHumiditySensor.c ****     uint8 H0_rH_x2 = I2C_HTS221(HTS221_H0_rH_x2);
+ 363              		.loc 1 125 0
+ 364 004a 3020     		movs	r0, #48
+ 365 004c FFF7FEFF 		bl	I2C_HTS221
+ 366              	.LVL61:
+ 126:HTS221TempHumiditySensor.c **** 
+ 127:HTS221TempHumiditySensor.c ****     double H0_rH = H0_rH_x2/2;
+ 367              		.loc 1 127 0
+ 368 0050 C0F34700 		ubfx	r0, r0, #1, #8
+ 369              	.LVL62:
+ 370 0054 FFF7FEFF 		bl	__aeabi_i2d
+ 371              	.LVL63:
+ 372 0058 0646     		mov	r6, r0
+ 373 005a 0F46     		mov	r7, r1
+ 374              	.LVL64:
+ 128:HTS221TempHumiditySensor.c **** 
+ 129:HTS221TempHumiditySensor.c ****     uint8 H1_rH_x2 = I2C_HTS221(HTS221_H1_rH_x2);
+ 375              		.loc 1 129 0
+ 376 005c 3120     		movs	r0, #49
+ 377 005e FFF7FEFF 		bl	I2C_HTS221
+ 378              	.LVL65:
+ 130:HTS221TempHumiditySensor.c **** 
+ 131:HTS221TempHumiditySensor.c ****     double H1_rH = H1_rH_x2/2;
+ 379              		.loc 1 131 0
+ 380 0062 C0F34700 		ubfx	r0, r0, #1, #8
+ 381              	.LVL66:
+ 382 0066 FFF7FEFF 		bl	__aeabi_i2d
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 10
+
+
+ 383              	.LVL67:
+ 132:HTS221TempHumiditySensor.c **** 
+ 133:HTS221TempHumiditySensor.c ****     double Diff_H0_H1_rH = H1_rH - H0_rH;
+ 384              		.loc 1 133 0
+ 385 006a 3246     		mov	r2, r6
+ 386 006c 3B46     		mov	r3, r7
+ 387 006e FFF7FEFF 		bl	__aeabi_dsub
+ 388              	.LVL68:
+ 389 0072 8046     		mov	r8, r0
+ 390 0074 8946     		mov	r9, r1
+ 391              	.LVL69:
+ 134:HTS221TempHumiditySensor.c **** 
+ 135:HTS221TempHumiditySensor.c ****     double Diff_H0_H1_OUT = H1_T0_OUT - H0_T0_OUT;
+ 392              		.loc 1 135 0
+ 393 0076 24B2     		sxth	r4, r4
+ 394 0078 0FFA8AF0 		sxth	r0, r10
+ 395 007c 001B     		subs	r0, r0, r4
+ 396 007e FFF7FEFF 		bl	__aeabi_i2d
+ 397              	.LVL70:
+ 398 0082 0246     		mov	r2, r0
+ 399 0084 0B46     		mov	r3, r1
+ 400              	.LVL71:
+ 136:HTS221TempHumiditySensor.c **** 
+ 137:HTS221TempHumiditySensor.c ****     double slope = Diff_H0_H1_rH/Diff_H0_H1_OUT;
+ 401              		.loc 1 137 0
+ 402 0086 4046     		mov	r0, r8
+ 403 0088 4946     		mov	r1, r9
+ 404 008a FFF7FEFF 		bl	__aeabi_ddiv
+ 405              	.LVL72:
+ 406 008e 8046     		mov	r8, r0
+ 407              	.LVL73:
+ 408 0090 8946     		mov	r9, r1
+ 409              	.LVL74:
+ 138:HTS221TempHumiditySensor.c **** 
+ 139:HTS221TempHumiditySensor.c ****     return (slope)*(H_T_OUT-H0_T0_OUT)+H0_rH;
+ 410              		.loc 1 139 0
+ 411 0092 28B2     		sxth	r0, r5
+ 412 0094 001B     		subs	r0, r0, r4
+ 413 0096 FFF7FEFF 		bl	__aeabi_i2d
+ 414              	.LVL75:
+ 415 009a 4246     		mov	r2, r8
+ 416 009c 4B46     		mov	r3, r9
+ 417 009e FFF7FEFF 		bl	__aeabi_dmul
+ 418              	.LVL76:
+ 419 00a2 3246     		mov	r2, r6
+ 420 00a4 3B46     		mov	r3, r7
+ 421 00a6 FFF7FEFF 		bl	__aeabi_dadd
+ 422              	.LVL77:
+ 423 00aa FFF7FEFF 		bl	__aeabi_d2uiz
+ 424              	.LVL78:
+ 140:HTS221TempHumiditySensor.c **** 
+ 141:HTS221TempHumiditySensor.c **** 
+ 142:HTS221TempHumiditySensor.c **** }
+ 425              		.loc 1 142 0
+ 426 00ae 80B2     		uxth	r0, r0
+ 427 00b0 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 428              		.cfi_endproc
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 11
+
+
+ 429              	.LFE66:
+ 430              		.size	HTS221_Read_Humidity, .-HTS221_Read_Humidity
+ 431              		.section	.text.HTS221_Test,"ax",%progbits
+ 432              		.align	2
+ 433              		.global	HTS221_Test
+ 434              		.thumb
+ 435              		.thumb_func
+ 436              		.type	HTS221_Test, %function
+ 437              	HTS221_Test:
+ 438              	.LFB67:
+ 143:HTS221TempHumiditySensor.c **** 
+ 144:HTS221TempHumiditySensor.c **** //Testing HTS221
+ 145:HTS221TempHumiditySensor.c **** 
+ 146:HTS221TempHumiditySensor.c **** uint16 HTS221_Test(){
+ 439              		.loc 1 146 0
+ 440              		.cfi_startproc
+ 441              		@ args = 0, pretend = 0, frame = 0
+ 442              		@ frame_needed = 0, uses_anonymous_args = 0
+ 443 0000 08B5     		push	{r3, lr}
+ 444              		.cfi_def_cfa_offset 8
+ 445              		.cfi_offset 3, -8
+ 446              		.cfi_offset 14, -4
+ 147:HTS221TempHumiditySensor.c **** 
+ 148:HTS221TempHumiditySensor.c ****     return   I2C_HTS221(HTS221_WHO_AM_I); // should be 0xBC
+ 447              		.loc 1 148 0
+ 448 0002 0F20     		movs	r0, #15
+ 449 0004 FFF7FEFF 		bl	I2C_HTS221
+ 450              	.LVL79:
+ 149:HTS221TempHumiditySensor.c **** 
+ 150:HTS221TempHumiditySensor.c **** }
+ 451              		.loc 1 150 0
+ 452 0008 08BD     		pop	{r3, pc}
+ 453              		.cfi_endproc
+ 454              	.LFE67:
+ 455              		.size	HTS221_Test, .-HTS221_Test
+ 456 000a 00BF     		.text
+ 457              	.Letext0:
+ 458              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 459              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 460              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 461              		.file 5 "Generated_Source\\PSoC5/I2C_1.h"
+ 462              		.file 6 "Generated_Source\\PSoC5/core_cm3.h"
+ 463              		.section	.debug_info,"",%progbits
+ 464              	.Ldebug_info0:
+ 465 0000 95050000 		.4byte	0x595
+ 466 0004 0400     		.2byte	0x4
+ 467 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 468 000a 04       		.byte	0x4
+ 469 000b 01       		.uleb128 0x1
+ 470 000c 44010000 		.4byte	.LASF48
+ 471 0010 01       		.byte	0x1
+ 472 0011 EB010000 		.4byte	.LASF49
+ 473 0015 DA020000 		.4byte	.LASF50
+ 474 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 475 001d 00000000 		.4byte	0
+ 476 0021 00000000 		.4byte	.Ldebug_line0
+ 477 0025 02       		.uleb128 0x2
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 12
+
+
+ 478 0026 01       		.byte	0x1
+ 479 0027 06       		.byte	0x6
+ 480 0028 32030000 		.4byte	.LASF0
+ 481 002c 02       		.uleb128 0x2
+ 482 002d 01       		.byte	0x1
+ 483 002e 08       		.byte	0x8
+ 484 002f A7000000 		.4byte	.LASF1
+ 485 0033 02       		.uleb128 0x2
+ 486 0034 02       		.byte	0x2
+ 487 0035 05       		.byte	0x5
+ 488 0036 81020000 		.4byte	.LASF2
+ 489 003a 02       		.uleb128 0x2
+ 490 003b 02       		.byte	0x2
+ 491 003c 07       		.byte	0x7
+ 492 003d 4B000000 		.4byte	.LASF3
+ 493 0041 03       		.uleb128 0x3
+ 494 0042 41000000 		.4byte	.LASF9
+ 495 0046 02       		.byte	0x2
+ 496 0047 3F       		.byte	0x3f
+ 497 0048 4C000000 		.4byte	0x4c
+ 498 004c 02       		.uleb128 0x2
+ 499 004d 04       		.byte	0x4
+ 500 004e 05       		.byte	0x5
+ 501 004f A9020000 		.4byte	.LASF4
+ 502 0053 02       		.uleb128 0x2
+ 503 0054 04       		.byte	0x4
+ 504 0055 07       		.byte	0x7
+ 505 0056 C2000000 		.4byte	.LASF5
+ 506 005a 02       		.uleb128 0x2
+ 507 005b 08       		.byte	0x8
+ 508 005c 05       		.byte	0x5
+ 509 005d 5B020000 		.4byte	.LASF6
+ 510 0061 02       		.uleb128 0x2
+ 511 0062 08       		.byte	0x8
+ 512 0063 07       		.byte	0x7
+ 513 0064 0D020000 		.4byte	.LASF7
+ 514 0068 04       		.uleb128 0x4
+ 515 0069 04       		.byte	0x4
+ 516 006a 05       		.byte	0x5
+ 517 006b 696E7400 		.ascii	"int\000"
+ 518 006f 02       		.uleb128 0x2
+ 519 0070 04       		.byte	0x4
+ 520 0071 07       		.byte	0x7
+ 521 0072 DE010000 		.4byte	.LASF8
+ 522 0076 03       		.uleb128 0x3
+ 523 0077 4A020000 		.4byte	.LASF10
+ 524 007b 03       		.byte	0x3
+ 525 007c 2C       		.byte	0x2c
+ 526 007d 41000000 		.4byte	0x41
+ 527 0081 05       		.uleb128 0x5
+ 528 0082 A3020000 		.4byte	.LASF11
+ 529 0086 04       		.byte	0x4
+ 530 0087 9201     		.2byte	0x192
+ 531 0089 2C000000 		.4byte	0x2c
+ 532 008d 05       		.uleb128 0x5
+ 533 008e 32010000 		.4byte	.LASF12
+ 534 0092 04       		.byte	0x4
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 13
+
+
+ 535 0093 9301     		.2byte	0x193
+ 536 0095 3A000000 		.4byte	0x3a
+ 537 0099 05       		.uleb128 0x5
+ 538 009a BC000000 		.4byte	.LASF13
+ 539 009e 04       		.byte	0x4
+ 540 009f 9601     		.2byte	0x196
+ 541 00a1 33000000 		.4byte	0x33
+ 542 00a5 02       		.uleb128 0x2
+ 543 00a6 04       		.byte	0x4
+ 544 00a7 04       		.byte	0x4
+ 545 00a8 9B000000 		.4byte	.LASF14
+ 546 00ac 02       		.uleb128 0x2
+ 547 00ad 08       		.byte	0x8
+ 548 00ae 04       		.byte	0x4
+ 549 00af 5E000000 		.4byte	.LASF15
+ 550 00b3 02       		.uleb128 0x2
+ 551 00b4 01       		.byte	0x1
+ 552 00b5 08       		.byte	0x8
+ 553 00b6 69020000 		.4byte	.LASF16
+ 554 00ba 02       		.uleb128 0x2
+ 555 00bb 04       		.byte	0x4
+ 556 00bc 07       		.byte	0x7
+ 557 00bd 52020000 		.4byte	.LASF17
+ 558 00c1 06       		.uleb128 0x6
+ 559 00c2 39010000 		.4byte	.LASF51
+ 560 00c6 01       		.byte	0x1
+ 561 00c7 0C       		.byte	0xc
+ 562 00c8 81000000 		.4byte	0x81
+ 563 00cc 00000000 		.4byte	.LFB63
+ 564 00d0 4E000000 		.4byte	.LFE63-.LFB63
+ 565 00d4 01       		.uleb128 0x1
+ 566 00d5 9C       		.byte	0x9c
+ 567 00d6 90010000 		.4byte	0x190
+ 568 00da 07       		.uleb128 0x7
+ 569 00db 1C000000 		.4byte	.LASF52
+ 570 00df 01       		.byte	0x1
+ 571 00e0 0C       		.byte	0xc
+ 572 00e1 81000000 		.4byte	0x81
+ 573 00e5 00000000 		.4byte	.LLST0
+ 574 00e9 08       		.uleb128 0x8
+ 575 00ea E6000000 		.4byte	.LASF18
+ 576 00ee 01       		.byte	0x1
+ 577 00ef 0E       		.byte	0xe
+ 578 00f0 81000000 		.4byte	0x81
+ 579 00f4 21000000 		.4byte	.LLST1
+ 580 00f8 08       		.uleb128 0x8
+ 581 00f9 0A000000 		.4byte	.LASF19
+ 582 00fd 01       		.byte	0x1
+ 583 00fe 0F       		.byte	0xf
+ 584 00ff 81000000 		.4byte	0x81
+ 585 0103 40000000 		.4byte	.LLST2
+ 586 0107 09       		.uleb128 0x9
+ 587 0108 00000000 		.4byte	.LASF20
+ 588 010c 01       		.byte	0x1
+ 589 010d 10       		.byte	0x10
+ 590 010e 90010000 		.4byte	0x190
+ 591 0112 02       		.uleb128 0x2
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 14
+
+
+ 592 0113 91       		.byte	0x91
+ 593 0114 74       		.sleb128 -12
+ 594 0115 09       		.uleb128 0x9
+ 595 0116 49030000 		.4byte	.LASF21
+ 596 011a 01       		.byte	0x1
+ 597 011b 11       		.byte	0x11
+ 598 011c 90010000 		.4byte	0x190
+ 599 0120 02       		.uleb128 0x2
+ 600 0121 91       		.byte	0x91
+ 601 0122 70       		.sleb128 -16
+ 602 0123 0A       		.uleb128 0xa
+ 603 0124 14000000 		.4byte	.LVL3
+ 604 0128 38050000 		.4byte	0x538
+ 605 012c 47010000 		.4byte	0x147
+ 606 0130 0B       		.uleb128 0xb
+ 607 0131 01       		.uleb128 0x1
+ 608 0132 53       		.byte	0x53
+ 609 0133 01       		.uleb128 0x1
+ 610 0134 30       		.byte	0x30
+ 611 0135 0B       		.uleb128 0xb
+ 612 0136 01       		.uleb128 0x1
+ 613 0137 52       		.byte	0x52
+ 614 0138 01       		.uleb128 0x1
+ 615 0139 31       		.byte	0x31
+ 616 013a 0B       		.uleb128 0xb
+ 617 013b 01       		.uleb128 0x1
+ 618 013c 51       		.byte	0x51
+ 619 013d 02       		.uleb128 0x2
+ 620 013e 91       		.byte	0x91
+ 621 013f 74       		.sleb128 -12
+ 622 0140 0B       		.uleb128 0xb
+ 623 0141 01       		.uleb128 0x1
+ 624 0142 50       		.byte	0x50
+ 625 0143 02       		.uleb128 0x2
+ 626 0144 08       		.byte	0x8
+ 627 0145 5F       		.byte	0x5f
+ 628 0146 00       		.byte	0
+ 629 0147 0C       		.uleb128 0xc
+ 630 0148 1C000000 		.4byte	.LVL5
+ 631 014c 62050000 		.4byte	0x562
+ 632 0150 0C       		.uleb128 0xc
+ 633 0151 26000000 		.4byte	.LVL6
+ 634 0155 6D050000 		.4byte	0x56d
+ 635 0159 0A       		.uleb128 0xa
+ 636 015a 32000000 		.4byte	.LVL7
+ 637 015e 78050000 		.4byte	0x578
+ 638 0162 7D010000 		.4byte	0x17d
+ 639 0166 0B       		.uleb128 0xb
+ 640 0167 01       		.uleb128 0x1
+ 641 0168 53       		.byte	0x53
+ 642 0169 01       		.uleb128 0x1
+ 643 016a 30       		.byte	0x30
+ 644 016b 0B       		.uleb128 0xb
+ 645 016c 01       		.uleb128 0x1
+ 646 016d 52       		.byte	0x52
+ 647 016e 01       		.uleb128 0x1
+ 648 016f 31       		.byte	0x31
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 15
+
+
+ 649 0170 0B       		.uleb128 0xb
+ 650 0171 01       		.uleb128 0x1
+ 651 0172 51       		.byte	0x51
+ 652 0173 02       		.uleb128 0x2
+ 653 0174 7D       		.byte	0x7d
+ 654 0175 00       		.sleb128 0
+ 655 0176 0B       		.uleb128 0xb
+ 656 0177 01       		.uleb128 0x1
+ 657 0178 50       		.byte	0x50
+ 658 0179 02       		.uleb128 0x2
+ 659 017a 08       		.byte	0x8
+ 660 017b 5F       		.byte	0x5f
+ 661 017c 00       		.byte	0
+ 662 017d 0C       		.uleb128 0xc
+ 663 017e 3A000000 		.4byte	.LVL9
+ 664 0182 62050000 		.4byte	0x562
+ 665 0186 0C       		.uleb128 0xc
+ 666 0187 44000000 		.4byte	.LVL10
+ 667 018b 6D050000 		.4byte	0x56d
+ 668 018f 00       		.byte	0
+ 669 0190 0D       		.uleb128 0xd
+ 670 0191 81000000 		.4byte	0x81
+ 671 0195 A0010000 		.4byte	0x1a0
+ 672 0199 0E       		.uleb128 0xe
+ 673 019a BA000000 		.4byte	0xba
+ 674 019e 00       		.byte	0
+ 675 019f 00       		.byte	0
+ 676 01a0 0F       		.uleb128 0xf
+ 677 01a1 75020000 		.4byte	.LASF53
+ 678 01a5 01       		.byte	0x1
+ 679 01a6 33       		.byte	0x33
+ 680 01a7 00000000 		.4byte	.LFB64
+ 681 01ab 34000000 		.4byte	.LFE64-.LFB64
+ 682 01af 01       		.uleb128 0x1
+ 683 01b0 9C       		.byte	0x9c
+ 684 01b1 15020000 		.4byte	0x215
+ 685 01b5 08       		.uleb128 0x8
+ 686 01b6 E6000000 		.4byte	.LASF18
+ 687 01ba 01       		.byte	0x1
+ 688 01bb 35       		.byte	0x35
+ 689 01bc 81000000 		.4byte	0x81
+ 690 01c0 5F000000 		.4byte	.LLST3
+ 691 01c4 10       		.uleb128 0x10
+ 692 01c5 0A000000 		.4byte	.LASF19
+ 693 01c9 01       		.byte	0x1
+ 694 01ca 36       		.byte	0x36
+ 695 01cb 81000000 		.4byte	0x81
+ 696 01cf 00       		.byte	0
+ 697 01d0 09       		.uleb128 0x9
+ 698 01d1 00000000 		.4byte	.LASF20
+ 699 01d5 01       		.byte	0x1
+ 700 01d6 37       		.byte	0x37
+ 701 01d7 15020000 		.4byte	0x215
+ 702 01db 02       		.uleb128 0x2
+ 703 01dc 91       		.byte	0x91
+ 704 01dd 74       		.sleb128 -12
+ 705 01de 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 16
+
+
+ 706 01df 1C000000 		.4byte	.LVL13
+ 707 01e3 38050000 		.4byte	0x538
+ 708 01e7 02020000 		.4byte	0x202
+ 709 01eb 0B       		.uleb128 0xb
+ 710 01ec 01       		.uleb128 0x1
+ 711 01ed 53       		.byte	0x53
+ 712 01ee 01       		.uleb128 0x1
+ 713 01ef 30       		.byte	0x30
+ 714 01f0 0B       		.uleb128 0xb
+ 715 01f1 01       		.uleb128 0x1
+ 716 01f2 52       		.byte	0x52
+ 717 01f3 01       		.uleb128 0x1
+ 718 01f4 32       		.byte	0x32
+ 719 01f5 0B       		.uleb128 0xb
+ 720 01f6 01       		.uleb128 0x1
+ 721 01f7 51       		.byte	0x51
+ 722 01f8 02       		.uleb128 0x2
+ 723 01f9 91       		.byte	0x91
+ 724 01fa 74       		.sleb128 -12
+ 725 01fb 0B       		.uleb128 0xb
+ 726 01fc 01       		.uleb128 0x1
+ 727 01fd 50       		.byte	0x50
+ 728 01fe 02       		.uleb128 0x2
+ 729 01ff 08       		.byte	0x8
+ 730 0200 5F       		.byte	0x5f
+ 731 0201 00       		.byte	0
+ 732 0202 0C       		.uleb128 0xc
+ 733 0203 24000000 		.4byte	.LVL15
+ 734 0207 62050000 		.4byte	0x562
+ 735 020b 0C       		.uleb128 0xc
+ 736 020c 2E000000 		.4byte	.LVL16
+ 737 0210 6D050000 		.4byte	0x56d
+ 738 0214 00       		.byte	0
+ 739 0215 0D       		.uleb128 0xd
+ 740 0216 81000000 		.4byte	0x81
+ 741 021a 25020000 		.4byte	0x225
+ 742 021e 0E       		.uleb128 0xe
+ 743 021f BA000000 		.4byte	0xba
+ 744 0223 01       		.byte	0x1
+ 745 0224 00       		.byte	0
+ 746 0225 11       		.uleb128 0x11
+ 747 0226 F7000000 		.4byte	.LASF34
+ 748 022a 01       		.byte	0x1
+ 749 022b 51       		.byte	0x51
+ 750 022c 81000000 		.4byte	0x81
+ 751 0230 00000000 		.4byte	.LFB65
+ 752 0234 D6000000 		.4byte	.LFE65-.LFB65
+ 753 0238 01       		.uleb128 0x1
+ 754 0239 9C       		.byte	0x9c
+ 755 023a B2030000 		.4byte	0x3b2
+ 756 023e 09       		.uleb128 0x9
+ 757 023f B5000000 		.4byte	.LASF22
+ 758 0243 01       		.byte	0x1
+ 759 0244 53       		.byte	0x53
+ 760 0245 99000000 		.4byte	0x99
+ 761 0249 01       		.uleb128 0x1
+ 762 024a 54       		.byte	0x54
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 17
+
+
+ 763 024b 09       		.uleb128 0x9
+ 764 024c 6E020000 		.4byte	.LASF23
+ 765 0250 01       		.byte	0x1
+ 766 0251 55       		.byte	0x55
+ 767 0252 99000000 		.4byte	0x99
+ 768 0256 01       		.uleb128 0x1
+ 769 0257 5A       		.byte	0x5a
+ 770 0258 09       		.uleb128 0x9
+ 771 0259 0F010000 		.4byte	.LASF24
+ 772 025d 01       		.byte	0x1
+ 773 025e 57       		.byte	0x57
+ 774 025f 99000000 		.4byte	0x99
+ 775 0263 01       		.uleb128 0x1
+ 776 0264 55       		.byte	0x55
+ 777 0265 12       		.uleb128 0x12
+ 778 0266 4D534200 		.ascii	"MSB\000"
+ 779 026a 01       		.byte	0x1
+ 780 026b 59       		.byte	0x59
+ 781 026c 8D000000 		.4byte	0x8d
+ 782 0270 7E000000 		.4byte	.LLST4
+ 783 0274 08       		.uleb128 0x8
+ 784 0275 06020000 		.4byte	.LASF25
+ 785 0279 01       		.byte	0x1
+ 786 027a 5B       		.byte	0x5b
+ 787 027b 8D000000 		.4byte	0x8d
+ 788 027f 96000000 		.4byte	.LLST5
+ 789 0283 08       		.uleb128 0x8
+ 790 0284 F0000000 		.4byte	.LASF26
+ 791 0288 01       		.byte	0x1
+ 792 0289 5D       		.byte	0x5d
+ 793 028a 8D000000 		.4byte	0x8d
+ 794 028e AE000000 		.4byte	.LLST6
+ 795 0292 08       		.uleb128 0x8
+ 796 0293 24020000 		.4byte	.LASF27
+ 797 0297 01       		.byte	0x1
+ 798 0298 5F       		.byte	0x5f
+ 799 0299 81000000 		.4byte	0x81
+ 800 029d C6000000 		.4byte	.LLST7
+ 801 02a1 09       		.uleb128 0x9
+ 802 02a2 D4000000 		.4byte	.LASF28
+ 803 02a6 01       		.byte	0x1
+ 804 02a7 61       		.byte	0x61
+ 805 02a8 AC000000 		.4byte	0xac
+ 806 02ac 06       		.uleb128 0x6
+ 807 02ad 56       		.byte	0x56
+ 808 02ae 93       		.byte	0x93
+ 809 02af 04       		.uleb128 0x4
+ 810 02b0 57       		.byte	0x57
+ 811 02b1 93       		.byte	0x93
+ 812 02b2 04       		.uleb128 0x4
+ 813 02b3 08       		.uleb128 0x8
+ 814 02b4 3E030000 		.4byte	.LASF29
+ 815 02b8 01       		.byte	0x1
+ 816 02b9 63       		.byte	0x63
+ 817 02ba 81000000 		.4byte	0x81
+ 818 02be D9000000 		.4byte	.LLST8
+ 819 02c2 08       		.uleb128 0x8
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 18
+
+
+ 820 02c3 14000000 		.4byte	.LASF30
+ 821 02c7 01       		.byte	0x1
+ 822 02c8 65       		.byte	0x65
+ 823 02c9 AC000000 		.4byte	0xac
+ 824 02cd EC000000 		.4byte	.LLST9
+ 825 02d1 08       		.uleb128 0x8
+ 826 02d2 37000000 		.4byte	.LASF31
+ 827 02d6 01       		.byte	0x1
+ 828 02d7 67       		.byte	0x67
+ 829 02d8 AC000000 		.4byte	0xac
+ 830 02dc 04010000 		.4byte	.LLST10
+ 831 02e0 08       		.uleb128 0x8
+ 832 02e1 29010000 		.4byte	.LASF32
+ 833 02e5 01       		.byte	0x1
+ 834 02e6 69       		.byte	0x69
+ 835 02e7 AC000000 		.4byte	0xac
+ 836 02eb 1C010000 		.4byte	.LLST11
+ 837 02ef 09       		.uleb128 0x9
+ 838 02f0 31000000 		.4byte	.LASF33
+ 839 02f4 01       		.byte	0x1
+ 840 02f5 6B       		.byte	0x6b
+ 841 02f6 AC000000 		.4byte	0xac
+ 842 02fa 06       		.uleb128 0x6
+ 843 02fb 58       		.byte	0x58
+ 844 02fc 93       		.byte	0x93
+ 845 02fd 04       		.uleb128 0x4
+ 846 02fe 59       		.byte	0x59
+ 847 02ff 93       		.byte	0x93
+ 848 0300 04       		.uleb128 0x4
+ 849 0301 0A       		.uleb128 0xa
+ 850 0302 0A000000 		.4byte	.LVL17
+ 851 0306 C1000000 		.4byte	0xc1
+ 852 030a 15030000 		.4byte	0x315
+ 853 030e 0B       		.uleb128 0xb
+ 854 030f 01       		.uleb128 0x1
+ 855 0310 50       		.byte	0x50
+ 856 0311 02       		.uleb128 0x2
+ 857 0312 08       		.byte	0x8
+ 858 0313 3C       		.byte	0x3c
+ 859 0314 00       		.byte	0
+ 860 0315 0A       		.uleb128 0xa
+ 861 0316 12000000 		.4byte	.LVL18
+ 862 031a C1000000 		.4byte	0xc1
+ 863 031e 29030000 		.4byte	0x329
+ 864 0322 0B       		.uleb128 0xb
+ 865 0323 01       		.uleb128 0x1
+ 866 0324 50       		.byte	0x50
+ 867 0325 02       		.uleb128 0x2
+ 868 0326 08       		.byte	0x8
+ 869 0327 3D       		.byte	0x3d
+ 870 0328 00       		.byte	0
+ 871 0329 0A       		.uleb128 0xa
+ 872 032a 20000000 		.4byte	.LVL20
+ 873 032e C1000000 		.4byte	0xc1
+ 874 0332 3D030000 		.4byte	0x33d
+ 875 0336 0B       		.uleb128 0xb
+ 876 0337 01       		.uleb128 0x1
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 19
+
+
+ 877 0338 50       		.byte	0x50
+ 878 0339 02       		.uleb128 0x2
+ 879 033a 08       		.byte	0x8
+ 880 033b 3E       		.byte	0x3e
+ 881 033c 00       		.byte	0
+ 882 033d 0A       		.uleb128 0xa
+ 883 033e 28000000 		.4byte	.LVL21
+ 884 0342 C1000000 		.4byte	0xc1
+ 885 0346 51030000 		.4byte	0x351
+ 886 034a 0B       		.uleb128 0xb
+ 887 034b 01       		.uleb128 0x1
+ 888 034c 50       		.byte	0x50
+ 889 034d 02       		.uleb128 0x2
+ 890 034e 08       		.byte	0x8
+ 891 034f 3F       		.byte	0x3f
+ 892 0350 00       		.byte	0
+ 893 0351 0A       		.uleb128 0xa
+ 894 0352 3A000000 		.4byte	.LVL23
+ 895 0356 C1000000 		.4byte	0xc1
+ 896 035a 65030000 		.4byte	0x365
+ 897 035e 0B       		.uleb128 0xb
+ 898 035f 01       		.uleb128 0x1
+ 899 0360 50       		.byte	0x50
+ 900 0361 02       		.uleb128 0x2
+ 901 0362 08       		.byte	0x8
+ 902 0363 2A       		.byte	0x2a
+ 903 0364 00       		.byte	0
+ 904 0365 0A       		.uleb128 0xa
+ 905 0366 42000000 		.4byte	.LVL24
+ 906 036a C1000000 		.4byte	0xc1
+ 907 036e 79030000 		.4byte	0x379
+ 908 0372 0B       		.uleb128 0xb
+ 909 0373 01       		.uleb128 0x1
+ 910 0374 50       		.byte	0x50
+ 911 0375 02       		.uleb128 0x2
+ 912 0376 08       		.byte	0x8
+ 913 0377 2B       		.byte	0x2b
+ 914 0378 00       		.byte	0
+ 915 0379 0A       		.uleb128 0xa
+ 916 037a 50000000 		.4byte	.LVL26
+ 917 037e C1000000 		.4byte	0xc1
+ 918 0382 8D030000 		.4byte	0x38d
+ 919 0386 0B       		.uleb128 0xb
+ 920 0387 01       		.uleb128 0x1
+ 921 0388 50       		.byte	0x50
+ 922 0389 02       		.uleb128 0x2
+ 923 038a 08       		.byte	0x8
+ 924 038b 35       		.byte	0x35
+ 925 038c 00       		.byte	0
+ 926 038d 0A       		.uleb128 0xa
+ 927 038e 5E000000 		.4byte	.LVL30
+ 928 0392 C1000000 		.4byte	0xc1
+ 929 0396 A1030000 		.4byte	0x3a1
+ 930 039a 0B       		.uleb128 0xb
+ 931 039b 01       		.uleb128 0x1
+ 932 039c 50       		.byte	0x50
+ 933 039d 02       		.uleb128 0x2
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 20
+
+
+ 934 039e 08       		.byte	0x8
+ 935 039f 32       		.byte	0x32
+ 936 03a0 00       		.byte	0
+ 937 03a1 13       		.uleb128 0x13
+ 938 03a2 7A000000 		.4byte	.LVL36
+ 939 03a6 C1000000 		.4byte	0xc1
+ 940 03aa 0B       		.uleb128 0xb
+ 941 03ab 01       		.uleb128 0x1
+ 942 03ac 50       		.byte	0x50
+ 943 03ad 02       		.uleb128 0x2
+ 944 03ae 08       		.byte	0x8
+ 945 03af 33       		.byte	0x33
+ 946 03b0 00       		.byte	0
+ 947 03b1 00       		.byte	0
+ 948 03b2 11       		.uleb128 0x11
+ 949 03b3 C5020000 		.4byte	.LASF35
+ 950 03b7 01       		.byte	0x1
+ 951 03b8 74       		.byte	0x74
+ 952 03b9 8D000000 		.4byte	0x8d
+ 953 03bd 00000000 		.4byte	.LFB66
+ 954 03c1 B4000000 		.4byte	.LFE66-.LFB66
+ 955 03c5 01       		.uleb128 0x1
+ 956 03c6 9C       		.byte	0x9c
+ 957 03c7 FE040000 		.4byte	0x4fe
+ 958 03cb 09       		.uleb128 0x9
+ 959 03cc DC000000 		.4byte	.LASF36
+ 960 03d0 01       		.byte	0x1
+ 961 03d1 77       		.byte	0x77
+ 962 03d2 99000000 		.4byte	0x99
+ 963 03d6 01       		.uleb128 0x1
+ 964 03d7 54       		.byte	0x54
+ 965 03d8 09       		.uleb128 0x9
+ 966 03d9 6D000000 		.4byte	.LASF37
+ 967 03dd 01       		.byte	0x1
+ 968 03de 79       		.byte	0x79
+ 969 03df 99000000 		.4byte	0x99
+ 970 03e3 01       		.uleb128 0x1
+ 971 03e4 5A       		.byte	0x5a
+ 972 03e5 09       		.uleb128 0x9
+ 973 03e6 65000000 		.4byte	.LASF38
+ 974 03ea 01       		.byte	0x1
+ 975 03eb 7B       		.byte	0x7b
+ 976 03ec 99000000 		.4byte	0x99
+ 977 03f0 01       		.uleb128 0x1
+ 978 03f1 55       		.byte	0x55
+ 979 03f2 08       		.uleb128 0x8
+ 980 03f3 53030000 		.4byte	.LASF39
+ 981 03f7 01       		.byte	0x1
+ 982 03f8 7D       		.byte	0x7d
+ 983 03f9 81000000 		.4byte	0x81
+ 984 03fd 34010000 		.4byte	.LLST12
+ 985 0401 09       		.uleb128 0x9
+ 986 0402 5C030000 		.4byte	.LASF40
+ 987 0406 01       		.byte	0x1
+ 988 0407 7F       		.byte	0x7f
+ 989 0408 AC000000 		.4byte	0xac
+ 990 040c 06       		.uleb128 0x6
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 21
+
+
+ 991 040d 56       		.byte	0x56
+ 992 040e 93       		.byte	0x93
+ 993 040f 04       		.uleb128 0x4
+ 994 0410 57       		.byte	0x57
+ 995 0411 93       		.byte	0x93
+ 996 0412 04       		.uleb128 0x4
+ 997 0413 08       		.uleb128 0x8
+ 998 0414 28000000 		.4byte	.LASF41
+ 999 0418 01       		.byte	0x1
+ 1000 0419 81       		.byte	0x81
+ 1001 041a 81000000 		.4byte	0x81
+ 1002 041e 47010000 		.4byte	.LLST13
+ 1003 0422 08       		.uleb128 0x8
+ 1004 0423 A1000000 		.4byte	.LASF42
+ 1005 0427 01       		.byte	0x1
+ 1006 0428 83       		.byte	0x83
+ 1007 0429 AC000000 		.4byte	0xac
+ 1008 042d 5A010000 		.4byte	.LLST14
+ 1009 0431 08       		.uleb128 0x8
+ 1010 0432 3C020000 		.4byte	.LASF43
+ 1011 0436 01       		.byte	0x1
+ 1012 0437 85       		.byte	0x85
+ 1013 0438 AC000000 		.4byte	0xac
+ 1014 043c 72010000 		.4byte	.LLST15
+ 1015 0440 08       		.uleb128 0x8
+ 1016 0441 77000000 		.4byte	.LASF44
+ 1017 0445 01       		.byte	0x1
+ 1018 0446 87       		.byte	0x87
+ 1019 0447 AC000000 		.4byte	0xac
+ 1020 044b 8A010000 		.4byte	.LLST16
+ 1021 044f 09       		.uleb128 0x9
+ 1022 0450 31000000 		.4byte	.LASF33
+ 1023 0454 01       		.byte	0x1
+ 1024 0455 89       		.byte	0x89
+ 1025 0456 AC000000 		.4byte	0xac
+ 1026 045a 06       		.uleb128 0x6
+ 1027 045b 58       		.byte	0x58
+ 1028 045c 93       		.byte	0x93
+ 1029 045d 04       		.uleb128 0x4
+ 1030 045e 59       		.byte	0x59
+ 1031 045f 93       		.byte	0x93
+ 1032 0460 04       		.uleb128 0x4
+ 1033 0461 0A       		.uleb128 0xa
+ 1034 0462 0A000000 		.4byte	.LVL52
+ 1035 0466 C1000000 		.4byte	0xc1
+ 1036 046a 75040000 		.4byte	0x475
+ 1037 046e 0B       		.uleb128 0xb
+ 1038 046f 01       		.uleb128 0x1
+ 1039 0470 50       		.byte	0x50
+ 1040 0471 02       		.uleb128 0x2
+ 1041 0472 08       		.byte	0x8
+ 1042 0473 36       		.byte	0x36
+ 1043 0474 00       		.byte	0
+ 1044 0475 0A       		.uleb128 0xa
+ 1045 0476 12000000 		.4byte	.LVL53
+ 1046 047a C1000000 		.4byte	0xc1
+ 1047 047e 89040000 		.4byte	0x489
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 22
+
+
+ 1048 0482 0B       		.uleb128 0xb
+ 1049 0483 01       		.uleb128 0x1
+ 1050 0484 50       		.byte	0x50
+ 1051 0485 02       		.uleb128 0x2
+ 1052 0486 08       		.byte	0x8
+ 1053 0487 37       		.byte	0x37
+ 1054 0488 00       		.byte	0
+ 1055 0489 0A       		.uleb128 0xa
+ 1056 048a 20000000 		.4byte	.LVL55
+ 1057 048e C1000000 		.4byte	0xc1
+ 1058 0492 9D040000 		.4byte	0x49d
+ 1059 0496 0B       		.uleb128 0xb
+ 1060 0497 01       		.uleb128 0x1
+ 1061 0498 50       		.byte	0x50
+ 1062 0499 02       		.uleb128 0x2
+ 1063 049a 08       		.byte	0x8
+ 1064 049b 3A       		.byte	0x3a
+ 1065 049c 00       		.byte	0
+ 1066 049d 0A       		.uleb128 0xa
+ 1067 049e 28000000 		.4byte	.LVL56
+ 1068 04a2 C1000000 		.4byte	0xc1
+ 1069 04a6 B1040000 		.4byte	0x4b1
+ 1070 04aa 0B       		.uleb128 0xb
+ 1071 04ab 01       		.uleb128 0x1
+ 1072 04ac 50       		.byte	0x50
+ 1073 04ad 02       		.uleb128 0x2
+ 1074 04ae 08       		.byte	0x8
+ 1075 04af 3B       		.byte	0x3b
+ 1076 04b0 00       		.byte	0
+ 1077 04b1 0A       		.uleb128 0xa
+ 1078 04b2 3A000000 		.4byte	.LVL58
+ 1079 04b6 C1000000 		.4byte	0xc1
+ 1080 04ba C5040000 		.4byte	0x4c5
+ 1081 04be 0B       		.uleb128 0xb
+ 1082 04bf 01       		.uleb128 0x1
+ 1083 04c0 50       		.byte	0x50
+ 1084 04c1 02       		.uleb128 0x2
+ 1085 04c2 08       		.byte	0x8
+ 1086 04c3 28       		.byte	0x28
+ 1087 04c4 00       		.byte	0
+ 1088 04c5 0A       		.uleb128 0xa
+ 1089 04c6 42000000 		.4byte	.LVL59
+ 1090 04ca C1000000 		.4byte	0xc1
+ 1091 04ce D9040000 		.4byte	0x4d9
+ 1092 04d2 0B       		.uleb128 0xb
+ 1093 04d3 01       		.uleb128 0x1
+ 1094 04d4 50       		.byte	0x50
+ 1095 04d5 02       		.uleb128 0x2
+ 1096 04d6 08       		.byte	0x8
+ 1097 04d7 29       		.byte	0x29
+ 1098 04d8 00       		.byte	0
+ 1099 04d9 0A       		.uleb128 0xa
+ 1100 04da 50000000 		.4byte	.LVL61
+ 1101 04de C1000000 		.4byte	0xc1
+ 1102 04e2 ED040000 		.4byte	0x4ed
+ 1103 04e6 0B       		.uleb128 0xb
+ 1104 04e7 01       		.uleb128 0x1
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 23
+
+
+ 1105 04e8 50       		.byte	0x50
+ 1106 04e9 02       		.uleb128 0x2
+ 1107 04ea 08       		.byte	0x8
+ 1108 04eb 30       		.byte	0x30
+ 1109 04ec 00       		.byte	0
+ 1110 04ed 13       		.uleb128 0x13
+ 1111 04ee 62000000 		.4byte	.LVL65
+ 1112 04f2 C1000000 		.4byte	0xc1
+ 1113 04f6 0B       		.uleb128 0xb
+ 1114 04f7 01       		.uleb128 0x1
+ 1115 04f8 50       		.byte	0x50
+ 1116 04f9 02       		.uleb128 0x2
+ 1117 04fa 08       		.byte	0x8
+ 1118 04fb 31       		.byte	0x31
+ 1119 04fc 00       		.byte	0
+ 1120 04fd 00       		.byte	0
+ 1121 04fe 14       		.uleb128 0x14
+ 1122 04ff D2010000 		.4byte	.LASF45
+ 1123 0503 01       		.byte	0x1
+ 1124 0504 92       		.byte	0x92
+ 1125 0505 8D000000 		.4byte	0x8d
+ 1126 0509 00000000 		.4byte	.LFB67
+ 1127 050d 0A000000 		.4byte	.LFE67-.LFB67
+ 1128 0511 01       		.uleb128 0x1
+ 1129 0512 9C       		.byte	0x9c
+ 1130 0513 27050000 		.4byte	0x527
+ 1131 0517 13       		.uleb128 0x13
+ 1132 0518 08000000 		.4byte	.LVL79
+ 1133 051c C1000000 		.4byte	0xc1
+ 1134 0520 0B       		.uleb128 0xb
+ 1135 0521 01       		.uleb128 0x1
+ 1136 0522 50       		.byte	0x50
+ 1137 0523 01       		.uleb128 0x1
+ 1138 0524 3F       		.byte	0x3f
+ 1139 0525 00       		.byte	0
+ 1140 0526 00       		.byte	0
+ 1141 0527 15       		.uleb128 0x15
+ 1142 0528 2F020000 		.4byte	.LASF54
+ 1143 052c 06       		.byte	0x6
+ 1144 052d 9606     		.2byte	0x696
+ 1145 052f 33050000 		.4byte	0x533
+ 1146 0533 16       		.uleb128 0x16
+ 1147 0534 76000000 		.4byte	0x76
+ 1148 0538 17       		.uleb128 0x17
+ 1149 0539 86000000 		.4byte	.LASF55
+ 1150 053d 05       		.byte	0x5
+ 1151 053e A7       		.byte	0xa7
+ 1152 053f 81000000 		.4byte	0x81
+ 1153 0543 5C050000 		.4byte	0x55c
+ 1154 0547 18       		.uleb128 0x18
+ 1155 0548 81000000 		.4byte	0x81
+ 1156 054c 18       		.uleb128 0x18
+ 1157 054d 5C050000 		.4byte	0x55c
+ 1158 0551 18       		.uleb128 0x18
+ 1159 0552 81000000 		.4byte	0x81
+ 1160 0556 18       		.uleb128 0x18
+ 1161 0557 81000000 		.4byte	0x81
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 24
+
+
+ 1162 055b 00       		.byte	0
+ 1163 055c 19       		.uleb128 0x19
+ 1164 055d 04       		.byte	0x4
+ 1165 055e 81000000 		.4byte	0x81
+ 1166 0562 1A       		.uleb128 0x1a
+ 1167 0563 B2020000 		.4byte	.LASF46
+ 1168 0567 05       		.byte	0x5
+ 1169 0568 A3       		.byte	0xa3
+ 1170 0569 81000000 		.4byte	0x81
+ 1171 056d 1A       		.uleb128 0x1a
+ 1172 056e 8B020000 		.4byte	.LASF47
+ 1173 0572 05       		.byte	0x5
+ 1174 0573 A4       		.byte	0xa4
+ 1175 0574 81000000 		.4byte	0x81
+ 1176 0578 1B       		.uleb128 0x1b
+ 1177 0579 15010000 		.4byte	.LASF56
+ 1178 057d 05       		.byte	0x5
+ 1179 057e A9       		.byte	0xa9
+ 1180 057f 81000000 		.4byte	0x81
+ 1181 0583 18       		.uleb128 0x18
+ 1182 0584 81000000 		.4byte	0x81
+ 1183 0588 18       		.uleb128 0x18
+ 1184 0589 5C050000 		.4byte	0x55c
+ 1185 058d 18       		.uleb128 0x18
+ 1186 058e 81000000 		.4byte	0x81
+ 1187 0592 18       		.uleb128 0x18
+ 1188 0593 81000000 		.4byte	0x81
+ 1189 0597 00       		.byte	0
+ 1190 0598 00       		.byte	0
+ 1191              		.section	.debug_abbrev,"",%progbits
+ 1192              	.Ldebug_abbrev0:
+ 1193 0000 01       		.uleb128 0x1
+ 1194 0001 11       		.uleb128 0x11
+ 1195 0002 01       		.byte	0x1
+ 1196 0003 25       		.uleb128 0x25
+ 1197 0004 0E       		.uleb128 0xe
+ 1198 0005 13       		.uleb128 0x13
+ 1199 0006 0B       		.uleb128 0xb
+ 1200 0007 03       		.uleb128 0x3
+ 1201 0008 0E       		.uleb128 0xe
+ 1202 0009 1B       		.uleb128 0x1b
+ 1203 000a 0E       		.uleb128 0xe
+ 1204 000b 55       		.uleb128 0x55
+ 1205 000c 17       		.uleb128 0x17
+ 1206 000d 11       		.uleb128 0x11
+ 1207 000e 01       		.uleb128 0x1
+ 1208 000f 10       		.uleb128 0x10
+ 1209 0010 17       		.uleb128 0x17
+ 1210 0011 00       		.byte	0
+ 1211 0012 00       		.byte	0
+ 1212 0013 02       		.uleb128 0x2
+ 1213 0014 24       		.uleb128 0x24
+ 1214 0015 00       		.byte	0
+ 1215 0016 0B       		.uleb128 0xb
+ 1216 0017 0B       		.uleb128 0xb
+ 1217 0018 3E       		.uleb128 0x3e
+ 1218 0019 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 25
+
+
+ 1219 001a 03       		.uleb128 0x3
+ 1220 001b 0E       		.uleb128 0xe
+ 1221 001c 00       		.byte	0
+ 1222 001d 00       		.byte	0
+ 1223 001e 03       		.uleb128 0x3
+ 1224 001f 16       		.uleb128 0x16
+ 1225 0020 00       		.byte	0
+ 1226 0021 03       		.uleb128 0x3
+ 1227 0022 0E       		.uleb128 0xe
+ 1228 0023 3A       		.uleb128 0x3a
+ 1229 0024 0B       		.uleb128 0xb
+ 1230 0025 3B       		.uleb128 0x3b
+ 1231 0026 0B       		.uleb128 0xb
+ 1232 0027 49       		.uleb128 0x49
+ 1233 0028 13       		.uleb128 0x13
+ 1234 0029 00       		.byte	0
+ 1235 002a 00       		.byte	0
+ 1236 002b 04       		.uleb128 0x4
+ 1237 002c 24       		.uleb128 0x24
+ 1238 002d 00       		.byte	0
+ 1239 002e 0B       		.uleb128 0xb
+ 1240 002f 0B       		.uleb128 0xb
+ 1241 0030 3E       		.uleb128 0x3e
+ 1242 0031 0B       		.uleb128 0xb
+ 1243 0032 03       		.uleb128 0x3
+ 1244 0033 08       		.uleb128 0x8
+ 1245 0034 00       		.byte	0
+ 1246 0035 00       		.byte	0
+ 1247 0036 05       		.uleb128 0x5
+ 1248 0037 16       		.uleb128 0x16
+ 1249 0038 00       		.byte	0
+ 1250 0039 03       		.uleb128 0x3
+ 1251 003a 0E       		.uleb128 0xe
+ 1252 003b 3A       		.uleb128 0x3a
+ 1253 003c 0B       		.uleb128 0xb
+ 1254 003d 3B       		.uleb128 0x3b
+ 1255 003e 05       		.uleb128 0x5
+ 1256 003f 49       		.uleb128 0x49
+ 1257 0040 13       		.uleb128 0x13
+ 1258 0041 00       		.byte	0
+ 1259 0042 00       		.byte	0
+ 1260 0043 06       		.uleb128 0x6
+ 1261 0044 2E       		.uleb128 0x2e
+ 1262 0045 01       		.byte	0x1
+ 1263 0046 3F       		.uleb128 0x3f
+ 1264 0047 19       		.uleb128 0x19
+ 1265 0048 03       		.uleb128 0x3
+ 1266 0049 0E       		.uleb128 0xe
+ 1267 004a 3A       		.uleb128 0x3a
+ 1268 004b 0B       		.uleb128 0xb
+ 1269 004c 3B       		.uleb128 0x3b
+ 1270 004d 0B       		.uleb128 0xb
+ 1271 004e 27       		.uleb128 0x27
+ 1272 004f 19       		.uleb128 0x19
+ 1273 0050 49       		.uleb128 0x49
+ 1274 0051 13       		.uleb128 0x13
+ 1275 0052 11       		.uleb128 0x11
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 26
+
+
+ 1276 0053 01       		.uleb128 0x1
+ 1277 0054 12       		.uleb128 0x12
+ 1278 0055 06       		.uleb128 0x6
+ 1279 0056 40       		.uleb128 0x40
+ 1280 0057 18       		.uleb128 0x18
+ 1281 0058 9742     		.uleb128 0x2117
+ 1282 005a 19       		.uleb128 0x19
+ 1283 005b 01       		.uleb128 0x1
+ 1284 005c 13       		.uleb128 0x13
+ 1285 005d 00       		.byte	0
+ 1286 005e 00       		.byte	0
+ 1287 005f 07       		.uleb128 0x7
+ 1288 0060 05       		.uleb128 0x5
+ 1289 0061 00       		.byte	0
+ 1290 0062 03       		.uleb128 0x3
+ 1291 0063 0E       		.uleb128 0xe
+ 1292 0064 3A       		.uleb128 0x3a
+ 1293 0065 0B       		.uleb128 0xb
+ 1294 0066 3B       		.uleb128 0x3b
+ 1295 0067 0B       		.uleb128 0xb
+ 1296 0068 49       		.uleb128 0x49
+ 1297 0069 13       		.uleb128 0x13
+ 1298 006a 02       		.uleb128 0x2
+ 1299 006b 17       		.uleb128 0x17
+ 1300 006c 00       		.byte	0
+ 1301 006d 00       		.byte	0
+ 1302 006e 08       		.uleb128 0x8
+ 1303 006f 34       		.uleb128 0x34
+ 1304 0070 00       		.byte	0
+ 1305 0071 03       		.uleb128 0x3
+ 1306 0072 0E       		.uleb128 0xe
+ 1307 0073 3A       		.uleb128 0x3a
+ 1308 0074 0B       		.uleb128 0xb
+ 1309 0075 3B       		.uleb128 0x3b
+ 1310 0076 0B       		.uleb128 0xb
+ 1311 0077 49       		.uleb128 0x49
+ 1312 0078 13       		.uleb128 0x13
+ 1313 0079 02       		.uleb128 0x2
+ 1314 007a 17       		.uleb128 0x17
+ 1315 007b 00       		.byte	0
+ 1316 007c 00       		.byte	0
+ 1317 007d 09       		.uleb128 0x9
+ 1318 007e 34       		.uleb128 0x34
+ 1319 007f 00       		.byte	0
+ 1320 0080 03       		.uleb128 0x3
+ 1321 0081 0E       		.uleb128 0xe
+ 1322 0082 3A       		.uleb128 0x3a
+ 1323 0083 0B       		.uleb128 0xb
+ 1324 0084 3B       		.uleb128 0x3b
+ 1325 0085 0B       		.uleb128 0xb
+ 1326 0086 49       		.uleb128 0x49
+ 1327 0087 13       		.uleb128 0x13
+ 1328 0088 02       		.uleb128 0x2
+ 1329 0089 18       		.uleb128 0x18
+ 1330 008a 00       		.byte	0
+ 1331 008b 00       		.byte	0
+ 1332 008c 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 27
+
+
+ 1333 008d 898201   		.uleb128 0x4109
+ 1334 0090 01       		.byte	0x1
+ 1335 0091 11       		.uleb128 0x11
+ 1336 0092 01       		.uleb128 0x1
+ 1337 0093 31       		.uleb128 0x31
+ 1338 0094 13       		.uleb128 0x13
+ 1339 0095 01       		.uleb128 0x1
+ 1340 0096 13       		.uleb128 0x13
+ 1341 0097 00       		.byte	0
+ 1342 0098 00       		.byte	0
+ 1343 0099 0B       		.uleb128 0xb
+ 1344 009a 8A8201   		.uleb128 0x410a
+ 1345 009d 00       		.byte	0
+ 1346 009e 02       		.uleb128 0x2
+ 1347 009f 18       		.uleb128 0x18
+ 1348 00a0 9142     		.uleb128 0x2111
+ 1349 00a2 18       		.uleb128 0x18
+ 1350 00a3 00       		.byte	0
+ 1351 00a4 00       		.byte	0
+ 1352 00a5 0C       		.uleb128 0xc
+ 1353 00a6 898201   		.uleb128 0x4109
+ 1354 00a9 00       		.byte	0
+ 1355 00aa 11       		.uleb128 0x11
+ 1356 00ab 01       		.uleb128 0x1
+ 1357 00ac 31       		.uleb128 0x31
+ 1358 00ad 13       		.uleb128 0x13
+ 1359 00ae 00       		.byte	0
+ 1360 00af 00       		.byte	0
+ 1361 00b0 0D       		.uleb128 0xd
+ 1362 00b1 01       		.uleb128 0x1
+ 1363 00b2 01       		.byte	0x1
+ 1364 00b3 49       		.uleb128 0x49
+ 1365 00b4 13       		.uleb128 0x13
+ 1366 00b5 01       		.uleb128 0x1
+ 1367 00b6 13       		.uleb128 0x13
+ 1368 00b7 00       		.byte	0
+ 1369 00b8 00       		.byte	0
+ 1370 00b9 0E       		.uleb128 0xe
+ 1371 00ba 21       		.uleb128 0x21
+ 1372 00bb 00       		.byte	0
+ 1373 00bc 49       		.uleb128 0x49
+ 1374 00bd 13       		.uleb128 0x13
+ 1375 00be 2F       		.uleb128 0x2f
+ 1376 00bf 0B       		.uleb128 0xb
+ 1377 00c0 00       		.byte	0
+ 1378 00c1 00       		.byte	0
+ 1379 00c2 0F       		.uleb128 0xf
+ 1380 00c3 2E       		.uleb128 0x2e
+ 1381 00c4 01       		.byte	0x1
+ 1382 00c5 3F       		.uleb128 0x3f
+ 1383 00c6 19       		.uleb128 0x19
+ 1384 00c7 03       		.uleb128 0x3
+ 1385 00c8 0E       		.uleb128 0xe
+ 1386 00c9 3A       		.uleb128 0x3a
+ 1387 00ca 0B       		.uleb128 0xb
+ 1388 00cb 3B       		.uleb128 0x3b
+ 1389 00cc 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 28
+
+
+ 1390 00cd 11       		.uleb128 0x11
+ 1391 00ce 01       		.uleb128 0x1
+ 1392 00cf 12       		.uleb128 0x12
+ 1393 00d0 06       		.uleb128 0x6
+ 1394 00d1 40       		.uleb128 0x40
+ 1395 00d2 18       		.uleb128 0x18
+ 1396 00d3 9742     		.uleb128 0x2117
+ 1397 00d5 19       		.uleb128 0x19
+ 1398 00d6 01       		.uleb128 0x1
+ 1399 00d7 13       		.uleb128 0x13
+ 1400 00d8 00       		.byte	0
+ 1401 00d9 00       		.byte	0
+ 1402 00da 10       		.uleb128 0x10
+ 1403 00db 34       		.uleb128 0x34
+ 1404 00dc 00       		.byte	0
+ 1405 00dd 03       		.uleb128 0x3
+ 1406 00de 0E       		.uleb128 0xe
+ 1407 00df 3A       		.uleb128 0x3a
+ 1408 00e0 0B       		.uleb128 0xb
+ 1409 00e1 3B       		.uleb128 0x3b
+ 1410 00e2 0B       		.uleb128 0xb
+ 1411 00e3 49       		.uleb128 0x49
+ 1412 00e4 13       		.uleb128 0x13
+ 1413 00e5 1C       		.uleb128 0x1c
+ 1414 00e6 0B       		.uleb128 0xb
+ 1415 00e7 00       		.byte	0
+ 1416 00e8 00       		.byte	0
+ 1417 00e9 11       		.uleb128 0x11
+ 1418 00ea 2E       		.uleb128 0x2e
+ 1419 00eb 01       		.byte	0x1
+ 1420 00ec 3F       		.uleb128 0x3f
+ 1421 00ed 19       		.uleb128 0x19
+ 1422 00ee 03       		.uleb128 0x3
+ 1423 00ef 0E       		.uleb128 0xe
+ 1424 00f0 3A       		.uleb128 0x3a
+ 1425 00f1 0B       		.uleb128 0xb
+ 1426 00f2 3B       		.uleb128 0x3b
+ 1427 00f3 0B       		.uleb128 0xb
+ 1428 00f4 49       		.uleb128 0x49
+ 1429 00f5 13       		.uleb128 0x13
+ 1430 00f6 11       		.uleb128 0x11
+ 1431 00f7 01       		.uleb128 0x1
+ 1432 00f8 12       		.uleb128 0x12
+ 1433 00f9 06       		.uleb128 0x6
+ 1434 00fa 40       		.uleb128 0x40
+ 1435 00fb 18       		.uleb128 0x18
+ 1436 00fc 9642     		.uleb128 0x2116
+ 1437 00fe 19       		.uleb128 0x19
+ 1438 00ff 01       		.uleb128 0x1
+ 1439 0100 13       		.uleb128 0x13
+ 1440 0101 00       		.byte	0
+ 1441 0102 00       		.byte	0
+ 1442 0103 12       		.uleb128 0x12
+ 1443 0104 34       		.uleb128 0x34
+ 1444 0105 00       		.byte	0
+ 1445 0106 03       		.uleb128 0x3
+ 1446 0107 08       		.uleb128 0x8
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 29
+
+
+ 1447 0108 3A       		.uleb128 0x3a
+ 1448 0109 0B       		.uleb128 0xb
+ 1449 010a 3B       		.uleb128 0x3b
+ 1450 010b 0B       		.uleb128 0xb
+ 1451 010c 49       		.uleb128 0x49
+ 1452 010d 13       		.uleb128 0x13
+ 1453 010e 02       		.uleb128 0x2
+ 1454 010f 17       		.uleb128 0x17
+ 1455 0110 00       		.byte	0
+ 1456 0111 00       		.byte	0
+ 1457 0112 13       		.uleb128 0x13
+ 1458 0113 898201   		.uleb128 0x4109
+ 1459 0116 01       		.byte	0x1
+ 1460 0117 11       		.uleb128 0x11
+ 1461 0118 01       		.uleb128 0x1
+ 1462 0119 31       		.uleb128 0x31
+ 1463 011a 13       		.uleb128 0x13
+ 1464 011b 00       		.byte	0
+ 1465 011c 00       		.byte	0
+ 1466 011d 14       		.uleb128 0x14
+ 1467 011e 2E       		.uleb128 0x2e
+ 1468 011f 01       		.byte	0x1
+ 1469 0120 3F       		.uleb128 0x3f
+ 1470 0121 19       		.uleb128 0x19
+ 1471 0122 03       		.uleb128 0x3
+ 1472 0123 0E       		.uleb128 0xe
+ 1473 0124 3A       		.uleb128 0x3a
+ 1474 0125 0B       		.uleb128 0xb
+ 1475 0126 3B       		.uleb128 0x3b
+ 1476 0127 0B       		.uleb128 0xb
+ 1477 0128 49       		.uleb128 0x49
+ 1478 0129 13       		.uleb128 0x13
+ 1479 012a 11       		.uleb128 0x11
+ 1480 012b 01       		.uleb128 0x1
+ 1481 012c 12       		.uleb128 0x12
+ 1482 012d 06       		.uleb128 0x6
+ 1483 012e 40       		.uleb128 0x40
+ 1484 012f 18       		.uleb128 0x18
+ 1485 0130 9742     		.uleb128 0x2117
+ 1486 0132 19       		.uleb128 0x19
+ 1487 0133 01       		.uleb128 0x1
+ 1488 0134 13       		.uleb128 0x13
+ 1489 0135 00       		.byte	0
+ 1490 0136 00       		.byte	0
+ 1491 0137 15       		.uleb128 0x15
+ 1492 0138 34       		.uleb128 0x34
+ 1493 0139 00       		.byte	0
+ 1494 013a 03       		.uleb128 0x3
+ 1495 013b 0E       		.uleb128 0xe
+ 1496 013c 3A       		.uleb128 0x3a
+ 1497 013d 0B       		.uleb128 0xb
+ 1498 013e 3B       		.uleb128 0x3b
+ 1499 013f 05       		.uleb128 0x5
+ 1500 0140 49       		.uleb128 0x49
+ 1501 0141 13       		.uleb128 0x13
+ 1502 0142 3F       		.uleb128 0x3f
+ 1503 0143 19       		.uleb128 0x19
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 30
+
+
+ 1504 0144 3C       		.uleb128 0x3c
+ 1505 0145 19       		.uleb128 0x19
+ 1506 0146 00       		.byte	0
+ 1507 0147 00       		.byte	0
+ 1508 0148 16       		.uleb128 0x16
+ 1509 0149 35       		.uleb128 0x35
+ 1510 014a 00       		.byte	0
+ 1511 014b 49       		.uleb128 0x49
+ 1512 014c 13       		.uleb128 0x13
+ 1513 014d 00       		.byte	0
+ 1514 014e 00       		.byte	0
+ 1515 014f 17       		.uleb128 0x17
+ 1516 0150 2E       		.uleb128 0x2e
+ 1517 0151 01       		.byte	0x1
+ 1518 0152 3F       		.uleb128 0x3f
+ 1519 0153 19       		.uleb128 0x19
+ 1520 0154 03       		.uleb128 0x3
+ 1521 0155 0E       		.uleb128 0xe
+ 1522 0156 3A       		.uleb128 0x3a
+ 1523 0157 0B       		.uleb128 0xb
+ 1524 0158 3B       		.uleb128 0x3b
+ 1525 0159 0B       		.uleb128 0xb
+ 1526 015a 27       		.uleb128 0x27
+ 1527 015b 19       		.uleb128 0x19
+ 1528 015c 49       		.uleb128 0x49
+ 1529 015d 13       		.uleb128 0x13
+ 1530 015e 3C       		.uleb128 0x3c
+ 1531 015f 19       		.uleb128 0x19
+ 1532 0160 01       		.uleb128 0x1
+ 1533 0161 13       		.uleb128 0x13
+ 1534 0162 00       		.byte	0
+ 1535 0163 00       		.byte	0
+ 1536 0164 18       		.uleb128 0x18
+ 1537 0165 05       		.uleb128 0x5
+ 1538 0166 00       		.byte	0
+ 1539 0167 49       		.uleb128 0x49
+ 1540 0168 13       		.uleb128 0x13
+ 1541 0169 00       		.byte	0
+ 1542 016a 00       		.byte	0
+ 1543 016b 19       		.uleb128 0x19
+ 1544 016c 0F       		.uleb128 0xf
+ 1545 016d 00       		.byte	0
+ 1546 016e 0B       		.uleb128 0xb
+ 1547 016f 0B       		.uleb128 0xb
+ 1548 0170 49       		.uleb128 0x49
+ 1549 0171 13       		.uleb128 0x13
+ 1550 0172 00       		.byte	0
+ 1551 0173 00       		.byte	0
+ 1552 0174 1A       		.uleb128 0x1a
+ 1553 0175 2E       		.uleb128 0x2e
+ 1554 0176 00       		.byte	0
+ 1555 0177 3F       		.uleb128 0x3f
+ 1556 0178 19       		.uleb128 0x19
+ 1557 0179 03       		.uleb128 0x3
+ 1558 017a 0E       		.uleb128 0xe
+ 1559 017b 3A       		.uleb128 0x3a
+ 1560 017c 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 31
+
+
+ 1561 017d 3B       		.uleb128 0x3b
+ 1562 017e 0B       		.uleb128 0xb
+ 1563 017f 27       		.uleb128 0x27
+ 1564 0180 19       		.uleb128 0x19
+ 1565 0181 49       		.uleb128 0x49
+ 1566 0182 13       		.uleb128 0x13
+ 1567 0183 3C       		.uleb128 0x3c
+ 1568 0184 19       		.uleb128 0x19
+ 1569 0185 00       		.byte	0
+ 1570 0186 00       		.byte	0
+ 1571 0187 1B       		.uleb128 0x1b
+ 1572 0188 2E       		.uleb128 0x2e
+ 1573 0189 01       		.byte	0x1
+ 1574 018a 3F       		.uleb128 0x3f
+ 1575 018b 19       		.uleb128 0x19
+ 1576 018c 03       		.uleb128 0x3
+ 1577 018d 0E       		.uleb128 0xe
+ 1578 018e 3A       		.uleb128 0x3a
+ 1579 018f 0B       		.uleb128 0xb
+ 1580 0190 3B       		.uleb128 0x3b
+ 1581 0191 0B       		.uleb128 0xb
+ 1582 0192 27       		.uleb128 0x27
+ 1583 0193 19       		.uleb128 0x19
+ 1584 0194 49       		.uleb128 0x49
+ 1585 0195 13       		.uleb128 0x13
+ 1586 0196 3C       		.uleb128 0x3c
+ 1587 0197 19       		.uleb128 0x19
+ 1588 0198 00       		.byte	0
+ 1589 0199 00       		.byte	0
+ 1590 019a 00       		.byte	0
+ 1591              		.section	.debug_loc,"",%progbits
+ 1592              	.Ldebug_loc0:
+ 1593              	.LLST0:
+ 1594 0000 00000000 		.4byte	.LVL0
+ 1595 0004 08000000 		.4byte	.LVL2
+ 1596 0008 0100     		.2byte	0x1
+ 1597 000a 50       		.byte	0x50
+ 1598 000b 08000000 		.4byte	.LVL2
+ 1599 000f 4E000000 		.4byte	.LFE63
+ 1600 0013 0400     		.2byte	0x4
+ 1601 0015 F3       		.byte	0xf3
+ 1602 0016 01       		.uleb128 0x1
+ 1603 0017 50       		.byte	0x50
+ 1604 0018 9F       		.byte	0x9f
+ 1605 0019 00000000 		.4byte	0
+ 1606 001d 00000000 		.4byte	0
+ 1607              	.LLST1:
+ 1608 0021 04000000 		.4byte	.LVL1
+ 1609 0025 08000000 		.4byte	.LVL2
+ 1610 0029 0200     		.2byte	0x2
+ 1611 002b 30       		.byte	0x30
+ 1612 002c 9F       		.byte	0x9f
+ 1613 002d 14000000 		.4byte	.LVL3
+ 1614 0031 18000000 		.4byte	.LVL4
+ 1615 0035 0100     		.2byte	0x1
+ 1616 0037 50       		.byte	0x50
+ 1617 0038 00000000 		.4byte	0
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 32
+
+
+ 1618 003c 00000000 		.4byte	0
+ 1619              	.LLST2:
+ 1620 0040 04000000 		.4byte	.LVL1
+ 1621 0044 32000000 		.4byte	.LVL7
+ 1622 0048 0200     		.2byte	0x2
+ 1623 004a 30       		.byte	0x30
+ 1624 004b 9F       		.byte	0x9f
+ 1625 004c 32000000 		.4byte	.LVL7
+ 1626 0050 36000000 		.4byte	.LVL8
+ 1627 0054 0100     		.2byte	0x1
+ 1628 0056 50       		.byte	0x50
+ 1629 0057 00000000 		.4byte	0
+ 1630 005b 00000000 		.4byte	0
+ 1631              	.LLST3:
+ 1632 005f 04000000 		.4byte	.LVL11
+ 1633 0063 10000000 		.4byte	.LVL12
+ 1634 0067 0200     		.2byte	0x2
+ 1635 0069 30       		.byte	0x30
+ 1636 006a 9F       		.byte	0x9f
+ 1637 006b 1C000000 		.4byte	.LVL13
+ 1638 006f 20000000 		.4byte	.LVL14
+ 1639 0073 0100     		.2byte	0x1
+ 1640 0075 50       		.byte	0x50
+ 1641 0076 00000000 		.4byte	0
+ 1642 007a 00000000 		.4byte	0
+ 1643              	.LLST4:
+ 1644 007e 50000000 		.4byte	.LVL26
+ 1645 0082 5A000000 		.4byte	.LVL29
+ 1646 0086 0600     		.2byte	0x6
+ 1647 0088 70       		.byte	0x70
+ 1648 0089 00       		.sleb128 0
+ 1649 008a 08       		.byte	0x8
+ 1650 008b FF       		.byte	0xff
+ 1651 008c 1A       		.byte	0x1a
+ 1652 008d 9F       		.byte	0x9f
+ 1653 008e 00000000 		.4byte	0
+ 1654 0092 00000000 		.4byte	0
+ 1655              	.LLST5:
+ 1656 0096 54000000 		.4byte	.LVL27
+ 1657 009a 72000000 		.4byte	.LVL34
+ 1658 009e 0600     		.2byte	0x6
+ 1659 00a0 76       		.byte	0x76
+ 1660 00a1 00       		.sleb128 0
+ 1661 00a2 08       		.byte	0x8
+ 1662 00a3 FF       		.byte	0xff
+ 1663 00a4 1A       		.byte	0x1a
+ 1664 00a5 9F       		.byte	0x9f
+ 1665 00a6 00000000 		.4byte	0
+ 1666 00aa 00000000 		.4byte	0
+ 1667              	.LLST6:
+ 1668 00ae 58000000 		.4byte	.LVL28
+ 1669 00b2 96000000 		.4byte	.LVL41
+ 1670 00b6 0600     		.2byte	0x6
+ 1671 00b8 78       		.byte	0x78
+ 1672 00b9 00       		.sleb128 0
+ 1673 00ba 08       		.byte	0x8
+ 1674 00bb FF       		.byte	0xff
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 33
+
+
+ 1675 00bc 1A       		.byte	0x1a
+ 1676 00bd 9F       		.byte	0x9f
+ 1677 00be 00000000 		.4byte	0
+ 1678 00c2 00000000 		.4byte	0
+ 1679              	.LLST7:
+ 1680 00c6 5E000000 		.4byte	.LVL30
+ 1681 00ca 62000000 		.4byte	.LVL31
+ 1682 00ce 0100     		.2byte	0x1
+ 1683 00d0 50       		.byte	0x50
+ 1684 00d1 00000000 		.4byte	0
+ 1685 00d5 00000000 		.4byte	0
+ 1686              	.LLST8:
+ 1687 00d9 7A000000 		.4byte	.LVL36
+ 1688 00dd 7E000000 		.4byte	.LVL37
+ 1689 00e1 0100     		.2byte	0x1
+ 1690 00e3 50       		.byte	0x50
+ 1691 00e4 00000000 		.4byte	0
+ 1692 00e8 00000000 		.4byte	0
+ 1693              	.LLST9:
+ 1694 00ec 8C000000 		.4byte	.LVL39
+ 1695 00f0 93000000 		.4byte	.LVL40-1
+ 1696 00f4 0600     		.2byte	0x6
+ 1697 00f6 50       		.byte	0x50
+ 1698 00f7 93       		.byte	0x93
+ 1699 00f8 04       		.uleb128 0x4
+ 1700 00f9 51       		.byte	0x51
+ 1701 00fa 93       		.byte	0x93
+ 1702 00fb 04       		.uleb128 0x4
+ 1703 00fc 00000000 		.4byte	0
+ 1704 0100 00000000 		.4byte	0
+ 1705              	.LLST10:
+ 1706 0104 98000000 		.4byte	.LVL42
+ 1707 0108 B2000000 		.4byte	.LVL46
+ 1708 010c 0600     		.2byte	0x6
+ 1709 010e 58       		.byte	0x58
+ 1710 010f 93       		.byte	0x93
+ 1711 0110 04       		.uleb128 0x4
+ 1712 0111 59       		.byte	0x59
+ 1713 0112 93       		.byte	0x93
+ 1714 0113 04       		.uleb128 0x4
+ 1715 0114 00000000 		.4byte	0
+ 1716 0118 00000000 		.4byte	0
+ 1717              	.LLST11:
+ 1718 011c A8000000 		.4byte	.LVL44
+ 1719 0120 AF000000 		.4byte	.LVL45-1
+ 1720 0124 0600     		.2byte	0x6
+ 1721 0126 52       		.byte	0x52
+ 1722 0127 93       		.byte	0x93
+ 1723 0128 04       		.uleb128 0x4
+ 1724 0129 53       		.byte	0x53
+ 1725 012a 93       		.byte	0x93
+ 1726 012b 04       		.uleb128 0x4
+ 1727 012c 00000000 		.4byte	0
+ 1728 0130 00000000 		.4byte	0
+ 1729              	.LLST12:
+ 1730 0134 50000000 		.4byte	.LVL61
+ 1731 0138 54000000 		.4byte	.LVL62
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 34
+
+
+ 1732 013c 0100     		.2byte	0x1
+ 1733 013e 50       		.byte	0x50
+ 1734 013f 00000000 		.4byte	0
+ 1735 0143 00000000 		.4byte	0
+ 1736              	.LLST13:
+ 1737 0147 62000000 		.4byte	.LVL65
+ 1738 014b 66000000 		.4byte	.LVL66
+ 1739 014f 0100     		.2byte	0x1
+ 1740 0151 50       		.byte	0x50
+ 1741 0152 00000000 		.4byte	0
+ 1742 0156 00000000 		.4byte	0
+ 1743              	.LLST14:
+ 1744 015a 6A000000 		.4byte	.LVL67
+ 1745 015e 71000000 		.4byte	.LVL68-1
+ 1746 0162 0600     		.2byte	0x6
+ 1747 0164 50       		.byte	0x50
+ 1748 0165 93       		.byte	0x93
+ 1749 0166 04       		.uleb128 0x4
+ 1750 0167 51       		.byte	0x51
+ 1751 0168 93       		.byte	0x93
+ 1752 0169 04       		.uleb128 0x4
+ 1753 016a 00000000 		.4byte	0
+ 1754 016e 00000000 		.4byte	0
+ 1755              	.LLST15:
+ 1756 0172 76000000 		.4byte	.LVL69
+ 1757 0176 90000000 		.4byte	.LVL73
+ 1758 017a 0600     		.2byte	0x6
+ 1759 017c 58       		.byte	0x58
+ 1760 017d 93       		.byte	0x93
+ 1761 017e 04       		.uleb128 0x4
+ 1762 017f 59       		.byte	0x59
+ 1763 0180 93       		.byte	0x93
+ 1764 0181 04       		.uleb128 0x4
+ 1765 0182 00000000 		.4byte	0
+ 1766 0186 00000000 		.4byte	0
+ 1767              	.LLST16:
+ 1768 018a 86000000 		.4byte	.LVL71
+ 1769 018e 8D000000 		.4byte	.LVL72-1
+ 1770 0192 0600     		.2byte	0x6
+ 1771 0194 52       		.byte	0x52
+ 1772 0195 93       		.byte	0x93
+ 1773 0196 04       		.uleb128 0x4
+ 1774 0197 53       		.byte	0x53
+ 1775 0198 93       		.byte	0x93
+ 1776 0199 04       		.uleb128 0x4
+ 1777 019a 00000000 		.4byte	0
+ 1778 019e 00000000 		.4byte	0
+ 1779              		.section	.debug_aranges,"",%progbits
+ 1780 0000 3C000000 		.4byte	0x3c
+ 1781 0004 0200     		.2byte	0x2
+ 1782 0006 00000000 		.4byte	.Ldebug_info0
+ 1783 000a 04       		.byte	0x4
+ 1784 000b 00       		.byte	0
+ 1785 000c 0000     		.2byte	0
+ 1786 000e 0000     		.2byte	0
+ 1787 0010 00000000 		.4byte	.LFB63
+ 1788 0014 4E000000 		.4byte	.LFE63-.LFB63
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 35
+
+
+ 1789 0018 00000000 		.4byte	.LFB64
+ 1790 001c 34000000 		.4byte	.LFE64-.LFB64
+ 1791 0020 00000000 		.4byte	.LFB65
+ 1792 0024 D6000000 		.4byte	.LFE65-.LFB65
+ 1793 0028 00000000 		.4byte	.LFB66
+ 1794 002c B4000000 		.4byte	.LFE66-.LFB66
+ 1795 0030 00000000 		.4byte	.LFB67
+ 1796 0034 0A000000 		.4byte	.LFE67-.LFB67
+ 1797 0038 00000000 		.4byte	0
+ 1798 003c 00000000 		.4byte	0
+ 1799              		.section	.debug_ranges,"",%progbits
+ 1800              	.Ldebug_ranges0:
+ 1801 0000 00000000 		.4byte	.LFB63
+ 1802 0004 4E000000 		.4byte	.LFE63
+ 1803 0008 00000000 		.4byte	.LFB64
+ 1804 000c 34000000 		.4byte	.LFE64
+ 1805 0010 00000000 		.4byte	.LFB65
+ 1806 0014 D6000000 		.4byte	.LFE65
+ 1807 0018 00000000 		.4byte	.LFB66
+ 1808 001c B4000000 		.4byte	.LFE66
+ 1809 0020 00000000 		.4byte	.LFB67
+ 1810 0024 0A000000 		.4byte	.LFE67
+ 1811 0028 00000000 		.4byte	0
+ 1812 002c 00000000 		.4byte	0
+ 1813              		.section	.debug_line,"",%progbits
+ 1814              	.Ldebug_line0:
+ 1815 0000 08020000 		.section	.debug_str,"MS",%progbits,1
+ 1815      02006601 
+ 1815      00000201 
+ 1815      FB0E0D00 
+ 1815      01010101 
+ 1816              	.LASF20:
+ 1817 0000 57525F42 		.ascii	"WR_Buffer\000"
+ 1817      75666665 
+ 1817      7200
+ 1818              	.LASF19:
+ 1819 000a 52445F53 		.ascii	"RD_Status\000"
+ 1819      74617475 
+ 1819      7300
+ 1820              	.LASF30:
+ 1821 0014 54315F44 		.ascii	"T1_DegC\000"
+ 1821      65674300 
+ 1822              	.LASF52:
+ 1823 001c 5265665F 		.ascii	"Ref_Address\000"
+ 1823      41646472 
+ 1823      65737300 
+ 1824              	.LASF41:
+ 1825 0028 48315F72 		.ascii	"H1_rH_x2\000"
+ 1825      485F7832 
+ 1825      00
+ 1826              	.LASF33:
+ 1827 0031 736C6F70 		.ascii	"slope\000"
+ 1827      6500
+ 1828              	.LASF31:
+ 1829 0037 44696666 		.ascii	"Diff_DegC\000"
+ 1829      5F446567 
+ 1829      4300
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 36
+
+
+ 1830              	.LASF9:
+ 1831 0041 5F5F696E 		.ascii	"__int32_t\000"
+ 1831      7433325F 
+ 1831      7400
+ 1832              	.LASF3:
+ 1833 004b 73686F72 		.ascii	"short unsigned int\000"
+ 1833      7420756E 
+ 1833      7369676E 
+ 1833      65642069 
+ 1833      6E7400
+ 1834              	.LASF15:
+ 1835 005e 646F7562 		.ascii	"double\000"
+ 1835      6C6500
+ 1836              	.LASF38:
+ 1837 0065 485F545F 		.ascii	"H_T_OUT\000"
+ 1837      4F555400 
+ 1838              	.LASF37:
+ 1839 006d 48315F54 		.ascii	"H1_T0_OUT\000"
+ 1839      305F4F55 
+ 1839      5400
+ 1840              	.LASF44:
+ 1841 0077 44696666 		.ascii	"Diff_H0_H1_OUT\000"
+ 1841      5F48305F 
+ 1841      48315F4F 
+ 1841      555400
+ 1842              	.LASF55:
+ 1843 0086 4932435F 		.ascii	"I2C_1_MasterWriteBuf\000"
+ 1843      315F4D61 
+ 1843      73746572 
+ 1843      57726974 
+ 1843      65427566 
+ 1844              	.LASF14:
+ 1845 009b 666C6F61 		.ascii	"float\000"
+ 1845      7400
+ 1846              	.LASF42:
+ 1847 00a1 48315F72 		.ascii	"H1_rH\000"
+ 1847      4800
+ 1848              	.LASF1:
+ 1849 00a7 756E7369 		.ascii	"unsigned char\000"
+ 1849      676E6564 
+ 1849      20636861 
+ 1849      7200
+ 1850              	.LASF22:
+ 1851 00b5 54305F4F 		.ascii	"T0_OUT\000"
+ 1851      555400
+ 1852              	.LASF13:
+ 1853 00bc 696E7431 		.ascii	"int16\000"
+ 1853      3600
+ 1854              	.LASF5:
+ 1855 00c2 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1855      20756E73 
+ 1855      69676E65 
+ 1855      6420696E 
+ 1855      7400
+ 1856              	.LASF28:
+ 1857 00d4 54305F44 		.ascii	"T0_DegC\000"
+ 1857      65674300 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 37
+
+
+ 1858              	.LASF36:
+ 1859 00dc 48305F54 		.ascii	"H0_T0_OUT\000"
+ 1859      305F4F55 
+ 1859      5400
+ 1860              	.LASF18:
+ 1861 00e6 57525F53 		.ascii	"WR_Status\000"
+ 1861      74617475 
+ 1861      7300
+ 1862              	.LASF26:
+ 1863 00f0 4D53425F 		.ascii	"MSB_T1\000"
+ 1863      543100
+ 1864              	.LASF34:
+ 1865 00f7 48545332 		.ascii	"HTS221_Read_Temperature\000"
+ 1865      32315F52 
+ 1865      6561645F 
+ 1865      54656D70 
+ 1865      65726174 
+ 1866              	.LASF24:
+ 1867 010f 545F4F55 		.ascii	"T_OUT\000"
+ 1867      5400
+ 1868              	.LASF56:
+ 1869 0115 4932435F 		.ascii	"I2C_1_MasterReadBuf\000"
+ 1869      315F4D61 
+ 1869      73746572 
+ 1869      52656164 
+ 1869      42756600 
+ 1870              	.LASF32:
+ 1871 0129 44696666 		.ascii	"Diff_OUT\000"
+ 1871      5F4F5554 
+ 1871      00
+ 1872              	.LASF12:
+ 1873 0132 75696E74 		.ascii	"uint16\000"
+ 1873      313600
+ 1874              	.LASF51:
+ 1875 0139 4932435F 		.ascii	"I2C_HTS221\000"
+ 1875      48545332 
+ 1875      323100
+ 1876              	.LASF48:
+ 1877 0144 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1877      4320342E 
+ 1877      392E3320 
+ 1877      32303135 
+ 1877      30333033 
+ 1878 0177 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1878      20726576 
+ 1878      6973696F 
+ 1878      6E203232 
+ 1878      31323230 
+ 1879 01aa 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1879      66756E63 
+ 1879      74696F6E 
+ 1879      2D736563 
+ 1879      74696F6E 
+ 1880              	.LASF45:
+ 1881 01d2 48545332 		.ascii	"HTS221_Test\000"
+ 1881      32315F54 
+ 1881      65737400 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 38
+
+
+ 1882              	.LASF8:
+ 1883 01de 756E7369 		.ascii	"unsigned int\000"
+ 1883      676E6564 
+ 1883      20696E74 
+ 1883      00
+ 1884              	.LASF49:
+ 1885 01eb 48545332 		.ascii	"HTS221TempHumiditySensor.c\000"
+ 1885      32315465 
+ 1885      6D704875 
+ 1885      6D696469 
+ 1885      74795365 
+ 1886              	.LASF25:
+ 1887 0206 4D53425F 		.ascii	"MSB_T0\000"
+ 1887      543000
+ 1888              	.LASF7:
+ 1889 020d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1889      206C6F6E 
+ 1889      6720756E 
+ 1889      7369676E 
+ 1889      65642069 
+ 1890              	.LASF27:
+ 1891 0224 54305F44 		.ascii	"T0_DegC_x8\000"
+ 1891      6567435F 
+ 1891      783800
+ 1892              	.LASF54:
+ 1893 022f 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1893      52784275 
+ 1893      66666572 
+ 1893      00
+ 1894              	.LASF43:
+ 1895 023c 44696666 		.ascii	"Diff_H0_H1_rH\000"
+ 1895      5F48305F 
+ 1895      48315F72 
+ 1895      4800
+ 1896              	.LASF10:
+ 1897 024a 696E7433 		.ascii	"int32_t\000"
+ 1897      325F7400 
+ 1898              	.LASF17:
+ 1899 0252 73697A65 		.ascii	"sizetype\000"
+ 1899      74797065 
+ 1899      00
+ 1900              	.LASF6:
+ 1901 025b 6C6F6E67 		.ascii	"long long int\000"
+ 1901      206C6F6E 
+ 1901      6720696E 
+ 1901      7400
+ 1902              	.LASF16:
+ 1903 0269 63686172 		.ascii	"char\000"
+ 1903      00
+ 1904              	.LASF23:
+ 1905 026e 54315F4F 		.ascii	"T1_OUT\000"
+ 1905      555400
+ 1906              	.LASF53:
+ 1907 0275 496E6974 		.ascii	"Init_HTS221\000"
+ 1907      5F485453 
+ 1907      32323100 
+ 1908              	.LASF2:
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 39
+
+
+ 1909 0281 73686F72 		.ascii	"short int\000"
+ 1909      7420696E 
+ 1909      7400
+ 1910              	.LASF47:
+ 1911 028b 4932435F 		.ascii	"I2C_1_MasterClearStatus\000"
+ 1911      315F4D61 
+ 1911      73746572 
+ 1911      436C6561 
+ 1911      72537461 
+ 1912              	.LASF11:
+ 1913 02a3 75696E74 		.ascii	"uint8\000"
+ 1913      3800
+ 1914              	.LASF4:
+ 1915 02a9 6C6F6E67 		.ascii	"long int\000"
+ 1915      20696E74 
+ 1915      00
+ 1916              	.LASF46:
+ 1917 02b2 4932435F 		.ascii	"I2C_1_MasterStatus\000"
+ 1917      315F4D61 
+ 1917      73746572 
+ 1917      53746174 
+ 1917      757300
+ 1918              	.LASF35:
+ 1919 02c5 48545332 		.ascii	"HTS221_Read_Humidity\000"
+ 1919      32315F52 
+ 1919      6561645F 
+ 1919      48756D69 
+ 1919      64697479 
+ 1920              	.LASF50:
+ 1921 02da 433A5C55 		.ascii	"C:\\Users\\Hesham\\Documents\\PSoC Creator\\PrISM_L"
+ 1921      73657273 
+ 1921      5C486573 
+ 1921      68616D5C 
+ 1921      446F6375 
+ 1922 0308 65643031 		.ascii	"ed01\\UART\\Lab_1_PreCourses\\Design01.cydsn\000"
+ 1922      5C554152 
+ 1922      545C4C61 
+ 1922      625F315F 
+ 1922      50726543 
+ 1923              	.LASF0:
+ 1924 0332 7369676E 		.ascii	"signed char\000"
+ 1924      65642063 
+ 1924      68617200 
+ 1925              	.LASF29:
+ 1926 033e 54315F44 		.ascii	"T1_DegC_x8\000"
+ 1926      6567435F 
+ 1926      783800
+ 1927              	.LASF21:
+ 1928 0349 52445F42 		.ascii	"RD_Buffer\000"
+ 1928      75666665 
+ 1928      7200
+ 1929              	.LASF39:
+ 1930 0353 48305F72 		.ascii	"H0_rH_x2\000"
+ 1930      485F7832 
+ 1930      00
+ 1931              	.LASF40:
+ 1932 035c 48305F72 		.ascii	"H0_rH\000"
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\cczvnjzy.s 			page 40
+
+
+ 1932      4800
+ 1933              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

@@ -1,0 +1,3278 @@
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"main.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.i8ToString,"ax",%progbits
+  19              		.align	2
+  20              		.thumb
+  21              		.thumb_func
+  22              		.type	i8ToString, %function
+  23              	i8ToString:
+  24              	.LFB67:
+  25              		.file 1 "main.c"
+   1:main.c        **** /* ========================================
+   2:main.c        ****  *
+   3:main.c        ****  * Copyright YOUR COMPANY, THE YEAR
+   4:main.c        ****  * All Rights Reserved
+   5:main.c        ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:main.c        ****  *
+   7:main.c        ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:main.c        ****  * WHICH IS THE PROPERTY OF your company.
+   9:main.c        ****  *
+  10:main.c        ****  * ========================================
+  11:main.c        **** */
+  12:main.c        **** 
+  13:main.c        **** #include "project.h"
+  14:main.c        **** #include "HTS221TempHumiditySensor.h"
+  15:main.c        **** #include "LIS3MDLMagnitometerSensor.h"
+  16:main.c        **** #include "LPS25HPressureSensor.h"
+  17:main.c        **** #include "LSM6DS0AccelerometerGyroscopeSensor.h"
+  18:main.c        **** 
+  19:main.c        **** #define RD_BUFFER_SIZE          (1u)
+  20:main.c        **** #define WR_BUFFER_SIZE          (1u)
+  21:main.c        **** #define WR_BUFFER_SIZE_DATA     (2u)
+  22:main.c        **** //LED's
+  23:main.c        **** static void LED_On(){
+  24:main.c        ****  
+  25:main.c        ****     PWM_1_WriteCompare(255);
+  26:main.c        ****     
+  27:main.c        **** }
+  28:main.c        **** 
+  29:main.c        **** static void LED_Off(){
+  30:main.c        ****  
+  31:main.c        ****     PWM_1_WriteCompare(0);
+  32:main.c        ****     
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 2
+
+
+  33:main.c        **** }
+  34:main.c        **** 
+  35:main.c        **** static void LED_Different(int value){
+  36:main.c        ****  
+  37:main.c        ****     PWM_1_WriteCompare(value);
+  38:main.c        ****     
+  39:main.c        **** }
+  40:main.c        **** 
+  41:main.c        **** static void LED_Breath(){
+  42:main.c        **** 
+  43:main.c        ****     static int Counter = 0;
+  44:main.c        ****     
+  45:main.c        ****     static int inc = 0;
+  46:main.c        ****         
+  47:main.c        ****     PWM_1_WriteCompare(Counter);  
+  48:main.c        ****   
+  49:main.c        ****     if(PIN_1_Read() == 1)
+  50:main.c        ****     
+  51:main.c        ****     {      
+  52:main.c        ****         
+  53:main.c        ****         if(inc == 0){
+  54:main.c        ****             if(Counter < 254)
+  55:main.c        ****                 Counter++;   
+  56:main.c        ****             else
+  57:main.c        ****                 inc = 1;
+  58:main.c        ****         }
+  59:main.c        ****  
+  60:main.c        ****         if(inc == 1){
+  61:main.c        ****             if(Counter > 0)
+  62:main.c        ****                 Counter--;   
+  63:main.c        ****             else
+  64:main.c        ****                 inc = 0;
+  65:main.c        ****         }
+  66:main.c        **** 
+  67:main.c        ****         else
+  68:main.c        ****         {
+  69:main.c        ****             
+  70:main.c        ****             LED_On();
+  71:main.c        ****             
+  72:main.c        ****             PWM_1_Stop();
+  73:main.c        ****                 
+  74:main.c        ****             CyDelay(50u);
+  75:main.c        ****                 
+  76:main.c        ****             PWM_1_Start();
+  77:main.c        ****     
+  78:main.c        ****             CyDelay(10u);
+  79:main.c        ****             
+  80:main.c        ****         }
+  81:main.c        **** 
+  82:main.c        ****     
+  83:main.c        **** 
+  84:main.c        ****     }
+  85:main.c        **** }
+  86:main.c        **** 
+  87:main.c        **** static void i8ToString(int8_t n, char *str)
+  88:main.c        **** {
+  26              		.loc 1 88 0
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 3
+
+
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 8
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              	.LVL0:
+  31 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+  32              		.cfi_def_cfa_offset 20
+  33              		.cfi_offset 4, -20
+  34              		.cfi_offset 5, -16
+  35              		.cfi_offset 6, -12
+  36              		.cfi_offset 7, -8
+  37              		.cfi_offset 14, -4
+  38 0002 83B0     		sub	sp, sp, #12
+  39              		.cfi_def_cfa_offset 32
+  89:main.c        ****     const uint8_t cint8_run[] = {100, 10, 1};
+  40              		.loc 1 89 0
+  41 0004 204B     		ldr	r3, .L10
+  42 0006 1A88     		ldrh	r2, [r3]	@ unaligned
+  43 0008 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+  44 000a ADF80420 		strh	r2, [sp, #4]	@ unaligned
+  45 000e 8DF80630 		strb	r3, [sp, #6]
+  46              	.LVL1:
+  90:main.c        ****     const uint8_t cint8_run_len = 3;
+  91:main.c        ****     
+  92:main.c        ****     uint8_t i = 0, j = 0;
+  93:main.c        ****     uint8_t start_found = 0;
+  94:main.c        ****     
+  95:main.c        ****     if (0 > n)
+  47              		.loc 1 95 0
+  48 0012 0028     		cmp	r0, #0
+  49              	.LVL2:
+  50 0014 03DA     		bge	.L8
+  51              	.LVL3:
+  96:main.c        ****       str[j++] = '-';  
+  52              		.loc 1 96 0
+  53 0016 2D23     		movs	r3, #45
+  54 0018 0B70     		strb	r3, [r1]
+  55 001a 0124     		movs	r4, #1
+  56 001c 00E0     		b	.L2
+  57              	.LVL4:
+  58              	.L8:
+  92:main.c        ****     uint8_t start_found = 0;
+  59              		.loc 1 92 0
+  60 001e 0024     		movs	r4, #0
+  61              	.LVL5:
+  62              	.L2:
+  97:main.c        ****     
+  98:main.c        ****     for (; i < cint8_run_len; i++)
+  99:main.c        ****     {
+ 100:main.c        ****         if (start_found == 1)
+ 101:main.c        ****         {
+ 102:main.c        ****             str[j++] = '0' + (n / cint8_run[i]);
+ 103:main.c        ****             n = n % cint8_run[i];
+ 104:main.c        ****         }
+ 105:main.c        ****         else
+ 106:main.c        ****         {
+ 107:main.c        ****            str[j] = '0' + (n / cint8_run[i]);
+ 108:main.c        ****            if ('0' < str[j])
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 4
+
+
+ 109:main.c        ****            {
+ 110:main.c        ****                 start_found = 1;
+  63              		.loc 1 110 0 discriminator 1
+  64 0020 0025     		movs	r5, #0
+  65 0022 2B46     		mov	r3, r5
+  66 0024 25E0     		b	.L3
+  67              	.LVL6:
+  68              	.L6:
+ 100:main.c        ****         {
+  69              		.loc 1 100 0
+  70 0026 7DB1     		cbz	r5, .L4
+ 102:main.c        ****             n = n % cint8_run[i];
+  71              		.loc 1 102 0
+  72 0028 671C     		adds	r7, r4, #1
+  73              	.LVL7:
+  74 002a 02AA     		add	r2, sp, #8
+  75 002c 1A44     		add	r2, r2, r3
+  76 002e 12F8046C 		ldrb	r6, [r2, #-4]	@ zero_extendqisi2
+  77 0032 90FBF6F2 		sdiv	r2, r0, r6
+  78 0036 02F1300E 		add	lr, r2, #48
+  79 003a 01F804E0 		strb	lr, [r1, r4]
+ 103:main.c        ****         }
+  80              		.loc 1 103 0
+  81 003e 06FB1200 		mls	r0, r6, r2, r0
+  82              	.LVL8:
+  83 0042 40B2     		sxtb	r0, r0
+  84              	.LVL9:
+ 102:main.c        ****             n = n % cint8_run[i];
+  85              		.loc 1 102 0
+  86 0044 FCB2     		uxtb	r4, r7
+  87 0046 12E0     		b	.L5
+  88              	.LVL10:
+  89              	.L4:
+ 107:main.c        ****            if ('0' < str[j])
+  90              		.loc 1 107 0
+  91 0048 02AA     		add	r2, sp, #8
+  92 004a 1A44     		add	r2, r2, r3
+  93 004c 12F8046C 		ldrb	r6, [r2, #-4]	@ zero_extendqisi2
+  94 0050 90FBF6F2 		sdiv	r2, r0, r6
+  95 0054 3032     		adds	r2, r2, #48
+  96 0056 D2B2     		uxtb	r2, r2
+  97 0058 0A55     		strb	r2, [r1, r4]
+ 108:main.c        ****            {
+  98              		.loc 1 108 0
+  99 005a 302A     		cmp	r2, #48
+ 100 005c 07D9     		bls	.L5
+ 101              	.LVL11:
+ 111:main.c        ****                 n = n % cint8_run[i];
+ 102              		.loc 1 111 0
+ 103 005e 90FBF6F2 		sdiv	r2, r0, r6
+ 104 0062 06FB1200 		mls	r0, r6, r2, r0
+ 105              	.LVL12:
+ 106 0066 40B2     		sxtb	r0, r0
+ 107              	.LVL13:
+ 112:main.c        ****                 j++;               
+ 108              		.loc 1 112 0
+ 109 0068 0134     		adds	r4, r4, #1
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 5
+
+
+ 110              	.LVL14:
+ 111 006a E4B2     		uxtb	r4, r4
+ 112              	.LVL15:
+ 110:main.c        ****                 n = n % cint8_run[i];
+ 113              		.loc 1 110 0
+ 114 006c 0125     		movs	r5, #1
+ 115              	.LVL16:
+ 116              	.L5:
+  98:main.c        ****     {
+ 117              		.loc 1 98 0
+ 118 006e 0133     		adds	r3, r3, #1
+ 119              	.LVL17:
+ 120 0070 DBB2     		uxtb	r3, r3
+ 121              	.LVL18:
+ 122              	.L3:
+  98:main.c        ****     {
+ 123              		.loc 1 98 0 is_stmt 0 discriminator 1
+ 124 0072 022B     		cmp	r3, #2
+ 125 0074 D7D9     		bls	.L6
+ 113:main.c        ****            }        
+ 114:main.c        ****         }
+ 115:main.c        ****     }
+ 116:main.c        ****     
+ 117:main.c        ****     if (start_found == 0)
+ 126              		.loc 1 117 0 is_stmt 1
+ 127 0076 1DB9     		cbnz	r5, .L7
+ 118:main.c        ****         str[j++] = '0';
+ 128              		.loc 1 118 0
+ 129 0078 631C     		adds	r3, r4, #1
+ 130              	.LVL19:
+ 131 007a 3022     		movs	r2, #48
+ 132 007c 0A55     		strb	r2, [r1, r4]
+ 133 007e DCB2     		uxtb	r4, r3
+ 134              	.LVL20:
+ 135              	.L7:
+ 119:main.c        ****         
+ 120:main.c        ****     str[j] = '\0';
+ 136              		.loc 1 120 0
+ 137 0080 0023     		movs	r3, #0
+ 138 0082 0B55     		strb	r3, [r1, r4]
+ 121:main.c        **** }
+ 139              		.loc 1 121 0
+ 140 0084 03B0     		add	sp, sp, #12
+ 141              		.cfi_def_cfa_offset 20
+ 142              		@ sp needed
+ 143 0086 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 144              	.LVL21:
+ 145              	.L11:
+ 146              		.align	2
+ 147              	.L10:
+ 148 0088 00000000 		.word	.LANCHOR0
+ 149              		.cfi_endproc
+ 150              	.LFE67:
+ 151              		.size	i8ToString, .-i8ToString
+ 152              		.section	.text.i16ToString,"ax",%progbits
+ 153              		.align	2
+ 154              		.thumb
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 6
+
+
+ 155              		.thumb_func
+ 156              		.type	i16ToString, %function
+ 157              	i16ToString:
+ 158              	.LFB68:
+ 122:main.c        **** 
+ 123:main.c        **** static void i16ToString(int16_t n, char *str)
+ 124:main.c        **** {
+ 159              		.loc 1 124 0
+ 160              		.cfi_startproc
+ 161              		@ args = 0, pretend = 0, frame = 8
+ 162              		@ frame_needed = 0, uses_anonymous_args = 0
+ 163              	.LVL22:
+ 164 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 165              		.cfi_def_cfa_offset 20
+ 166              		.cfi_offset 4, -20
+ 167              		.cfi_offset 5, -16
+ 168              		.cfi_offset 6, -12
+ 169              		.cfi_offset 7, -8
+ 170              		.cfi_offset 14, -4
+ 171 0002 83B0     		sub	sp, sp, #12
+ 172              		.cfi_def_cfa_offset 32
+ 125:main.c        ****     volatile int temp_n = n;
+ 173              		.loc 1 125 0
+ 174 0004 0190     		str	r0, [sp, #4]
+ 126:main.c        ****     
+ 127:main.c        ****     volatile char s = '+';
+ 175              		.loc 1 127 0
+ 176 0006 2B23     		movs	r3, #43
+ 177 0008 8DF80330 		strb	r3, [sp, #3]
+ 128:main.c        ****     
+ 129:main.c        ****     if(0 > n)
+ 178              		.loc 1 129 0
+ 179 000c 0028     		cmp	r0, #0
+ 180 000e 05DA     		bge	.L13
+ 130:main.c        ****     {
+ 131:main.c        ****         temp_n = temp_n * -1;
+ 181              		.loc 1 131 0
+ 182 0010 019B     		ldr	r3, [sp, #4]
+ 183 0012 5B42     		negs	r3, r3
+ 184 0014 0193     		str	r3, [sp, #4]
+ 132:main.c        ****         
+ 133:main.c        ****         s = '-';
+ 185              		.loc 1 133 0
+ 186 0016 2D23     		movs	r3, #45
+ 187 0018 8DF80330 		strb	r3, [sp, #3]
+ 188              	.L13:
+ 134:main.c        ****     }
+ 135:main.c        **** 
+ 136:main.c        ****     str[4] = '0' + (((temp_n%1000)%100)%10)/1;
+ 189              		.loc 1 136 0
+ 190 001c 019A     		ldr	r2, [sp, #4]
+ 191 001e 2A4C     		ldr	r4, .L15
+ 192 0020 84FB0230 		smull	r3, r0, r4, r2
+ 193              	.LVL23:
+ 194 0024 D317     		asrs	r3, r2, #31
+ 195 0026 C3EBA010 		rsb	r0, r3, r0, asr #6
+ 196 002a 4FF47A76 		mov	r6, #1000
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 7
+
+
+ 197 002e 06FB1020 		mls	r0, r6, r0, r2
+ 198 0032 264D     		ldr	r5, .L15+4
+ 199 0034 85FB0032 		smull	r3, r2, r5, r0
+ 200 0038 C317     		asrs	r3, r0, #31
+ 201 003a C3EB6212 		rsb	r2, r3, r2, asr #5
+ 202 003e 4FF0640E 		mov	lr, #100
+ 203 0042 0EFB1202 		mls	r2, lr, r2, r0
+ 204 0046 224F     		ldr	r7, .L15+8
+ 205 0048 87FB0230 		smull	r3, r0, r7, r2
+ 206 004c D317     		asrs	r3, r2, #31
+ 207 004e C3EBA000 		rsb	r0, r3, r0, asr #2
+ 208 0052 00EB8000 		add	r0, r0, r0, lsl #2
+ 209 0056 4000     		lsls	r0, r0, #1
+ 210 0058 101A     		subs	r0, r2, r0
+ 211 005a 3030     		adds	r0, r0, #48
+ 212 005c 0871     		strb	r0, [r1, #4]
+ 137:main.c        ****     str[3] = '0' + ((temp_n%1000)%100)/10;
+ 213              		.loc 1 137 0
+ 214 005e 019A     		ldr	r2, [sp, #4]
+ 215 0060 84FB0230 		smull	r3, r0, r4, r2
+ 216 0064 D317     		asrs	r3, r2, #31
+ 217 0066 C3EBA013 		rsb	r3, r3, r0, asr #6
+ 218 006a 06FB1323 		mls	r3, r6, r3, r2
+ 219 006e 85FB0302 		smull	r0, r2, r5, r3
+ 220 0072 D817     		asrs	r0, r3, #31
+ 221 0074 C0EB6212 		rsb	r2, r0, r2, asr #5
+ 222 0078 0EFB1232 		mls	r2, lr, r2, r3
+ 223 007c 87FB0237 		smull	r3, r7, r7, r2
+ 224 0080 D217     		asrs	r2, r2, #31
+ 225 0082 C2EBA702 		rsb	r2, r2, r7, asr #2
+ 226 0086 3032     		adds	r2, r2, #48
+ 227 0088 CA70     		strb	r2, [r1, #3]
+ 138:main.c        ****     str[2] = '0' + (temp_n%1000)/100;
+ 228              		.loc 1 138 0
+ 229 008a 0198     		ldr	r0, [sp, #4]
+ 230 008c 84FB0023 		smull	r2, r3, r4, r0
+ 231 0090 C217     		asrs	r2, r0, #31
+ 232 0092 C2EBA313 		rsb	r3, r2, r3, asr #6
+ 233 0096 06FB1303 		mls	r3, r6, r3, r0
+ 234 009a 85FB0325 		smull	r2, r5, r5, r3
+ 235 009e DB17     		asrs	r3, r3, #31
+ 236 00a0 C3EB6513 		rsb	r3, r3, r5, asr #5
+ 237 00a4 3033     		adds	r3, r3, #48
+ 238 00a6 8B70     		strb	r3, [r1, #2]
+ 139:main.c        ****     str[1] = '0' + temp_n/1000;
+ 239              		.loc 1 139 0
+ 240 00a8 019B     		ldr	r3, [sp, #4]
+ 241 00aa 84FB0324 		smull	r2, r4, r4, r3
+ 242 00ae DB17     		asrs	r3, r3, #31
+ 243 00b0 C3EBA413 		rsb	r3, r3, r4, asr #6
+ 244 00b4 3033     		adds	r3, r3, #48
+ 245 00b6 4B70     		strb	r3, [r1, #1]
+ 140:main.c        ****     str[0] = s;
+ 246              		.loc 1 140 0
+ 247 00b8 9DF80330 		ldrb	r3, [sp, #3]	@ zero_extendqisi2
+ 248 00bc 0B70     		strb	r3, [r1]
+ 141:main.c        ****     str[5] = '\0';
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 8
+
+
+ 249              		.loc 1 141 0
+ 250 00be 0023     		movs	r3, #0
+ 251 00c0 4B71     		strb	r3, [r1, #5]
+ 142:main.c        **** }
+ 252              		.loc 1 142 0
+ 253 00c2 03B0     		add	sp, sp, #12
+ 254              		.cfi_def_cfa_offset 20
+ 255              		@ sp needed
+ 256 00c4 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 257              	.L16:
+ 258 00c6 00BF     		.align	2
+ 259              	.L15:
+ 260 00c8 D34D6210 		.word	274877907
+ 261 00cc 1F85EB51 		.word	1374389535
+ 262 00d0 67666666 		.word	1717986919
+ 263              		.cfi_endproc
+ 264              	.LFE68:
+ 265              		.size	i16ToString, .-i16ToString
+ 266              		.section	.text.LED_On,"ax",%progbits
+ 267              		.align	2
+ 268              		.thumb
+ 269              		.thumb_func
+ 270              		.type	LED_On, %function
+ 271              	LED_On:
+ 272              	.LFB63:
+  23:main.c        ****  
+ 273              		.loc 1 23 0
+ 274              		.cfi_startproc
+ 275              		@ args = 0, pretend = 0, frame = 0
+ 276              		@ frame_needed = 0, uses_anonymous_args = 0
+ 277 0000 08B5     		push	{r3, lr}
+ 278              		.cfi_def_cfa_offset 8
+ 279              		.cfi_offset 3, -8
+ 280              		.cfi_offset 14, -4
+  25:main.c        ****     
+ 281              		.loc 1 25 0
+ 282 0002 FF20     		movs	r0, #255
+ 283 0004 FFF7FEFF 		bl	PWM_1_WriteCompare
+ 284              	.LVL24:
+ 285 0008 08BD     		pop	{r3, pc}
+ 286              		.cfi_endproc
+ 287              	.LFE63:
+ 288              		.size	LED_On, .-LED_On
+ 289 000a 00BF     		.section	.text.main,"ax",%progbits
+ 290              		.align	2
+ 291              		.global	main
+ 292              		.thumb
+ 293              		.thumb_func
+ 294              		.type	main, %function
+ 295              	main:
+ 296              	.LFB73:
+ 143:main.c        **** 
+ 144:main.c        **** 
+ 145:main.c        **** static uint8 I2C_Read(uint8 Address,uint8 Ref_Address){
+ 146:main.c        ****     
+ 147:main.c        ****     
+ 148:main.c        ****     uint8 WR_Status = 0;
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 9
+
+
+ 149:main.c        ****     uint8 RD_Status = 0;
+ 150:main.c        ****     uint8 WR_Buffer[LPS25H_WR_BUFFER_SIZE];
+ 151:main.c        ****     uint8 RD_Buffer[RD_BUFFER_SIZE];
+ 152:main.c        ****     
+ 153:main.c        ****     WR_Buffer[0] = Ref_Address;
+ 154:main.c        ****     
+ 155:main.c        ****             do
+ 156:main.c        ****         {
+ 157:main.c        ****             /* The syntax below automatically writes a buffer of data to a slave
+ 158:main.c        ****              * device from start to stop.
+ 159:main.c        ****               */
+ 160:main.c        ****             WR_Status = I2C_1_MasterWriteBuf(Address, (uint8 *)WR_Buffer,
+ 161:main.c        ****                                         WR_BUFFER_SIZE, I2C_1_MODE_COMPLETE_XFER);
+ 162:main.c        ****         }
+ 163:main.c        ****         while (WR_Status != I2C_1_MSTR_NO_ERROR);
+ 164:main.c        **** 
+ 165:main.c        ****         
+ 166:main.c        ****         
+ 167:main.c        ****         /* Wait for the data transfer to complete */
+ 168:main.c        ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+ 169:main.c        **** 
+ 170:main.c        ****         WR_Status = I2C_1_MasterClearStatus();
+ 171:main.c        ****         
+ 172:main.c        ****         RD_Status = I2C_1_MasterReadBuf(Address, (uint8 *)RD_Buffer,
+ 173:main.c        ****                     RD_BUFFER_SIZE, I2C_1_MODE_COMPLETE_XFER);
+ 174:main.c        **** 
+ 175:main.c        ****         while (RD_Status != I2C_1_MSTR_NO_ERROR);
+ 176:main.c        **** 
+ 177:main.c        ****         /* Wait for the data transfer to complete */
+ 178:main.c        ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+ 179:main.c        **** 
+ 180:main.c        ****         RD_Status = I2C_1_MasterClearStatus();
+ 181:main.c        ****         
+ 182:main.c        ****         return RD_Buffer[0];
+ 183:main.c        **** }
+ 184:main.c        **** 
+ 185:main.c        **** static void I2C_Write(uint8 Address,uint8 Ref_Address,uint8 Data){
+ 186:main.c        ****     
+ 187:main.c        ****     
+ 188:main.c        ****     uint8 WR_Status = 0;
+ 189:main.c        ****     uint8 RD_Status = 0;
+ 190:main.c        ****     uint8 WR_Buffer[WR_BUFFER_SIZE_DATA];
+ 191:main.c        ****     
+ 192:main.c        ****     WR_Buffer[0] = Ref_Address;
+ 193:main.c        ****     WR_Buffer[1] = Data;
+ 194:main.c        ****     
+ 195:main.c        ****             do
+ 196:main.c        ****         {
+ 197:main.c        ****             /* The syntax below automatically writes a buffer of data to a slave
+ 198:main.c        ****              * device from start to stop.
+ 199:main.c        ****               */
+ 200:main.c        ****             WR_Status = I2C_1_MasterWriteBuf(Address, (uint8 *)WR_Buffer,
+ 201:main.c        ****                                         WR_BUFFER_SIZE_DATA, I2C_1_MODE_COMPLETE_XFER);
+ 202:main.c        ****         }
+ 203:main.c        ****         while (WR_Status != I2C_1_MSTR_NO_ERROR);
+ 204:main.c        **** 
+ 205:main.c        ****         
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 10
+
+
+ 206:main.c        ****         
+ 207:main.c        ****         /* Wait for the data transfer to complete */
+ 208:main.c        ****         while(I2C_1_MasterStatus() & I2C_1_MSTAT_XFER_INP);
+ 209:main.c        **** 
+ 210:main.c        ****         WR_Status = I2C_1_MasterClearStatus();
+ 211:main.c        ****         
+ 212:main.c        **** }
+ 213:main.c        **** 
+ 214:main.c        **** // Sending data via UART
+ 215:main.c        **** 
+ 216:main.c        **** static void UART_Send_8(char8* Data_Name, uint8 Data){
+ 217:main.c        **** 
+ 218:main.c        ****     UART_1_PutString(Data_Name);
+ 219:main.c        ****     
+ 220:main.c        ****     UART_1_PutString(" : ");
+ 221:main.c        ****     
+ 222:main.c        ****     UART_1_PutCRLF(Data);
+ 223:main.c        **** 
+ 224:main.c        **** }
+ 225:main.c        **** 
+ 226:main.c        **** static void UART_Send_16(char8* Data_Name, signed short Data ){
+ 227:main.c        **** 
+ 228:main.c        ****     UART_1_PutString(Data_Name);
+ 229:main.c        ****     
+ 230:main.c        ****     UART_1_PutString(" : ");
+ 231:main.c        ****     
+ 232:main.c        ****     signed short Data_L = 0;
+ 233:main.c        ****     
+ 234:main.c        ****     if(Data < 0)
+ 235:main.c        ****     {
+ 236:main.c        ****         
+ 237:main.c        ****         Data_L = -1*Data;
+ 238:main.c        ****          
+ 239:main.c        ****         UART_1_PutChar('-');
+ 240:main.c        ****     
+ 241:main.c        ****     }
+ 242:main.c        ****     else
+ 243:main.c        ****     {
+ 244:main.c        ****     
+ 245:main.c        ****         Data_L = Data;
+ 246:main.c        ****         
+ 247:main.c        ****         UART_1_PutChar('+');
+ 248:main.c        ****     
+ 249:main.c        ****     }    
+ 250:main.c        **** 
+ 251:main.c        ****     
+ 252:main.c        ****     UART_1_PutChar(Data_L>>8);
+ 253:main.c        **** 
+ 254:main.c        ****     UART_1_PutCRLF(Data_L);
+ 255:main.c        ****     
+ 256:main.c        **** }
+ 257:main.c        **** 
+ 258:main.c        **** int main(void)
+ 259:main.c        **** {
+ 297              		.loc 1 259 0
+ 298              		.cfi_startproc
+ 299              		@ args = 0, pretend = 0, frame = 104
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 11
+
+
+ 300              		@ frame_needed = 0, uses_anonymous_args = 0
+ 301 0000 00B5     		push	{lr}
+ 302              		.cfi_def_cfa_offset 4
+ 303              		.cfi_offset 14, -4
+ 304 0002 9BB0     		sub	sp, sp, #108
+ 305              		.cfi_def_cfa_offset 112
+ 260:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 306              		.loc 1 260 0
+ 307              	@ 260 "main.c" 1
+ 308 0004 62B6     		CPSIE   i
+ 309              	@ 0 "" 2
+ 261:main.c        **** 
+ 262:main.c        ****     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+ 263:main.c        ****     
+ 264:main.c        ****    
+ 265:main.c        ****   
+ 266:main.c        ****     UART_1_Start();
+ 310              		.loc 1 266 0
+ 311              		.thumb
+ 312 0006 FFF7FEFF 		bl	UART_1_Start
+ 313              	.LVL25:
+ 267:main.c        **** 
+ 268:main.c        ****     PWM_1_Start();
+ 314              		.loc 1 268 0
+ 315 000a FFF7FEFF 		bl	PWM_1_Start
+ 316              	.LVL26:
+ 269:main.c        **** 
+ 270:main.c        **** 	I2C_1_Start();
+ 317              		.loc 1 270 0
+ 318 000e FFF7FEFF 		bl	I2C_1_Start
+ 319              	.LVL27:
+ 271:main.c        ****       
+ 272:main.c        ****     
+ 273:main.c        ****     Init_LSM6DS0(); // Gyrometer and Acelerometer
+ 320              		.loc 1 273 0
+ 321 0012 FFF7FEFF 		bl	Init_LSM6DS0
+ 322              	.LVL28:
+ 274:main.c        ****     
+ 275:main.c        ****     Init_HTS221();  // Temperature and Hyumidity
+ 323              		.loc 1 275 0
+ 324 0016 FFF7FEFF 		bl	Init_HTS221
+ 325              	.LVL29:
+ 276:main.c        ****     
+ 277:main.c        ****     Init_LIS3MDL(); // Magnitometer
+ 326              		.loc 1 277 0
+ 327 001a FFF7FEFF 		bl	Init_LIS3MDL
+ 328              	.LVL30:
+ 278:main.c        **** 
+ 279:main.c        ****     Init_LPS25H();  // Pressure
+ 329              		.loc 1 279 0
+ 330 001e FFF7FEFF 		bl	Init_LPS25H
+ 331              	.LVL31:
+ 280:main.c        **** 
+ 281:main.c        ****     //I2C_Write(I2C_LIS3MDL_Address,0x21,0x0C);
+ 282:main.c        ****     
+ 283:main.c        ****     //I2C_Write(I2C_LSM6DS0_Address,0x10,0x80);
+ 284:main.c        ****     
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 12
+
+
+ 285:main.c        ****     //I2C_Write(I2C_LIS3MDL_Address,0x22,0x00);
+ 286:main.c        ****     
+ 287:main.c        ****     
+ 288:main.c        ****     /* Temperature and Humidity Sensor */ 
+ 289:main.c        ****     
+ 290:main.c        ****     volatile uint8 Temperature = 0;
+ 332              		.loc 1 290 0
+ 333 0022 0023     		movs	r3, #0
+ 334 0024 8DF86730 		strb	r3, [sp, #103]
+ 291:main.c        ****     volatile uint16 Humidity = 0;
+ 335              		.loc 1 291 0
+ 336 0028 ADF86430 		strh	r3, [sp, #100]	@ movhi
+ 292:main.c        ****     
+ 293:main.c        ****     /* Pressure Sensor */
+ 294:main.c        ****     
+ 295:main.c        ****     volatile uint16 Pressure = 0;
+ 337              		.loc 1 295 0
+ 338 002c ADF86230 		strh	r3, [sp, #98]	@ movhi
+ 296:main.c        **** 
+ 297:main.c        ****     /* Magentometer Sensor */
+ 298:main.c        ****     
+ 299:main.c        ****     signed short X_Mageneto = 0;
+ 339              		.loc 1 299 0
+ 340 0030 ADF86030 		strh	r3, [sp, #96]	@ movhi
+ 300:main.c        ****     signed short Y_Mageneto = 0;
+ 341              		.loc 1 300 0
+ 342 0034 ADF85E30 		strh	r3, [sp, #94]	@ movhi
+ 301:main.c        ****     signed short Z_Mageneto = 0;
+ 343              		.loc 1 301 0
+ 344 0038 ADF85C30 		strh	r3, [sp, #92]	@ movhi
+ 302:main.c        ****     
+ 303:main.c        ****     /* Accelerometer and Gyroscope Sensor */
+ 304:main.c        ****     
+ 305:main.c        ****     signed short X_Gyro = 0;
+ 345              		.loc 1 305 0
+ 346 003c ADF85A30 		strh	r3, [sp, #90]	@ movhi
+ 306:main.c        ****     signed short Y_Gyro = 0;
+ 347              		.loc 1 306 0
+ 348 0040 ADF85830 		strh	r3, [sp, #88]	@ movhi
+ 307:main.c        ****     signed short Z_Gyro = 0;
+ 349              		.loc 1 307 0
+ 350 0044 ADF85630 		strh	r3, [sp, #86]	@ movhi
+ 308:main.c        ****     
+ 309:main.c        ****     signed short X_Accelerator = 0;
+ 351              		.loc 1 309 0
+ 352 0048 ADF85430 		strh	r3, [sp, #84]	@ movhi
+ 310:main.c        ****     signed short Y_Accelerator = 0;
+ 353              		.loc 1 310 0
+ 354 004c ADF85230 		strh	r3, [sp, #82]	@ movhi
+ 311:main.c        ****     signed short Z_Accelerator = 0;
+ 355              		.loc 1 311 0
+ 356 0050 ADF85030 		strh	r3, [sp, #80]	@ movhi
+ 312:main.c        ****     
+ 313:main.c        ****     /* Strings for the values */
+ 314:main.c        ****     
+ 315:main.c        ****     char temperature_str[5] = {0};
+ 357              		.loc 1 315 0
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 13
+
+
+ 358 0054 1293     		str	r3, [sp, #72]
+ 359 0056 8DF84C30 		strb	r3, [sp, #76]
+ 316:main.c        ****     char Humidity_str[5] = {0};
+ 317:main.c        ****     
+ 318:main.c        ****     char Pressure_str[5] = {0};
+ 319:main.c        ****     
+ 320:main.c        ****     char X_Mageneto_str[5] = {0};
+ 360              		.loc 1 320 0
+ 361 005a 1093     		str	r3, [sp, #64]
+ 362 005c 8DF84430 		strb	r3, [sp, #68]
+ 321:main.c        ****     char Y_Mageneto_str[5] = {0};
+ 363              		.loc 1 321 0
+ 364 0060 0E93     		str	r3, [sp, #56]
+ 365 0062 8DF83C30 		strb	r3, [sp, #60]
+ 322:main.c        ****     char Z_Mageneto_str[5] = {0};
+ 366              		.loc 1 322 0
+ 367 0066 0C93     		str	r3, [sp, #48]
+ 368 0068 8DF83430 		strb	r3, [sp, #52]
+ 323:main.c        ****     
+ 324:main.c        ****     char X_Gyro_str[5] = {0};
+ 369              		.loc 1 324 0
+ 370 006c 0A93     		str	r3, [sp, #40]
+ 371 006e 8DF82C30 		strb	r3, [sp, #44]
+ 325:main.c        ****     char Y_Gyro_str[5] = {0};
+ 372              		.loc 1 325 0
+ 373 0072 0893     		str	r3, [sp, #32]
+ 374 0074 8DF82430 		strb	r3, [sp, #36]
+ 326:main.c        ****     char Z_Gyro_str[5] = {0};
+ 375              		.loc 1 326 0
+ 376 0078 0693     		str	r3, [sp, #24]
+ 377 007a 8DF81C30 		strb	r3, [sp, #28]
+ 327:main.c        ****     
+ 328:main.c        ****     char X_Accelerator_str[5] = {0};
+ 378              		.loc 1 328 0
+ 379 007e 0493     		str	r3, [sp, #16]
+ 380 0080 8DF81430 		strb	r3, [sp, #20]
+ 329:main.c        ****     char Y_Accelerator_str[5] = {0};
+ 381              		.loc 1 329 0
+ 382 0084 0293     		str	r3, [sp, #8]
+ 383 0086 8DF80C30 		strb	r3, [sp, #12]
+ 330:main.c        ****     char Z_Accelerator_str[5] = {0};
+ 384              		.loc 1 330 0
+ 385 008a 0093     		str	r3, [sp]
+ 386 008c 8DF80430 		strb	r3, [sp, #4]
+ 387              	.L20:
+ 331:main.c        ****     
+ 332:main.c        ****     for(;;)
+ 333:main.c        ****     {
+ 334:main.c        ****         Temperature = HTS221_Read_Temperature();
+ 388              		.loc 1 334 0 discriminator 1
+ 389 0090 FFF7FEFF 		bl	HTS221_Read_Temperature
+ 390              	.LVL32:
+ 391 0094 8DF86700 		strb	r0, [sp, #103]
+ 335:main.c        ****  
+ 336:main.c        ****         Humidity = HTS221_Read_Humidity();
+ 392              		.loc 1 336 0 discriminator 1
+ 393 0098 FFF7FEFF 		bl	HTS221_Read_Humidity
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 14
+
+
+ 394              	.LVL33:
+ 395 009c ADF86400 		strh	r0, [sp, #100]	@ movhi
+ 337:main.c        **** 
+ 338:main.c        ****         Pressure = LPS25H_Read_PRESSURE();
+ 396              		.loc 1 338 0 discriminator 1
+ 397 00a0 FFF7FEFF 		bl	LPS25H_Read_PRESSURE
+ 398              	.LVL34:
+ 399 00a4 ADF86200 		strh	r0, [sp, #98]	@ movhi
+ 339:main.c        ****   
+ 340:main.c        ****         LIS3MDL_Read_Magnetiometer(&X_Mageneto,&Y_Mageneto,&Z_Mageneto);
+ 400              		.loc 1 340 0 discriminator 1
+ 401 00a8 18A8     		add	r0, sp, #96
+ 402 00aa 0DF15E01 		add	r1, sp, #94
+ 403 00ae 17AA     		add	r2, sp, #92
+ 404 00b0 FFF7FEFF 		bl	LIS3MDL_Read_Magnetiometer
+ 405              	.LVL35:
+ 341:main.c        **** 
+ 342:main.c        ****         LSM6DS0_Read_Gyrometer(&X_Gyro,&Y_Gyro ,&Z_Gyro);
+ 406              		.loc 1 342 0 discriminator 1
+ 407 00b4 0DF15A00 		add	r0, sp, #90
+ 408 00b8 16A9     		add	r1, sp, #88
+ 409 00ba 0DF15602 		add	r2, sp, #86
+ 410 00be FFF7FEFF 		bl	LSM6DS0_Read_Gyrometer
+ 411              	.LVL36:
+ 343:main.c        ****         
+ 344:main.c        ****         LSM6DS0_Read_Acelerometer(&X_Accelerator ,&Y_Accelerator,&Z_Accelerator);
+ 412              		.loc 1 344 0 discriminator 1
+ 413 00c2 15A8     		add	r0, sp, #84
+ 414 00c4 0DF15201 		add	r1, sp, #82
+ 415 00c8 14AA     		add	r2, sp, #80
+ 416 00ca FFF7FEFF 		bl	LSM6DS0_Read_Acelerometer
+ 417              	.LVL37:
+ 345:main.c        **** 
+ 346:main.c        ****         
+ 347:main.c        ****         
+ 348:main.c        ****         i8ToString(Temperature, temperature_str);
+ 418              		.loc 1 348 0 discriminator 1
+ 419 00ce 9DF86700 		ldrb	r0, [sp, #103]	@ zero_extendqisi2
+ 420 00d2 40B2     		sxtb	r0, r0
+ 421 00d4 12A9     		add	r1, sp, #72
+ 422 00d6 FFF7FEFF 		bl	i8ToString
+ 423              	.LVL38:
+ 349:main.c        ****         UART_1_PutString("\nTemperature : ");
+ 424              		.loc 1 349 0 discriminator 1
+ 425 00da 3848     		ldr	r0, .L22
+ 426 00dc FFF7FEFF 		bl	UART_1_PutString
+ 427              	.LVL39:
+ 350:main.c        ****         UART_1_PutString(temperature_str);
+ 428              		.loc 1 350 0 discriminator 1
+ 429 00e0 12A8     		add	r0, sp, #72
+ 430 00e2 FFF7FEFF 		bl	UART_1_PutString
+ 431              	.LVL40:
+ 351:main.c        **** 
+ 352:main.c        ****         
+ 353:main.c        ****         i16ToString(X_Mageneto, X_Mageneto_str);
+ 432              		.loc 1 353 0 discriminator 1
+ 433 00e6 BDF96000 		ldrsh	r0, [sp, #96]
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 15
+
+
+ 434 00ea 10A9     		add	r1, sp, #64
+ 435 00ec FFF7FEFF 		bl	i16ToString
+ 436              	.LVL41:
+ 354:main.c        ****         UART_1_PutString("\nX_Mageneto : ");
+ 437              		.loc 1 354 0 discriminator 1
+ 438 00f0 3348     		ldr	r0, .L22+4
+ 439 00f2 FFF7FEFF 		bl	UART_1_PutString
+ 440              	.LVL42:
+ 355:main.c        ****         UART_1_PutString(X_Mageneto_str);               
+ 441              		.loc 1 355 0 discriminator 1
+ 442 00f6 10A8     		add	r0, sp, #64
+ 443 00f8 FFF7FEFF 		bl	UART_1_PutString
+ 444              	.LVL43:
+ 356:main.c        ****            
+ 357:main.c        ****         i16ToString(Y_Mageneto, Y_Mageneto_str);
+ 445              		.loc 1 357 0 discriminator 1
+ 446 00fc BDF95E00 		ldrsh	r0, [sp, #94]
+ 447 0100 0EA9     		add	r1, sp, #56
+ 448 0102 FFF7FEFF 		bl	i16ToString
+ 449              	.LVL44:
+ 358:main.c        ****         UART_1_PutString("\nY_Mageneto : ");
+ 450              		.loc 1 358 0 discriminator 1
+ 451 0106 2F48     		ldr	r0, .L22+8
+ 452 0108 FFF7FEFF 		bl	UART_1_PutString
+ 453              	.LVL45:
+ 359:main.c        ****         UART_1_PutString(Y_Mageneto_str);
+ 454              		.loc 1 359 0 discriminator 1
+ 455 010c 0EA8     		add	r0, sp, #56
+ 456 010e FFF7FEFF 		bl	UART_1_PutString
+ 457              	.LVL46:
+ 360:main.c        ****          
+ 361:main.c        ****         i16ToString(Z_Mageneto, Z_Mageneto_str);
+ 458              		.loc 1 361 0 discriminator 1
+ 459 0112 BDF95C00 		ldrsh	r0, [sp, #92]
+ 460 0116 0CA9     		add	r1, sp, #48
+ 461 0118 FFF7FEFF 		bl	i16ToString
+ 462              	.LVL47:
+ 362:main.c        ****         UART_1_PutString("\nZ_Mageneto : ");
+ 463              		.loc 1 362 0 discriminator 1
+ 464 011c 2A48     		ldr	r0, .L22+12
+ 465 011e FFF7FEFF 		bl	UART_1_PutString
+ 466              	.LVL48:
+ 363:main.c        ****         UART_1_PutString(Z_Mageneto_str); 
+ 467              		.loc 1 363 0 discriminator 1
+ 468 0122 0CA8     		add	r0, sp, #48
+ 469 0124 FFF7FEFF 		bl	UART_1_PutString
+ 470              	.LVL49:
+ 364:main.c        ****                 
+ 365:main.c        ****         i16ToString(X_Gyro, X_Gyro_str);
+ 471              		.loc 1 365 0 discriminator 1
+ 472 0128 BDF95A00 		ldrsh	r0, [sp, #90]
+ 473 012c 0AA9     		add	r1, sp, #40
+ 474 012e FFF7FEFF 		bl	i16ToString
+ 475              	.LVL50:
+ 366:main.c        ****         UART_1_PutString("\nX_Gyro : ");
+ 476              		.loc 1 366 0 discriminator 1
+ 477 0132 2648     		ldr	r0, .L22+16
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 16
+
+
+ 478 0134 FFF7FEFF 		bl	UART_1_PutString
+ 479              	.LVL51:
+ 367:main.c        ****         UART_1_PutString(X_Gyro_str); 
+ 480              		.loc 1 367 0 discriminator 1
+ 481 0138 0AA8     		add	r0, sp, #40
+ 482 013a FFF7FEFF 		bl	UART_1_PutString
+ 483              	.LVL52:
+ 368:main.c        ****                         
+ 369:main.c        ****         i16ToString(Y_Gyro, Y_Gyro_str);
+ 484              		.loc 1 369 0 discriminator 1
+ 485 013e BDF95800 		ldrsh	r0, [sp, #88]
+ 486 0142 08A9     		add	r1, sp, #32
+ 487 0144 FFF7FEFF 		bl	i16ToString
+ 488              	.LVL53:
+ 370:main.c        ****         UART_1_PutString("\nY_Gyro : ");
+ 489              		.loc 1 370 0 discriminator 1
+ 490 0148 2148     		ldr	r0, .L22+20
+ 491 014a FFF7FEFF 		bl	UART_1_PutString
+ 492              	.LVL54:
+ 371:main.c        ****         UART_1_PutString(Y_Gyro_str); 
+ 493              		.loc 1 371 0 discriminator 1
+ 494 014e 08A8     		add	r0, sp, #32
+ 495 0150 FFF7FEFF 		bl	UART_1_PutString
+ 496              	.LVL55:
+ 372:main.c        ****                         
+ 373:main.c        ****         i16ToString(Z_Gyro, Z_Gyro_str);
+ 497              		.loc 1 373 0 discriminator 1
+ 498 0154 BDF95600 		ldrsh	r0, [sp, #86]
+ 499 0158 06A9     		add	r1, sp, #24
+ 500 015a FFF7FEFF 		bl	i16ToString
+ 501              	.LVL56:
+ 374:main.c        ****         UART_1_PutString("\nZ_Gyro : ");
+ 502              		.loc 1 374 0 discriminator 1
+ 503 015e 1D48     		ldr	r0, .L22+24
+ 504 0160 FFF7FEFF 		bl	UART_1_PutString
+ 505              	.LVL57:
+ 375:main.c        ****         UART_1_PutString(Z_Gyro_str); 
+ 506              		.loc 1 375 0 discriminator 1
+ 507 0164 06A8     		add	r0, sp, #24
+ 508 0166 FFF7FEFF 		bl	UART_1_PutString
+ 509              	.LVL58:
+ 376:main.c        ****                 
+ 377:main.c        ****         i16ToString(X_Accelerator, X_Accelerator_str);
+ 510              		.loc 1 377 0 discriminator 1
+ 511 016a BDF95400 		ldrsh	r0, [sp, #84]
+ 512 016e 04A9     		add	r1, sp, #16
+ 513 0170 FFF7FEFF 		bl	i16ToString
+ 514              	.LVL59:
+ 378:main.c        ****         UART_1_PutString("\nX_Accelerator : ");
+ 515              		.loc 1 378 0 discriminator 1
+ 516 0174 1848     		ldr	r0, .L22+28
+ 517 0176 FFF7FEFF 		bl	UART_1_PutString
+ 518              	.LVL60:
+ 379:main.c        ****         UART_1_PutString(X_Accelerator_str); 
+ 519              		.loc 1 379 0 discriminator 1
+ 520 017a 04A8     		add	r0, sp, #16
+ 521 017c FFF7FEFF 		bl	UART_1_PutString
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 17
+
+
+ 522              	.LVL61:
+ 380:main.c        ****                         
+ 381:main.c        ****         i16ToString(Y_Accelerator, Y_Accelerator_str);
+ 523              		.loc 1 381 0 discriminator 1
+ 524 0180 BDF95200 		ldrsh	r0, [sp, #82]
+ 525 0184 02A9     		add	r1, sp, #8
+ 526 0186 FFF7FEFF 		bl	i16ToString
+ 527              	.LVL62:
+ 382:main.c        ****         UART_1_PutString("\nY_Accelerator : ");
+ 528              		.loc 1 382 0 discriminator 1
+ 529 018a 1448     		ldr	r0, .L22+32
+ 530 018c FFF7FEFF 		bl	UART_1_PutString
+ 531              	.LVL63:
+ 383:main.c        ****         UART_1_PutString(Y_Accelerator_str); 
+ 532              		.loc 1 383 0 discriminator 1
+ 533 0190 02A8     		add	r0, sp, #8
+ 534 0192 FFF7FEFF 		bl	UART_1_PutString
+ 535              	.LVL64:
+ 384:main.c        ****                         
+ 385:main.c        ****         i16ToString(Z_Accelerator, Z_Accelerator_str);
+ 536              		.loc 1 385 0 discriminator 1
+ 537 0196 BDF95000 		ldrsh	r0, [sp, #80]
+ 538 019a 6946     		mov	r1, sp
+ 539 019c FFF7FEFF 		bl	i16ToString
+ 540              	.LVL65:
+ 386:main.c        ****         UART_1_PutString("\nZ_Accelerator : ");
+ 541              		.loc 1 386 0 discriminator 1
+ 542 01a0 0F48     		ldr	r0, .L22+36
+ 543 01a2 FFF7FEFF 		bl	UART_1_PutString
+ 544              	.LVL66:
+ 387:main.c        ****         UART_1_PutString(Z_Accelerator_str); 
+ 545              		.loc 1 387 0 discriminator 1
+ 546 01a6 6846     		mov	r0, sp
+ 547 01a8 FFF7FEFF 		bl	UART_1_PutString
+ 548              	.LVL67:
+ 388:main.c        ****                 
+ 389:main.c        ****         //UART_Send_8("Temperature", Temperature);
+ 390:main.c        **** 
+ 391:main.c        ****         //UART_Send_8("Humidity", Humidity);
+ 392:main.c        ****     
+ 393:main.c        ****         //UART_Send_8("Pressure", Pressure);
+ 394:main.c        **** /*        
+ 395:main.c        ****         UART_Send_16("Magnetometer X",X_Mageneto);
+ 396:main.c        ****         UART_Send_16("Magnetometer Y",Y_Mageneto);
+ 397:main.c        ****         UART_Send_16("Magnetometer Z",Z_Mageneto);
+ 398:main.c        ****         
+ 399:main.c        ****         UART_Send_16("Gyrometer X",X_Gyro);
+ 400:main.c        ****         UART_Send_16("Gyrometer Y",Y_Gyro);
+ 401:main.c        ****         UART_Send_16("Gyrometer Z",Z_Gyro); 
+ 402:main.c        ****         
+ 403:main.c        ****         
+ 404:main.c        ****         UART_Send_16("Acelerometer X",X_Accelerator);
+ 405:main.c        ****         UART_Send_16("Acelerometer Y",Y_Accelerator);
+ 406:main.c        ****         UART_Send_16("Acelerometer Z",Z_Accelerator);    
+ 407:main.c        **** */
+ 408:main.c        ****         LED_On();
+ 549              		.loc 1 408 0 discriminator 1
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 18
+
+
+ 550 01ac FFF7FEFF 		bl	LED_On
+ 551              	.LVL68:
+ 409:main.c        ****         
+ 410:main.c        ****         CyDelay(10000u);
+ 552              		.loc 1 410 0 discriminator 1
+ 553 01b0 42F21070 		movw	r0, #10000
+ 554 01b4 FFF7FEFF 		bl	CyDelay
+ 555              	.LVL69:
+ 411:main.c        ****    
+ 412:main.c        ****         
+ 413:main.c        ****     }
+ 556              		.loc 1 413 0 discriminator 1
+ 557 01b8 6AE7     		b	.L20
+ 558              	.L23:
+ 559 01ba 00BF     		.align	2
+ 560              	.L22:
+ 561 01bc 00000000 		.word	.LC1
+ 562 01c0 10000000 		.word	.LC2
+ 563 01c4 20000000 		.word	.LC3
+ 564 01c8 30000000 		.word	.LC4
+ 565 01cc 40000000 		.word	.LC5
+ 566 01d0 4C000000 		.word	.LC6
+ 567 01d4 58000000 		.word	.LC7
+ 568 01d8 64000000 		.word	.LC8
+ 569 01dc 78000000 		.word	.LC9
+ 570 01e0 8C000000 		.word	.LC10
+ 571              		.cfi_endproc
+ 572              	.LFE73:
+ 573              		.size	main, .-main
+ 574              		.section	.rodata
+ 575              		.align	2
+ 576              		.set	.LANCHOR0,. + 0
+ 577              	.LC0:
+ 578 0000 64       		.byte	100
+ 579 0001 0A       		.byte	10
+ 580 0002 01       		.byte	1
+ 581 0003 00       		.section	.rodata.str1.4,"aMS",%progbits,1
+ 582              		.align	2
+ 583              	.LC1:
+ 584 0000 0A54656D 		.ascii	"\012Temperature : \000"
+ 584      70657261 
+ 584      74757265 
+ 584      203A2000 
+ 585              	.LC2:
+ 586 0010 0A585F4D 		.ascii	"\012X_Mageneto : \000"
+ 586      6167656E 
+ 586      65746F20 
+ 586      3A2000
+ 587 001f 00       		.space	1
+ 588              	.LC3:
+ 589 0020 0A595F4D 		.ascii	"\012Y_Mageneto : \000"
+ 589      6167656E 
+ 589      65746F20 
+ 589      3A2000
+ 590 002f 00       		.space	1
+ 591              	.LC4:
+ 592 0030 0A5A5F4D 		.ascii	"\012Z_Mageneto : \000"
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 19
+
+
+ 592      6167656E 
+ 592      65746F20 
+ 592      3A2000
+ 593 003f 00       		.space	1
+ 594              	.LC5:
+ 595 0040 0A585F47 		.ascii	"\012X_Gyro : \000"
+ 595      79726F20 
+ 595      3A2000
+ 596 004b 00       		.space	1
+ 597              	.LC6:
+ 598 004c 0A595F47 		.ascii	"\012Y_Gyro : \000"
+ 598      79726F20 
+ 598      3A2000
+ 599 0057 00       		.space	1
+ 600              	.LC7:
+ 601 0058 0A5A5F47 		.ascii	"\012Z_Gyro : \000"
+ 601      79726F20 
+ 601      3A2000
+ 602 0063 00       		.space	1
+ 603              	.LC8:
+ 604 0064 0A585F41 		.ascii	"\012X_Accelerator : \000"
+ 604      6363656C 
+ 604      65726174 
+ 604      6F72203A 
+ 604      2000
+ 605 0076 0000     		.space	2
+ 606              	.LC9:
+ 607 0078 0A595F41 		.ascii	"\012Y_Accelerator : \000"
+ 607      6363656C 
+ 607      65726174 
+ 607      6F72203A 
+ 607      2000
+ 608 008a 0000     		.space	2
+ 609              	.LC10:
+ 610 008c 0A5A5F41 		.ascii	"\012Z_Accelerator : \000"
+ 610      6363656C 
+ 610      65726174 
+ 610      6F72203A 
+ 610      2000
+ 611 009e 0000     		.text
+ 612              	.Letext0:
+ 613              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 614              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 615              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 616              		.file 5 "Generated_Source\\PSoC5/UART_1.h"
+ 617              		.file 6 "Generated_Source\\PSoC5/PWM_1.h"
+ 618              		.file 7 "Generated_Source\\PSoC5/I2C_1.h"
+ 619              		.file 8 "LSM6DS0AccelerometerGyroscopeSensor.h"
+ 620              		.file 9 "HTS221TempHumiditySensor.h"
+ 621              		.file 10 "LIS3MDLMagnitometerSensor.h"
+ 622              		.file 11 "LPS25HPressureSensor.h"
+ 623              		.file 12 "Generated_Source\\PSoC5/CyLib.h"
+ 624              		.file 13 "Generated_Source\\PSoC5/core_cm3.h"
+ 625              		.section	.debug_info,"",%progbits
+ 626              	.Ldebug_info0:
+ 627 0000 28080000 		.4byte	0x828
+ 628 0004 0400     		.2byte	0x4
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 20
+
+
+ 629 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 630 000a 04       		.byte	0x4
+ 631 000b 01       		.uleb128 0x1
+ 632 000c 97020000 		.4byte	.LASF71
+ 633 0010 01       		.byte	0x1
+ 634 0011 67030000 		.4byte	.LASF72
+ 635 0015 AA030000 		.4byte	.LASF73
+ 636 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 637 001d 00000000 		.4byte	0
+ 638 0021 00000000 		.4byte	.Ldebug_line0
+ 639 0025 02       		.uleb128 0x2
+ 640 0026 89020000 		.4byte	.LASF0
+ 641 002a 02       		.byte	0x2
+ 642 002b 1B       		.byte	0x1b
+ 643 002c 30000000 		.4byte	0x30
+ 644 0030 03       		.uleb128 0x3
+ 645 0031 01       		.byte	0x1
+ 646 0032 06       		.byte	0x6
+ 647 0033 1F020000 		.4byte	.LASF2
+ 648 0037 02       		.uleb128 0x2
+ 649 0038 AB010000 		.4byte	.LASF1
+ 650 003c 02       		.byte	0x2
+ 651 003d 1D       		.byte	0x1d
+ 652 003e 42000000 		.4byte	0x42
+ 653 0042 03       		.uleb128 0x3
+ 654 0043 01       		.byte	0x1
+ 655 0044 08       		.byte	0x8
+ 656 0045 F9010000 		.4byte	.LASF3
+ 657 0049 02       		.uleb128 0x2
+ 658 004a 46040000 		.4byte	.LASF4
+ 659 004e 02       		.byte	0x2
+ 660 004f 29       		.byte	0x29
+ 661 0050 54000000 		.4byte	0x54
+ 662 0054 03       		.uleb128 0x3
+ 663 0055 02       		.byte	0x2
+ 664 0056 05       		.byte	0x5
+ 665 0057 7E000000 		.4byte	.LASF5
+ 666 005b 03       		.uleb128 0x3
+ 667 005c 02       		.byte	0x2
+ 668 005d 07       		.byte	0x7
+ 669 005e 76020000 		.4byte	.LASF6
+ 670 0062 02       		.uleb128 0x2
+ 671 0063 30040000 		.4byte	.LASF7
+ 672 0067 02       		.byte	0x2
+ 673 0068 3F       		.byte	0x3f
+ 674 0069 6D000000 		.4byte	0x6d
+ 675 006d 03       		.uleb128 0x3
+ 676 006e 04       		.byte	0x4
+ 677 006f 05       		.byte	0x5
+ 678 0070 98010000 		.4byte	.LASF8
+ 679 0074 03       		.uleb128 0x3
+ 680 0075 04       		.byte	0x4
+ 681 0076 07       		.byte	0x7
+ 682 0077 6E030000 		.4byte	.LASF9
+ 683 007b 03       		.uleb128 0x3
+ 684 007c 08       		.byte	0x8
+ 685 007d 05       		.byte	0x5
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 21
+
+
+ 686 007e 6D010000 		.4byte	.LASF10
+ 687 0082 03       		.uleb128 0x3
+ 688 0083 08       		.byte	0x8
+ 689 0084 07       		.byte	0x7
+ 690 0085 32020000 		.4byte	.LASF11
+ 691 0089 04       		.uleb128 0x4
+ 692 008a 04       		.byte	0x4
+ 693 008b 05       		.byte	0x5
+ 694 008c 696E7400 		.ascii	"int\000"
+ 695 0090 03       		.uleb128 0x3
+ 696 0091 04       		.byte	0x4
+ 697 0092 07       		.byte	0x7
+ 698 0093 5B020000 		.4byte	.LASF12
+ 699 0097 02       		.uleb128 0x2
+ 700 0098 32000000 		.4byte	.LASF13
+ 701 009c 03       		.byte	0x3
+ 702 009d 14       		.byte	0x14
+ 703 009e 25000000 		.4byte	0x25
+ 704 00a2 02       		.uleb128 0x2
+ 705 00a3 FC000000 		.4byte	.LASF14
+ 706 00a7 03       		.byte	0x3
+ 707 00a8 15       		.byte	0x15
+ 708 00a9 37000000 		.4byte	0x37
+ 709 00ad 02       		.uleb128 0x2
+ 710 00ae 34030000 		.4byte	.LASF15
+ 711 00b2 03       		.byte	0x3
+ 712 00b3 20       		.byte	0x20
+ 713 00b4 49000000 		.4byte	0x49
+ 714 00b8 02       		.uleb128 0x2
+ 715 00b9 25030000 		.4byte	.LASF16
+ 716 00bd 03       		.byte	0x3
+ 717 00be 2C       		.byte	0x2c
+ 718 00bf 62000000 		.4byte	0x62
+ 719 00c3 05       		.uleb128 0x5
+ 720 00c4 F3010000 		.4byte	.LASF17
+ 721 00c8 04       		.byte	0x4
+ 722 00c9 9201     		.2byte	0x192
+ 723 00cb 42000000 		.4byte	0x42
+ 724 00cf 05       		.uleb128 0x5
+ 725 00d0 F5000000 		.4byte	.LASF18
+ 726 00d4 04       		.byte	0x4
+ 727 00d5 9301     		.2byte	0x193
+ 728 00d7 5B000000 		.4byte	0x5b
+ 729 00db 05       		.uleb128 0x5
+ 730 00dc 60030000 		.4byte	.LASF19
+ 731 00e0 04       		.byte	0x4
+ 732 00e1 9401     		.2byte	0x194
+ 733 00e3 74000000 		.4byte	0x74
+ 734 00e7 03       		.uleb128 0x3
+ 735 00e8 04       		.byte	0x4
+ 736 00e9 04       		.byte	0x4
+ 737 00ea 67010000 		.4byte	.LASF20
+ 738 00ee 03       		.uleb128 0x3
+ 739 00ef 08       		.byte	0x8
+ 740 00f0 04       		.byte	0x4
+ 741 00f1 80030000 		.4byte	.LASF21
+ 742 00f5 05       		.uleb128 0x5
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 22
+
+
+ 743 00f6 A3000000 		.4byte	.LASF22
+ 744 00fa 04       		.byte	0x4
+ 745 00fb A301     		.2byte	0x1a3
+ 746 00fd 01010000 		.4byte	0x101
+ 747 0101 03       		.uleb128 0x3
+ 748 0102 01       		.byte	0x1
+ 749 0103 08       		.byte	0x8
+ 750 0104 92020000 		.4byte	.LASF23
+ 751 0108 06       		.uleb128 0x6
+ 752 0109 C3000000 		.4byte	0xc3
+ 753 010d 06       		.uleb128 0x6
+ 754 010e CF000000 		.4byte	0xcf
+ 755 0112 03       		.uleb128 0x3
+ 756 0113 04       		.byte	0x4
+ 757 0114 07       		.byte	0x7
+ 758 0115 88000000 		.4byte	.LASF24
+ 759 0119 07       		.uleb128 0x7
+ 760 011a 04       		.byte	0x4
+ 761 011b 01010000 		.4byte	0x101
+ 762 011f 08       		.uleb128 0x8
+ 763 0120 98030000 		.4byte	.LASF28
+ 764 0124 01       		.byte	0x1
+ 765 0125 57       		.byte	0x57
+ 766 0126 00000000 		.4byte	.LFB67
+ 767 012a 8C000000 		.4byte	.LFE67-.LFB67
+ 768 012e 01       		.uleb128 0x1
+ 769 012f 9C       		.byte	0x9c
+ 770 0130 92010000 		.4byte	0x192
+ 771 0134 09       		.uleb128 0x9
+ 772 0135 6E00     		.ascii	"n\000"
+ 773 0137 01       		.byte	0x1
+ 774 0138 57       		.byte	0x57
+ 775 0139 97000000 		.4byte	0x97
+ 776 013d 00000000 		.4byte	.LLST0
+ 777 0141 0A       		.uleb128 0xa
+ 778 0142 73747200 		.ascii	"str\000"
+ 779 0146 01       		.byte	0x1
+ 780 0147 57       		.byte	0x57
+ 781 0148 19010000 		.4byte	0x119
+ 782 014c 01       		.uleb128 0x1
+ 783 014d 51       		.byte	0x51
+ 784 014e 0B       		.uleb128 0xb
+ 785 014f A1010000 		.4byte	.LASF25
+ 786 0153 01       		.byte	0x1
+ 787 0154 59       		.byte	0x59
+ 788 0155 A2010000 		.4byte	0x1a2
+ 789 0159 02       		.uleb128 0x2
+ 790 015a 91       		.byte	0x91
+ 791 015b 64       		.sleb128 -28
+ 792 015c 0C       		.uleb128 0xc
+ 793 015d 45030000 		.4byte	.LASF26
+ 794 0161 01       		.byte	0x1
+ 795 0162 5A       		.byte	0x5a
+ 796 0163 A7010000 		.4byte	0x1a7
+ 797 0167 03       		.byte	0x3
+ 798 0168 0D       		.uleb128 0xd
+ 799 0169 6900     		.ascii	"i\000"
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 23
+
+
+ 800 016b 01       		.byte	0x1
+ 801 016c 5C       		.byte	0x5c
+ 802 016d A2000000 		.4byte	0xa2
+ 803 0171 42000000 		.4byte	.LLST1
+ 804 0175 0D       		.uleb128 0xd
+ 805 0176 6A00     		.ascii	"j\000"
+ 806 0178 01       		.byte	0x1
+ 807 0179 5C       		.byte	0x5c
+ 808 017a A2000000 		.4byte	0xa2
+ 809 017e 6C000000 		.4byte	.LLST2
+ 810 0182 0E       		.uleb128 0xe
+ 811 0183 3A040000 		.4byte	.LASF27
+ 812 0187 01       		.byte	0x1
+ 813 0188 5D       		.byte	0x5d
+ 814 0189 A2000000 		.4byte	0xa2
+ 815 018d DA000000 		.4byte	.LLST3
+ 816 0191 00       		.byte	0
+ 817 0192 0F       		.uleb128 0xf
+ 818 0193 A2000000 		.4byte	0xa2
+ 819 0197 A2010000 		.4byte	0x1a2
+ 820 019b 10       		.uleb128 0x10
+ 821 019c 12010000 		.4byte	0x112
+ 822 01a0 02       		.byte	0x2
+ 823 01a1 00       		.byte	0
+ 824 01a2 11       		.uleb128 0x11
+ 825 01a3 92010000 		.4byte	0x192
+ 826 01a7 11       		.uleb128 0x11
+ 827 01a8 A2000000 		.4byte	0xa2
+ 828 01ac 08       		.uleb128 0x8
+ 829 01ad 13020000 		.4byte	.LASF29
+ 830 01b1 01       		.byte	0x1
+ 831 01b2 7B       		.byte	0x7b
+ 832 01b3 00000000 		.4byte	.LFB68
+ 833 01b7 D4000000 		.4byte	.LFE68-.LFB68
+ 834 01bb 01       		.uleb128 0x1
+ 835 01bc 9C       		.byte	0x9c
+ 836 01bd F6010000 		.4byte	0x1f6
+ 837 01c1 09       		.uleb128 0x9
+ 838 01c2 6E00     		.ascii	"n\000"
+ 839 01c4 01       		.byte	0x1
+ 840 01c5 7B       		.byte	0x7b
+ 841 01c6 AD000000 		.4byte	0xad
+ 842 01ca 10010000 		.4byte	.LLST4
+ 843 01ce 0A       		.uleb128 0xa
+ 844 01cf 73747200 		.ascii	"str\000"
+ 845 01d3 01       		.byte	0x1
+ 846 01d4 7B       		.byte	0x7b
+ 847 01d5 19010000 		.4byte	0x119
+ 848 01d9 01       		.uleb128 0x1
+ 849 01da 51       		.byte	0x51
+ 850 01db 0B       		.uleb128 0xb
+ 851 01dc 2B020000 		.4byte	.LASF30
+ 852 01e0 01       		.byte	0x1
+ 853 01e1 7D       		.byte	0x7d
+ 854 01e2 F6010000 		.4byte	0x1f6
+ 855 01e6 02       		.uleb128 0x2
+ 856 01e7 91       		.byte	0x91
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 24
+
+
+ 857 01e8 64       		.sleb128 -28
+ 858 01e9 12       		.uleb128 0x12
+ 859 01ea 7300     		.ascii	"s\000"
+ 860 01ec 01       		.byte	0x1
+ 861 01ed 7F       		.byte	0x7f
+ 862 01ee FB010000 		.4byte	0x1fb
+ 863 01f2 02       		.uleb128 0x2
+ 864 01f3 91       		.byte	0x91
+ 865 01f4 63       		.sleb128 -29
+ 866 01f5 00       		.byte	0
+ 867 01f6 06       		.uleb128 0x6
+ 868 01f7 89000000 		.4byte	0x89
+ 869 01fb 06       		.uleb128 0x6
+ 870 01fc 01010000 		.4byte	0x101
+ 871 0200 13       		.uleb128 0x13
+ 872 0201 2D030000 		.4byte	.LASF74
+ 873 0205 01       		.byte	0x1
+ 874 0206 17       		.byte	0x17
+ 875 0207 00000000 		.4byte	.LFB63
+ 876 020b 0A000000 		.4byte	.LFE63-.LFB63
+ 877 020f 01       		.uleb128 0x1
+ 878 0210 9C       		.byte	0x9c
+ 879 0211 26020000 		.4byte	0x226
+ 880 0215 14       		.uleb128 0x14
+ 881 0216 08000000 		.4byte	.LVL24
+ 882 021a 1E070000 		.4byte	0x71e
+ 883 021e 15       		.uleb128 0x15
+ 884 021f 01       		.uleb128 0x1
+ 885 0220 50       		.byte	0x50
+ 886 0221 02       		.uleb128 0x2
+ 887 0222 09       		.byte	0x9
+ 888 0223 FF       		.byte	0xff
+ 889 0224 00       		.byte	0
+ 890 0225 00       		.byte	0
+ 891 0226 16       		.uleb128 0x16
+ 892 0227 A9000000 		.4byte	.LASF75
+ 893 022b 01       		.byte	0x1
+ 894 022c 0201     		.2byte	0x102
+ 895 022e 89000000 		.4byte	0x89
+ 896 0232 00000000 		.4byte	.LFB73
+ 897 0236 E4010000 		.4byte	.LFE73-.LFB73
+ 898 023a 01       		.uleb128 0x1
+ 899 023b 9C       		.byte	0x9c
+ 900 023c FD060000 		.4byte	0x6fd
+ 901 0240 17       		.uleb128 0x17
+ 902 0241 57040000 		.4byte	.LASF31
+ 903 0245 01       		.byte	0x1
+ 904 0246 2201     		.2byte	0x122
+ 905 0248 08010000 		.4byte	0x108
+ 906 024c 02       		.uleb128 0x2
+ 907 024d 91       		.byte	0x91
+ 908 024e 77       		.sleb128 -9
+ 909 024f 17       		.uleb128 0x17
+ 910 0250 3C030000 		.4byte	.LASF32
+ 911 0254 01       		.byte	0x1
+ 912 0255 2301     		.2byte	0x123
+ 913 0257 0D010000 		.4byte	0x10d
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 25
+
+
+ 914 025b 02       		.uleb128 0x2
+ 915 025c 91       		.byte	0x91
+ 916 025d 74       		.sleb128 -12
+ 917 025e 17       		.uleb128 0x17
+ 918 025f 04010000 		.4byte	.LASF33
+ 919 0263 01       		.byte	0x1
+ 920 0264 2701     		.2byte	0x127
+ 921 0266 0D010000 		.4byte	0x10d
+ 922 026a 02       		.uleb128 0x2
+ 923 026b 91       		.byte	0x91
+ 924 026c 72       		.sleb128 -14
+ 925 026d 17       		.uleb128 0x17
+ 926 026e D0000000 		.4byte	.LASF34
+ 927 0272 01       		.byte	0x1
+ 928 0273 2B01     		.2byte	0x12b
+ 929 0275 54000000 		.4byte	0x54
+ 930 0279 02       		.uleb128 0x2
+ 931 027a 91       		.byte	0x91
+ 932 027b 70       		.sleb128 -16
+ 933 027c 17       		.uleb128 0x17
+ 934 027d D5010000 		.4byte	.LASF35
+ 935 0281 01       		.byte	0x1
+ 936 0282 2C01     		.2byte	0x12c
+ 937 0284 54000000 		.4byte	0x54
+ 938 0288 02       		.uleb128 0x2
+ 939 0289 91       		.byte	0x91
+ 940 028a 6E       		.sleb128 -18
+ 941 028b 17       		.uleb128 0x17
+ 942 028c 25040000 		.4byte	.LASF36
+ 943 0290 01       		.byte	0x1
+ 944 0291 2D01     		.2byte	0x12d
+ 945 0293 54000000 		.4byte	0x54
+ 946 0297 02       		.uleb128 0x2
+ 947 0298 91       		.byte	0x91
+ 948 0299 6C       		.sleb128 -20
+ 949 029a 17       		.uleb128 0x17
+ 950 029b C9000000 		.4byte	.LASF37
+ 951 029f 01       		.byte	0x1
+ 952 02a0 3101     		.2byte	0x131
+ 953 02a2 54000000 		.4byte	0x54
+ 954 02a6 02       		.uleb128 0x2
+ 955 02a7 91       		.byte	0x91
+ 956 02a8 6A       		.sleb128 -22
+ 957 02a9 17       		.uleb128 0x17
+ 958 02aa 50040000 		.4byte	.LASF38
+ 959 02ae 01       		.byte	0x1
+ 960 02af 3201     		.2byte	0x132
+ 961 02b1 54000000 		.4byte	0x54
+ 962 02b5 02       		.uleb128 0x2
+ 963 02b6 91       		.byte	0x91
+ 964 02b7 68       		.sleb128 -24
+ 965 02b8 17       		.uleb128 0x17
+ 966 02b9 A3030000 		.4byte	.LASF39
+ 967 02bd 01       		.byte	0x1
+ 968 02be 3301     		.2byte	0x133
+ 969 02c0 54000000 		.4byte	0x54
+ 970 02c4 02       		.uleb128 0x2
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 26
+
+
+ 971 02c5 91       		.byte	0x91
+ 972 02c6 66       		.sleb128 -26
+ 973 02c7 17       		.uleb128 0x17
+ 974 02c8 59010000 		.4byte	.LASF40
+ 975 02cc 01       		.byte	0x1
+ 976 02cd 3501     		.2byte	0x135
+ 977 02cf 54000000 		.4byte	0x54
+ 978 02d3 02       		.uleb128 0x2
+ 979 02d4 91       		.byte	0x91
+ 980 02d5 64       		.sleb128 -28
+ 981 02d6 17       		.uleb128 0x17
+ 982 02d7 68020000 		.4byte	.LASF41
+ 983 02db 01       		.byte	0x1
+ 984 02dc 3601     		.2byte	0x136
+ 985 02de 54000000 		.4byte	0x54
+ 986 02e2 02       		.uleb128 0x2
+ 987 02e3 91       		.byte	0x91
+ 988 02e4 62       		.sleb128 -30
+ 989 02e5 17       		.uleb128 0x17
+ 990 02e6 7B010000 		.4byte	.LASF42
+ 991 02ea 01       		.byte	0x1
+ 992 02eb 3701     		.2byte	0x137
+ 993 02ed 54000000 		.4byte	0x54
+ 994 02f1 02       		.uleb128 0x2
+ 995 02f2 91       		.byte	0x91
+ 996 02f3 60       		.sleb128 -32
+ 997 02f4 17       		.uleb128 0x17
+ 998 02f5 2F010000 		.4byte	.LASF43
+ 999 02f9 01       		.byte	0x1
+ 1000 02fa 3B01     		.2byte	0x13b
+ 1001 02fc FD060000 		.4byte	0x6fd
+ 1002 0300 02       		.uleb128 0x2
+ 1003 0301 91       		.byte	0x91
+ 1004 0302 58       		.sleb128 -40
+ 1005 0303 18       		.uleb128 0x18
+ 1006 0304 53030000 		.4byte	.LASF44
+ 1007 0308 01       		.byte	0x1
+ 1008 0309 3C01     		.2byte	0x13c
+ 1009 030b FD060000 		.4byte	0x6fd
+ 1010 030f 18       		.uleb128 0x18
+ 1011 0310 71000000 		.4byte	.LASF45
+ 1012 0314 01       		.byte	0x1
+ 1013 0315 3E01     		.2byte	0x13e
+ 1014 0317 FD060000 		.4byte	0x6fd
+ 1015 031b 17       		.uleb128 0x17
+ 1016 031c 89010000 		.4byte	.LASF46
+ 1017 0320 01       		.byte	0x1
+ 1018 0321 4001     		.2byte	0x140
+ 1019 0323 FD060000 		.4byte	0x6fd
+ 1020 0327 02       		.uleb128 0x2
+ 1021 0328 91       		.byte	0x91
+ 1022 0329 50       		.sleb128 -48
+ 1023 032a 17       		.uleb128 0x17
+ 1024 032b E6000000 		.4byte	.LASF47
+ 1025 032f 01       		.byte	0x1
+ 1026 0330 4101     		.2byte	0x141
+ 1027 0332 FD060000 		.4byte	0x6fd
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 27
+
+
+ 1028 0336 02       		.uleb128 0x2
+ 1029 0337 91       		.byte	0x91
+ 1030 0338 48       		.sleb128 -56
+ 1031 0339 17       		.uleb128 0x17
+ 1032 033a 4B000000 		.4byte	.LASF48
+ 1033 033e 01       		.byte	0x1
+ 1034 033f 4201     		.2byte	0x142
+ 1035 0341 FD060000 		.4byte	0x6fd
+ 1036 0345 02       		.uleb128 0x2
+ 1037 0346 91       		.byte	0x91
+ 1038 0347 40       		.sleb128 -64
+ 1039 0348 17       		.uleb128 0x17
+ 1040 0349 B5010000 		.4byte	.LASF49
+ 1041 034d 01       		.byte	0x1
+ 1042 034e 4401     		.2byte	0x144
+ 1043 0350 FD060000 		.4byte	0x6fd
+ 1044 0354 03       		.uleb128 0x3
+ 1045 0355 91       		.byte	0x91
+ 1046 0356 B87F     		.sleb128 -72
+ 1047 0358 17       		.uleb128 0x17
+ 1048 0359 02040000 		.4byte	.LASF50
+ 1049 035d 01       		.byte	0x1
+ 1050 035e 4501     		.2byte	0x145
+ 1051 0360 FD060000 		.4byte	0x6fd
+ 1052 0364 03       		.uleb128 0x3
+ 1053 0365 91       		.byte	0x91
+ 1054 0366 B07F     		.sleb128 -80
+ 1055 0368 17       		.uleb128 0x17
+ 1056 0369 DB000000 		.4byte	.LASF51
+ 1057 036d 01       		.byte	0x1
+ 1058 036e 4601     		.2byte	0x146
+ 1059 0370 FD060000 		.4byte	0x6fd
+ 1060 0374 03       		.uleb128 0x3
+ 1061 0375 91       		.byte	0x91
+ 1062 0376 A87F     		.sleb128 -88
+ 1063 0378 17       		.uleb128 0x17
+ 1064 0379 49020000 		.4byte	.LASF52
+ 1065 037d 01       		.byte	0x1
+ 1066 037e 4801     		.2byte	0x148
+ 1067 0380 FD060000 		.4byte	0x6fd
+ 1068 0384 03       		.uleb128 0x3
+ 1069 0385 91       		.byte	0x91
+ 1070 0386 A07F     		.sleb128 -96
+ 1071 0388 17       		.uleb128 0x17
+ 1072 0389 39000000 		.4byte	.LASF53
+ 1073 038d 01       		.byte	0x1
+ 1074 038e 4901     		.2byte	0x149
+ 1075 0390 FD060000 		.4byte	0x6fd
+ 1076 0394 03       		.uleb128 0x3
+ 1077 0395 91       		.byte	0x91
+ 1078 0396 987F     		.sleb128 -104
+ 1079 0398 17       		.uleb128 0x17
+ 1080 0399 91000000 		.4byte	.LASF54
+ 1081 039d 01       		.byte	0x1
+ 1082 039e 4A01     		.2byte	0x14a
+ 1083 03a0 FD060000 		.4byte	0x6fd
+ 1084 03a4 03       		.uleb128 0x3
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 28
+
+
+ 1085 03a5 91       		.byte	0x91
+ 1086 03a6 907F     		.sleb128 -112
+ 1087 03a8 19       		.uleb128 0x19
+ 1088 03a9 0A000000 		.4byte	.LVL25
+ 1089 03ad 2F070000 		.4byte	0x72f
+ 1090 03b1 19       		.uleb128 0x19
+ 1091 03b2 0E000000 		.4byte	.LVL26
+ 1092 03b6 36070000 		.4byte	0x736
+ 1093 03ba 19       		.uleb128 0x19
+ 1094 03bb 12000000 		.4byte	.LVL27
+ 1095 03bf 3D070000 		.4byte	0x73d
+ 1096 03c3 19       		.uleb128 0x19
+ 1097 03c4 16000000 		.4byte	.LVL28
+ 1098 03c8 44070000 		.4byte	0x744
+ 1099 03cc 19       		.uleb128 0x19
+ 1100 03cd 1A000000 		.4byte	.LVL29
+ 1101 03d1 51070000 		.4byte	0x751
+ 1102 03d5 19       		.uleb128 0x19
+ 1103 03d6 1E000000 		.4byte	.LVL30
+ 1104 03da 5E070000 		.4byte	0x75e
+ 1105 03de 19       		.uleb128 0x19
+ 1106 03df 22000000 		.4byte	.LVL31
+ 1107 03e3 6B070000 		.4byte	0x76b
+ 1108 03e7 19       		.uleb128 0x19
+ 1109 03e8 94000000 		.4byte	.LVL32
+ 1110 03ec 78070000 		.4byte	0x778
+ 1111 03f0 19       		.uleb128 0x19
+ 1112 03f1 9C000000 		.4byte	.LVL33
+ 1113 03f5 89070000 		.4byte	0x789
+ 1114 03f9 19       		.uleb128 0x19
+ 1115 03fa A4000000 		.4byte	.LVL34
+ 1116 03fe 9A070000 		.4byte	0x79a
+ 1117 0402 1A       		.uleb128 0x1a
+ 1118 0403 B4000000 		.4byte	.LVL35
+ 1119 0407 AB070000 		.4byte	0x7ab
+ 1120 040b 22040000 		.4byte	0x422
+ 1121 040f 15       		.uleb128 0x15
+ 1122 0410 01       		.uleb128 0x1
+ 1123 0411 52       		.byte	0x52
+ 1124 0412 02       		.uleb128 0x2
+ 1125 0413 91       		.byte	0x91
+ 1126 0414 6C       		.sleb128 -20
+ 1127 0415 15       		.uleb128 0x15
+ 1128 0416 01       		.uleb128 0x1
+ 1129 0417 51       		.byte	0x51
+ 1130 0418 02       		.uleb128 0x2
+ 1131 0419 91       		.byte	0x91
+ 1132 041a 6E       		.sleb128 -18
+ 1133 041b 15       		.uleb128 0x15
+ 1134 041c 01       		.uleb128 0x1
+ 1135 041d 50       		.byte	0x50
+ 1136 041e 02       		.uleb128 0x2
+ 1137 041f 91       		.byte	0x91
+ 1138 0420 70       		.sleb128 -16
+ 1139 0421 00       		.byte	0
+ 1140 0422 1A       		.uleb128 0x1a
+ 1141 0423 C2000000 		.4byte	.LVL36
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 29
+
+
+ 1142 0427 CC070000 		.4byte	0x7cc
+ 1143 042b 42040000 		.4byte	0x442
+ 1144 042f 15       		.uleb128 0x15
+ 1145 0430 01       		.uleb128 0x1
+ 1146 0431 52       		.byte	0x52
+ 1147 0432 02       		.uleb128 0x2
+ 1148 0433 91       		.byte	0x91
+ 1149 0434 66       		.sleb128 -26
+ 1150 0435 15       		.uleb128 0x15
+ 1151 0436 01       		.uleb128 0x1
+ 1152 0437 51       		.byte	0x51
+ 1153 0438 02       		.uleb128 0x2
+ 1154 0439 91       		.byte	0x91
+ 1155 043a 68       		.sleb128 -24
+ 1156 043b 15       		.uleb128 0x15
+ 1157 043c 01       		.uleb128 0x1
+ 1158 043d 50       		.byte	0x50
+ 1159 043e 02       		.uleb128 0x2
+ 1160 043f 91       		.byte	0x91
+ 1161 0440 6A       		.sleb128 -22
+ 1162 0441 00       		.byte	0
+ 1163 0442 1A       		.uleb128 0x1a
+ 1164 0443 CE000000 		.4byte	.LVL37
+ 1165 0447 E7070000 		.4byte	0x7e7
+ 1166 044b 62040000 		.4byte	0x462
+ 1167 044f 15       		.uleb128 0x15
+ 1168 0450 01       		.uleb128 0x1
+ 1169 0451 52       		.byte	0x52
+ 1170 0452 02       		.uleb128 0x2
+ 1171 0453 91       		.byte	0x91
+ 1172 0454 60       		.sleb128 -32
+ 1173 0455 15       		.uleb128 0x15
+ 1174 0456 01       		.uleb128 0x1
+ 1175 0457 51       		.byte	0x51
+ 1176 0458 02       		.uleb128 0x2
+ 1177 0459 91       		.byte	0x91
+ 1178 045a 62       		.sleb128 -30
+ 1179 045b 15       		.uleb128 0x15
+ 1180 045c 01       		.uleb128 0x1
+ 1181 045d 50       		.byte	0x50
+ 1182 045e 02       		.uleb128 0x2
+ 1183 045f 91       		.byte	0x91
+ 1184 0460 64       		.sleb128 -28
+ 1185 0461 00       		.byte	0
+ 1186 0462 1A       		.uleb128 0x1a
+ 1187 0463 DA000000 		.4byte	.LVL38
+ 1188 0467 1F010000 		.4byte	0x11f
+ 1189 046b 76040000 		.4byte	0x476
+ 1190 046f 15       		.uleb128 0x15
+ 1191 0470 01       		.uleb128 0x1
+ 1192 0471 51       		.byte	0x51
+ 1193 0472 02       		.uleb128 0x2
+ 1194 0473 91       		.byte	0x91
+ 1195 0474 58       		.sleb128 -40
+ 1196 0475 00       		.byte	0
+ 1197 0476 1A       		.uleb128 0x1a
+ 1198 0477 E0000000 		.4byte	.LVL39
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 30
+
+
+ 1199 047b 02080000 		.4byte	0x802
+ 1200 047f 8D040000 		.4byte	0x48d
+ 1201 0483 15       		.uleb128 0x15
+ 1202 0484 01       		.uleb128 0x1
+ 1203 0485 50       		.byte	0x50
+ 1204 0486 05       		.uleb128 0x5
+ 1205 0487 03       		.byte	0x3
+ 1206 0488 00000000 		.4byte	.LC1
+ 1207 048c 00       		.byte	0
+ 1208 048d 1A       		.uleb128 0x1a
+ 1209 048e E6000000 		.4byte	.LVL40
+ 1210 0492 02080000 		.4byte	0x802
+ 1211 0496 A1040000 		.4byte	0x4a1
+ 1212 049a 15       		.uleb128 0x15
+ 1213 049b 01       		.uleb128 0x1
+ 1214 049c 50       		.byte	0x50
+ 1215 049d 02       		.uleb128 0x2
+ 1216 049e 91       		.byte	0x91
+ 1217 049f 58       		.sleb128 -40
+ 1218 04a0 00       		.byte	0
+ 1219 04a1 1A       		.uleb128 0x1a
+ 1220 04a2 F0000000 		.4byte	.LVL41
+ 1221 04a6 AC010000 		.4byte	0x1ac
+ 1222 04aa B5040000 		.4byte	0x4b5
+ 1223 04ae 15       		.uleb128 0x15
+ 1224 04af 01       		.uleb128 0x1
+ 1225 04b0 51       		.byte	0x51
+ 1226 04b1 02       		.uleb128 0x2
+ 1227 04b2 91       		.byte	0x91
+ 1228 04b3 50       		.sleb128 -48
+ 1229 04b4 00       		.byte	0
+ 1230 04b5 1A       		.uleb128 0x1a
+ 1231 04b6 F6000000 		.4byte	.LVL42
+ 1232 04ba 02080000 		.4byte	0x802
+ 1233 04be CC040000 		.4byte	0x4cc
+ 1234 04c2 15       		.uleb128 0x15
+ 1235 04c3 01       		.uleb128 0x1
+ 1236 04c4 50       		.byte	0x50
+ 1237 04c5 05       		.uleb128 0x5
+ 1238 04c6 03       		.byte	0x3
+ 1239 04c7 10000000 		.4byte	.LC2
+ 1240 04cb 00       		.byte	0
+ 1241 04cc 1A       		.uleb128 0x1a
+ 1242 04cd FC000000 		.4byte	.LVL43
+ 1243 04d1 02080000 		.4byte	0x802
+ 1244 04d5 E0040000 		.4byte	0x4e0
+ 1245 04d9 15       		.uleb128 0x15
+ 1246 04da 01       		.uleb128 0x1
+ 1247 04db 50       		.byte	0x50
+ 1248 04dc 02       		.uleb128 0x2
+ 1249 04dd 91       		.byte	0x91
+ 1250 04de 50       		.sleb128 -48
+ 1251 04df 00       		.byte	0
+ 1252 04e0 1A       		.uleb128 0x1a
+ 1253 04e1 06010000 		.4byte	.LVL44
+ 1254 04e5 AC010000 		.4byte	0x1ac
+ 1255 04e9 F4040000 		.4byte	0x4f4
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 31
+
+
+ 1256 04ed 15       		.uleb128 0x15
+ 1257 04ee 01       		.uleb128 0x1
+ 1258 04ef 51       		.byte	0x51
+ 1259 04f0 02       		.uleb128 0x2
+ 1260 04f1 91       		.byte	0x91
+ 1261 04f2 48       		.sleb128 -56
+ 1262 04f3 00       		.byte	0
+ 1263 04f4 1A       		.uleb128 0x1a
+ 1264 04f5 0C010000 		.4byte	.LVL45
+ 1265 04f9 02080000 		.4byte	0x802
+ 1266 04fd 0B050000 		.4byte	0x50b
+ 1267 0501 15       		.uleb128 0x15
+ 1268 0502 01       		.uleb128 0x1
+ 1269 0503 50       		.byte	0x50
+ 1270 0504 05       		.uleb128 0x5
+ 1271 0505 03       		.byte	0x3
+ 1272 0506 20000000 		.4byte	.LC3
+ 1273 050a 00       		.byte	0
+ 1274 050b 1A       		.uleb128 0x1a
+ 1275 050c 12010000 		.4byte	.LVL46
+ 1276 0510 02080000 		.4byte	0x802
+ 1277 0514 1F050000 		.4byte	0x51f
+ 1278 0518 15       		.uleb128 0x15
+ 1279 0519 01       		.uleb128 0x1
+ 1280 051a 50       		.byte	0x50
+ 1281 051b 02       		.uleb128 0x2
+ 1282 051c 91       		.byte	0x91
+ 1283 051d 48       		.sleb128 -56
+ 1284 051e 00       		.byte	0
+ 1285 051f 1A       		.uleb128 0x1a
+ 1286 0520 1C010000 		.4byte	.LVL47
+ 1287 0524 AC010000 		.4byte	0x1ac
+ 1288 0528 33050000 		.4byte	0x533
+ 1289 052c 15       		.uleb128 0x15
+ 1290 052d 01       		.uleb128 0x1
+ 1291 052e 51       		.byte	0x51
+ 1292 052f 02       		.uleb128 0x2
+ 1293 0530 91       		.byte	0x91
+ 1294 0531 40       		.sleb128 -64
+ 1295 0532 00       		.byte	0
+ 1296 0533 1A       		.uleb128 0x1a
+ 1297 0534 22010000 		.4byte	.LVL48
+ 1298 0538 02080000 		.4byte	0x802
+ 1299 053c 4A050000 		.4byte	0x54a
+ 1300 0540 15       		.uleb128 0x15
+ 1301 0541 01       		.uleb128 0x1
+ 1302 0542 50       		.byte	0x50
+ 1303 0543 05       		.uleb128 0x5
+ 1304 0544 03       		.byte	0x3
+ 1305 0545 30000000 		.4byte	.LC4
+ 1306 0549 00       		.byte	0
+ 1307 054a 1A       		.uleb128 0x1a
+ 1308 054b 28010000 		.4byte	.LVL49
+ 1309 054f 02080000 		.4byte	0x802
+ 1310 0553 5E050000 		.4byte	0x55e
+ 1311 0557 15       		.uleb128 0x15
+ 1312 0558 01       		.uleb128 0x1
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 32
+
+
+ 1313 0559 50       		.byte	0x50
+ 1314 055a 02       		.uleb128 0x2
+ 1315 055b 91       		.byte	0x91
+ 1316 055c 40       		.sleb128 -64
+ 1317 055d 00       		.byte	0
+ 1318 055e 1A       		.uleb128 0x1a
+ 1319 055f 32010000 		.4byte	.LVL50
+ 1320 0563 AC010000 		.4byte	0x1ac
+ 1321 0567 73050000 		.4byte	0x573
+ 1322 056b 15       		.uleb128 0x15
+ 1323 056c 01       		.uleb128 0x1
+ 1324 056d 51       		.byte	0x51
+ 1325 056e 03       		.uleb128 0x3
+ 1326 056f 91       		.byte	0x91
+ 1327 0570 B87F     		.sleb128 -72
+ 1328 0572 00       		.byte	0
+ 1329 0573 1A       		.uleb128 0x1a
+ 1330 0574 38010000 		.4byte	.LVL51
+ 1331 0578 02080000 		.4byte	0x802
+ 1332 057c 8A050000 		.4byte	0x58a
+ 1333 0580 15       		.uleb128 0x15
+ 1334 0581 01       		.uleb128 0x1
+ 1335 0582 50       		.byte	0x50
+ 1336 0583 05       		.uleb128 0x5
+ 1337 0584 03       		.byte	0x3
+ 1338 0585 40000000 		.4byte	.LC5
+ 1339 0589 00       		.byte	0
+ 1340 058a 1A       		.uleb128 0x1a
+ 1341 058b 3E010000 		.4byte	.LVL52
+ 1342 058f 02080000 		.4byte	0x802
+ 1343 0593 9F050000 		.4byte	0x59f
+ 1344 0597 15       		.uleb128 0x15
+ 1345 0598 01       		.uleb128 0x1
+ 1346 0599 50       		.byte	0x50
+ 1347 059a 03       		.uleb128 0x3
+ 1348 059b 91       		.byte	0x91
+ 1349 059c B87F     		.sleb128 -72
+ 1350 059e 00       		.byte	0
+ 1351 059f 1A       		.uleb128 0x1a
+ 1352 05a0 48010000 		.4byte	.LVL53
+ 1353 05a4 AC010000 		.4byte	0x1ac
+ 1354 05a8 B4050000 		.4byte	0x5b4
+ 1355 05ac 15       		.uleb128 0x15
+ 1356 05ad 01       		.uleb128 0x1
+ 1357 05ae 51       		.byte	0x51
+ 1358 05af 03       		.uleb128 0x3
+ 1359 05b0 91       		.byte	0x91
+ 1360 05b1 B07F     		.sleb128 -80
+ 1361 05b3 00       		.byte	0
+ 1362 05b4 1A       		.uleb128 0x1a
+ 1363 05b5 4E010000 		.4byte	.LVL54
+ 1364 05b9 02080000 		.4byte	0x802
+ 1365 05bd CB050000 		.4byte	0x5cb
+ 1366 05c1 15       		.uleb128 0x15
+ 1367 05c2 01       		.uleb128 0x1
+ 1368 05c3 50       		.byte	0x50
+ 1369 05c4 05       		.uleb128 0x5
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 33
+
+
+ 1370 05c5 03       		.byte	0x3
+ 1371 05c6 4C000000 		.4byte	.LC6
+ 1372 05ca 00       		.byte	0
+ 1373 05cb 1A       		.uleb128 0x1a
+ 1374 05cc 54010000 		.4byte	.LVL55
+ 1375 05d0 02080000 		.4byte	0x802
+ 1376 05d4 E0050000 		.4byte	0x5e0
+ 1377 05d8 15       		.uleb128 0x15
+ 1378 05d9 01       		.uleb128 0x1
+ 1379 05da 50       		.byte	0x50
+ 1380 05db 03       		.uleb128 0x3
+ 1381 05dc 91       		.byte	0x91
+ 1382 05dd B07F     		.sleb128 -80
+ 1383 05df 00       		.byte	0
+ 1384 05e0 1A       		.uleb128 0x1a
+ 1385 05e1 5E010000 		.4byte	.LVL56
+ 1386 05e5 AC010000 		.4byte	0x1ac
+ 1387 05e9 F5050000 		.4byte	0x5f5
+ 1388 05ed 15       		.uleb128 0x15
+ 1389 05ee 01       		.uleb128 0x1
+ 1390 05ef 51       		.byte	0x51
+ 1391 05f0 03       		.uleb128 0x3
+ 1392 05f1 91       		.byte	0x91
+ 1393 05f2 A87F     		.sleb128 -88
+ 1394 05f4 00       		.byte	0
+ 1395 05f5 1A       		.uleb128 0x1a
+ 1396 05f6 64010000 		.4byte	.LVL57
+ 1397 05fa 02080000 		.4byte	0x802
+ 1398 05fe 0C060000 		.4byte	0x60c
+ 1399 0602 15       		.uleb128 0x15
+ 1400 0603 01       		.uleb128 0x1
+ 1401 0604 50       		.byte	0x50
+ 1402 0605 05       		.uleb128 0x5
+ 1403 0606 03       		.byte	0x3
+ 1404 0607 58000000 		.4byte	.LC7
+ 1405 060b 00       		.byte	0
+ 1406 060c 1A       		.uleb128 0x1a
+ 1407 060d 6A010000 		.4byte	.LVL58
+ 1408 0611 02080000 		.4byte	0x802
+ 1409 0615 21060000 		.4byte	0x621
+ 1410 0619 15       		.uleb128 0x15
+ 1411 061a 01       		.uleb128 0x1
+ 1412 061b 50       		.byte	0x50
+ 1413 061c 03       		.uleb128 0x3
+ 1414 061d 91       		.byte	0x91
+ 1415 061e A87F     		.sleb128 -88
+ 1416 0620 00       		.byte	0
+ 1417 0621 1A       		.uleb128 0x1a
+ 1418 0622 74010000 		.4byte	.LVL59
+ 1419 0626 AC010000 		.4byte	0x1ac
+ 1420 062a 36060000 		.4byte	0x636
+ 1421 062e 15       		.uleb128 0x15
+ 1422 062f 01       		.uleb128 0x1
+ 1423 0630 51       		.byte	0x51
+ 1424 0631 03       		.uleb128 0x3
+ 1425 0632 91       		.byte	0x91
+ 1426 0633 A07F     		.sleb128 -96
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 34
+
+
+ 1427 0635 00       		.byte	0
+ 1428 0636 1A       		.uleb128 0x1a
+ 1429 0637 7A010000 		.4byte	.LVL60
+ 1430 063b 02080000 		.4byte	0x802
+ 1431 063f 4D060000 		.4byte	0x64d
+ 1432 0643 15       		.uleb128 0x15
+ 1433 0644 01       		.uleb128 0x1
+ 1434 0645 50       		.byte	0x50
+ 1435 0646 05       		.uleb128 0x5
+ 1436 0647 03       		.byte	0x3
+ 1437 0648 64000000 		.4byte	.LC8
+ 1438 064c 00       		.byte	0
+ 1439 064d 1A       		.uleb128 0x1a
+ 1440 064e 80010000 		.4byte	.LVL61
+ 1441 0652 02080000 		.4byte	0x802
+ 1442 0656 62060000 		.4byte	0x662
+ 1443 065a 15       		.uleb128 0x15
+ 1444 065b 01       		.uleb128 0x1
+ 1445 065c 50       		.byte	0x50
+ 1446 065d 03       		.uleb128 0x3
+ 1447 065e 91       		.byte	0x91
+ 1448 065f A07F     		.sleb128 -96
+ 1449 0661 00       		.byte	0
+ 1450 0662 1A       		.uleb128 0x1a
+ 1451 0663 8A010000 		.4byte	.LVL62
+ 1452 0667 AC010000 		.4byte	0x1ac
+ 1453 066b 77060000 		.4byte	0x677
+ 1454 066f 15       		.uleb128 0x15
+ 1455 0670 01       		.uleb128 0x1
+ 1456 0671 51       		.byte	0x51
+ 1457 0672 03       		.uleb128 0x3
+ 1458 0673 91       		.byte	0x91
+ 1459 0674 987F     		.sleb128 -104
+ 1460 0676 00       		.byte	0
+ 1461 0677 1A       		.uleb128 0x1a
+ 1462 0678 90010000 		.4byte	.LVL63
+ 1463 067c 02080000 		.4byte	0x802
+ 1464 0680 8E060000 		.4byte	0x68e
+ 1465 0684 15       		.uleb128 0x15
+ 1466 0685 01       		.uleb128 0x1
+ 1467 0686 50       		.byte	0x50
+ 1468 0687 05       		.uleb128 0x5
+ 1469 0688 03       		.byte	0x3
+ 1470 0689 78000000 		.4byte	.LC9
+ 1471 068d 00       		.byte	0
+ 1472 068e 1A       		.uleb128 0x1a
+ 1473 068f 96010000 		.4byte	.LVL64
+ 1474 0693 02080000 		.4byte	0x802
+ 1475 0697 A3060000 		.4byte	0x6a3
+ 1476 069b 15       		.uleb128 0x15
+ 1477 069c 01       		.uleb128 0x1
+ 1478 069d 50       		.byte	0x50
+ 1479 069e 03       		.uleb128 0x3
+ 1480 069f 91       		.byte	0x91
+ 1481 06a0 987F     		.sleb128 -104
+ 1482 06a2 00       		.byte	0
+ 1483 06a3 1A       		.uleb128 0x1a
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 35
+
+
+ 1484 06a4 A0010000 		.4byte	.LVL65
+ 1485 06a8 AC010000 		.4byte	0x1ac
+ 1486 06ac B7060000 		.4byte	0x6b7
+ 1487 06b0 15       		.uleb128 0x15
+ 1488 06b1 01       		.uleb128 0x1
+ 1489 06b2 51       		.byte	0x51
+ 1490 06b3 02       		.uleb128 0x2
+ 1491 06b4 7D       		.byte	0x7d
+ 1492 06b5 00       		.sleb128 0
+ 1493 06b6 00       		.byte	0
+ 1494 06b7 1A       		.uleb128 0x1a
+ 1495 06b8 A6010000 		.4byte	.LVL66
+ 1496 06bc 02080000 		.4byte	0x802
+ 1497 06c0 CE060000 		.4byte	0x6ce
+ 1498 06c4 15       		.uleb128 0x15
+ 1499 06c5 01       		.uleb128 0x1
+ 1500 06c6 50       		.byte	0x50
+ 1501 06c7 05       		.uleb128 0x5
+ 1502 06c8 03       		.byte	0x3
+ 1503 06c9 8C000000 		.4byte	.LC10
+ 1504 06cd 00       		.byte	0
+ 1505 06ce 1A       		.uleb128 0x1a
+ 1506 06cf AC010000 		.4byte	.LVL67
+ 1507 06d3 02080000 		.4byte	0x802
+ 1508 06d7 E2060000 		.4byte	0x6e2
+ 1509 06db 15       		.uleb128 0x15
+ 1510 06dc 01       		.uleb128 0x1
+ 1511 06dd 50       		.byte	0x50
+ 1512 06de 02       		.uleb128 0x2
+ 1513 06df 7D       		.byte	0x7d
+ 1514 06e0 00       		.sleb128 0
+ 1515 06e1 00       		.byte	0
+ 1516 06e2 19       		.uleb128 0x19
+ 1517 06e3 B0010000 		.4byte	.LVL68
+ 1518 06e7 00020000 		.4byte	0x200
+ 1519 06eb 14       		.uleb128 0x14
+ 1520 06ec B8010000 		.4byte	.LVL69
+ 1521 06f0 1E080000 		.4byte	0x81e
+ 1522 06f4 15       		.uleb128 0x15
+ 1523 06f5 01       		.uleb128 0x1
+ 1524 06f6 50       		.byte	0x50
+ 1525 06f7 03       		.uleb128 0x3
+ 1526 06f8 0A       		.byte	0xa
+ 1527 06f9 1027     		.2byte	0x2710
+ 1528 06fb 00       		.byte	0
+ 1529 06fc 00       		.byte	0
+ 1530 06fd 0F       		.uleb128 0xf
+ 1531 06fe 01010000 		.4byte	0x101
+ 1532 0702 0D070000 		.4byte	0x70d
+ 1533 0706 10       		.uleb128 0x10
+ 1534 0707 12010000 		.4byte	0x112
+ 1535 070b 04       		.byte	0x4
+ 1536 070c 00       		.byte	0
+ 1537 070d 1B       		.uleb128 0x1b
+ 1538 070e 6F040000 		.4byte	.LASF76
+ 1539 0712 0D       		.byte	0xd
+ 1540 0713 9606     		.2byte	0x696
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 36
+
+
+ 1541 0715 19070000 		.4byte	0x719
+ 1542 0719 06       		.uleb128 0x6
+ 1543 071a B8000000 		.4byte	0xb8
+ 1544 071e 1C       		.uleb128 0x1c
+ 1545 071f E0010000 		.4byte	.LASF62
+ 1546 0723 06       		.byte	0x6
+ 1547 0724 C3       		.byte	0xc3
+ 1548 0725 2F070000 		.4byte	0x72f
+ 1549 0729 1D       		.uleb128 0x1d
+ 1550 072a C3000000 		.4byte	0xc3
+ 1551 072e 00       		.byte	0
+ 1552 072f 1E       		.uleb128 0x1e
+ 1553 0730 3F010000 		.4byte	.LASF55
+ 1554 0734 05       		.byte	0x5
+ 1555 0735 54       		.byte	0x54
+ 1556 0736 1E       		.uleb128 0x1e
+ 1557 0737 26000000 		.4byte	.LASF56
+ 1558 073b 06       		.byte	0x6
+ 1559 073c 92       		.byte	0x92
+ 1560 073d 1E       		.uleb128 0x1e
+ 1561 073e 00000000 		.4byte	.LASF57
+ 1562 0742 07       		.byte	0x7
+ 1563 0743 93       		.byte	0x93
+ 1564 0744 1F       		.uleb128 0x1f
+ 1565 0745 4C010000 		.4byte	.LASF58
+ 1566 0749 08       		.byte	0x8
+ 1567 074a 27       		.byte	0x27
+ 1568 074b 51070000 		.4byte	0x751
+ 1569 074f 20       		.uleb128 0x20
+ 1570 0750 00       		.byte	0
+ 1571 0751 1F       		.uleb128 0x1f
+ 1572 0752 63040000 		.4byte	.LASF59
+ 1573 0756 09       		.byte	0x9
+ 1574 0757 2F       		.byte	0x2f
+ 1575 0758 5E070000 		.4byte	0x75e
+ 1576 075c 20       		.uleb128 0x20
+ 1577 075d 00       		.byte	0
+ 1578 075e 1F       		.uleb128 0x1f
+ 1579 075f 0D010000 		.4byte	.LASF60
+ 1580 0763 0A       		.byte	0xa
+ 1581 0764 21       		.byte	0x21
+ 1582 0765 6B070000 		.4byte	0x76b
+ 1583 0769 20       		.uleb128 0x20
+ 1584 076a 00       		.byte	0
+ 1585 076b 1F       		.uleb128 0x1f
+ 1586 076c 07020000 		.4byte	.LASF61
+ 1587 0770 0B       		.byte	0xb
+ 1588 0771 20       		.byte	0x20
+ 1589 0772 78070000 		.4byte	0x778
+ 1590 0776 20       		.uleb128 0x20
+ 1591 0777 00       		.byte	0
+ 1592 0778 21       		.uleb128 0x21
+ 1593 0779 0D040000 		.4byte	.LASF63
+ 1594 077d 09       		.byte	0x9
+ 1595 077e 31       		.byte	0x31
+ 1596 077f C3000000 		.4byte	0xc3
+ 1597 0783 89070000 		.4byte	0x789
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 37
+
+
+ 1598 0787 20       		.uleb128 0x20
+ 1599 0788 00       		.byte	0
+ 1600 0789 21       		.uleb128 0x21
+ 1601 078a C0010000 		.4byte	.LASF64
+ 1602 078e 09       		.byte	0x9
+ 1603 078f 33       		.byte	0x33
+ 1604 0790 CF000000 		.4byte	0xcf
+ 1605 0794 9A070000 		.4byte	0x79a
+ 1606 0798 20       		.uleb128 0x20
+ 1607 0799 00       		.byte	0
+ 1608 079a 21       		.uleb128 0x21
+ 1609 079b 1A010000 		.4byte	.LASF65
+ 1610 079f 0B       		.byte	0xb
+ 1611 07a0 22       		.byte	0x22
+ 1612 07a1 CF000000 		.4byte	0xcf
+ 1613 07a5 AB070000 		.4byte	0x7ab
+ 1614 07a9 20       		.uleb128 0x20
+ 1615 07aa 00       		.byte	0
+ 1616 07ab 1C       		.uleb128 0x1c
+ 1617 07ac AE000000 		.4byte	.LASF66
+ 1618 07b0 0A       		.byte	0xa
+ 1619 07b1 25       		.byte	0x25
+ 1620 07b2 C6070000 		.4byte	0x7c6
+ 1621 07b6 1D       		.uleb128 0x1d
+ 1622 07b7 C6070000 		.4byte	0x7c6
+ 1623 07bb 1D       		.uleb128 0x1d
+ 1624 07bc C6070000 		.4byte	0x7c6
+ 1625 07c0 1D       		.uleb128 0x1d
+ 1626 07c1 C6070000 		.4byte	0x7c6
+ 1627 07c5 00       		.byte	0
+ 1628 07c6 07       		.uleb128 0x7
+ 1629 07c7 04       		.byte	0x4
+ 1630 07c8 54000000 		.4byte	0x54
+ 1631 07cc 1C       		.uleb128 0x1c
+ 1632 07cd 5A000000 		.4byte	.LASF67
+ 1633 07d1 08       		.byte	0x8
+ 1634 07d2 2B       		.byte	0x2b
+ 1635 07d3 E7070000 		.4byte	0x7e7
+ 1636 07d7 1D       		.uleb128 0x1d
+ 1637 07d8 C6070000 		.4byte	0x7c6
+ 1638 07dc 1D       		.uleb128 0x1d
+ 1639 07dd C6070000 		.4byte	0x7c6
+ 1640 07e1 1D       		.uleb128 0x1d
+ 1641 07e2 C6070000 		.4byte	0x7c6
+ 1642 07e6 00       		.byte	0
+ 1643 07e7 1C       		.uleb128 0x1c
+ 1644 07e8 0C000000 		.4byte	.LASF68
+ 1645 07ec 08       		.byte	0x8
+ 1646 07ed 2D       		.byte	0x2d
+ 1647 07ee 02080000 		.4byte	0x802
+ 1648 07f2 1D       		.uleb128 0x1d
+ 1649 07f3 C6070000 		.4byte	0x7c6
+ 1650 07f7 1D       		.uleb128 0x1d
+ 1651 07f8 C6070000 		.4byte	0x7c6
+ 1652 07fc 1D       		.uleb128 0x1d
+ 1653 07fd C6070000 		.4byte	0x7c6
+ 1654 0801 00       		.byte	0
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 38
+
+
+ 1655 0802 1C       		.uleb128 0x1c
+ 1656 0803 87030000 		.4byte	.LASF69
+ 1657 0807 05       		.byte	0x5
+ 1658 0808 8B       		.byte	0x8b
+ 1659 0809 13080000 		.4byte	0x813
+ 1660 080d 1D       		.uleb128 0x1d
+ 1661 080e 13080000 		.4byte	0x813
+ 1662 0812 00       		.byte	0
+ 1663 0813 07       		.uleb128 0x7
+ 1664 0814 04       		.byte	0x4
+ 1665 0815 19080000 		.4byte	0x819
+ 1666 0819 11       		.uleb128 0x11
+ 1667 081a F5000000 		.4byte	0xf5
+ 1668 081e 22       		.uleb128 0x22
+ 1669 081f 7C040000 		.4byte	.LASF70
+ 1670 0823 0C       		.byte	0xc
+ 1671 0824 76       		.byte	0x76
+ 1672 0825 1D       		.uleb128 0x1d
+ 1673 0826 DB000000 		.4byte	0xdb
+ 1674 082a 00       		.byte	0
+ 1675 082b 00       		.byte	0
+ 1676              		.section	.debug_abbrev,"",%progbits
+ 1677              	.Ldebug_abbrev0:
+ 1678 0000 01       		.uleb128 0x1
+ 1679 0001 11       		.uleb128 0x11
+ 1680 0002 01       		.byte	0x1
+ 1681 0003 25       		.uleb128 0x25
+ 1682 0004 0E       		.uleb128 0xe
+ 1683 0005 13       		.uleb128 0x13
+ 1684 0006 0B       		.uleb128 0xb
+ 1685 0007 03       		.uleb128 0x3
+ 1686 0008 0E       		.uleb128 0xe
+ 1687 0009 1B       		.uleb128 0x1b
+ 1688 000a 0E       		.uleb128 0xe
+ 1689 000b 55       		.uleb128 0x55
+ 1690 000c 17       		.uleb128 0x17
+ 1691 000d 11       		.uleb128 0x11
+ 1692 000e 01       		.uleb128 0x1
+ 1693 000f 10       		.uleb128 0x10
+ 1694 0010 17       		.uleb128 0x17
+ 1695 0011 00       		.byte	0
+ 1696 0012 00       		.byte	0
+ 1697 0013 02       		.uleb128 0x2
+ 1698 0014 16       		.uleb128 0x16
+ 1699 0015 00       		.byte	0
+ 1700 0016 03       		.uleb128 0x3
+ 1701 0017 0E       		.uleb128 0xe
+ 1702 0018 3A       		.uleb128 0x3a
+ 1703 0019 0B       		.uleb128 0xb
+ 1704 001a 3B       		.uleb128 0x3b
+ 1705 001b 0B       		.uleb128 0xb
+ 1706 001c 49       		.uleb128 0x49
+ 1707 001d 13       		.uleb128 0x13
+ 1708 001e 00       		.byte	0
+ 1709 001f 00       		.byte	0
+ 1710 0020 03       		.uleb128 0x3
+ 1711 0021 24       		.uleb128 0x24
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 39
+
+
+ 1712 0022 00       		.byte	0
+ 1713 0023 0B       		.uleb128 0xb
+ 1714 0024 0B       		.uleb128 0xb
+ 1715 0025 3E       		.uleb128 0x3e
+ 1716 0026 0B       		.uleb128 0xb
+ 1717 0027 03       		.uleb128 0x3
+ 1718 0028 0E       		.uleb128 0xe
+ 1719 0029 00       		.byte	0
+ 1720 002a 00       		.byte	0
+ 1721 002b 04       		.uleb128 0x4
+ 1722 002c 24       		.uleb128 0x24
+ 1723 002d 00       		.byte	0
+ 1724 002e 0B       		.uleb128 0xb
+ 1725 002f 0B       		.uleb128 0xb
+ 1726 0030 3E       		.uleb128 0x3e
+ 1727 0031 0B       		.uleb128 0xb
+ 1728 0032 03       		.uleb128 0x3
+ 1729 0033 08       		.uleb128 0x8
+ 1730 0034 00       		.byte	0
+ 1731 0035 00       		.byte	0
+ 1732 0036 05       		.uleb128 0x5
+ 1733 0037 16       		.uleb128 0x16
+ 1734 0038 00       		.byte	0
+ 1735 0039 03       		.uleb128 0x3
+ 1736 003a 0E       		.uleb128 0xe
+ 1737 003b 3A       		.uleb128 0x3a
+ 1738 003c 0B       		.uleb128 0xb
+ 1739 003d 3B       		.uleb128 0x3b
+ 1740 003e 05       		.uleb128 0x5
+ 1741 003f 49       		.uleb128 0x49
+ 1742 0040 13       		.uleb128 0x13
+ 1743 0041 00       		.byte	0
+ 1744 0042 00       		.byte	0
+ 1745 0043 06       		.uleb128 0x6
+ 1746 0044 35       		.uleb128 0x35
+ 1747 0045 00       		.byte	0
+ 1748 0046 49       		.uleb128 0x49
+ 1749 0047 13       		.uleb128 0x13
+ 1750 0048 00       		.byte	0
+ 1751 0049 00       		.byte	0
+ 1752 004a 07       		.uleb128 0x7
+ 1753 004b 0F       		.uleb128 0xf
+ 1754 004c 00       		.byte	0
+ 1755 004d 0B       		.uleb128 0xb
+ 1756 004e 0B       		.uleb128 0xb
+ 1757 004f 49       		.uleb128 0x49
+ 1758 0050 13       		.uleb128 0x13
+ 1759 0051 00       		.byte	0
+ 1760 0052 00       		.byte	0
+ 1761 0053 08       		.uleb128 0x8
+ 1762 0054 2E       		.uleb128 0x2e
+ 1763 0055 01       		.byte	0x1
+ 1764 0056 03       		.uleb128 0x3
+ 1765 0057 0E       		.uleb128 0xe
+ 1766 0058 3A       		.uleb128 0x3a
+ 1767 0059 0B       		.uleb128 0xb
+ 1768 005a 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 40
+
+
+ 1769 005b 0B       		.uleb128 0xb
+ 1770 005c 27       		.uleb128 0x27
+ 1771 005d 19       		.uleb128 0x19
+ 1772 005e 11       		.uleb128 0x11
+ 1773 005f 01       		.uleb128 0x1
+ 1774 0060 12       		.uleb128 0x12
+ 1775 0061 06       		.uleb128 0x6
+ 1776 0062 40       		.uleb128 0x40
+ 1777 0063 18       		.uleb128 0x18
+ 1778 0064 9742     		.uleb128 0x2117
+ 1779 0066 19       		.uleb128 0x19
+ 1780 0067 01       		.uleb128 0x1
+ 1781 0068 13       		.uleb128 0x13
+ 1782 0069 00       		.byte	0
+ 1783 006a 00       		.byte	0
+ 1784 006b 09       		.uleb128 0x9
+ 1785 006c 05       		.uleb128 0x5
+ 1786 006d 00       		.byte	0
+ 1787 006e 03       		.uleb128 0x3
+ 1788 006f 08       		.uleb128 0x8
+ 1789 0070 3A       		.uleb128 0x3a
+ 1790 0071 0B       		.uleb128 0xb
+ 1791 0072 3B       		.uleb128 0x3b
+ 1792 0073 0B       		.uleb128 0xb
+ 1793 0074 49       		.uleb128 0x49
+ 1794 0075 13       		.uleb128 0x13
+ 1795 0076 02       		.uleb128 0x2
+ 1796 0077 17       		.uleb128 0x17
+ 1797 0078 00       		.byte	0
+ 1798 0079 00       		.byte	0
+ 1799 007a 0A       		.uleb128 0xa
+ 1800 007b 05       		.uleb128 0x5
+ 1801 007c 00       		.byte	0
+ 1802 007d 03       		.uleb128 0x3
+ 1803 007e 08       		.uleb128 0x8
+ 1804 007f 3A       		.uleb128 0x3a
+ 1805 0080 0B       		.uleb128 0xb
+ 1806 0081 3B       		.uleb128 0x3b
+ 1807 0082 0B       		.uleb128 0xb
+ 1808 0083 49       		.uleb128 0x49
+ 1809 0084 13       		.uleb128 0x13
+ 1810 0085 02       		.uleb128 0x2
+ 1811 0086 18       		.uleb128 0x18
+ 1812 0087 00       		.byte	0
+ 1813 0088 00       		.byte	0
+ 1814 0089 0B       		.uleb128 0xb
+ 1815 008a 34       		.uleb128 0x34
+ 1816 008b 00       		.byte	0
+ 1817 008c 03       		.uleb128 0x3
+ 1818 008d 0E       		.uleb128 0xe
+ 1819 008e 3A       		.uleb128 0x3a
+ 1820 008f 0B       		.uleb128 0xb
+ 1821 0090 3B       		.uleb128 0x3b
+ 1822 0091 0B       		.uleb128 0xb
+ 1823 0092 49       		.uleb128 0x49
+ 1824 0093 13       		.uleb128 0x13
+ 1825 0094 02       		.uleb128 0x2
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 41
+
+
+ 1826 0095 18       		.uleb128 0x18
+ 1827 0096 00       		.byte	0
+ 1828 0097 00       		.byte	0
+ 1829 0098 0C       		.uleb128 0xc
+ 1830 0099 34       		.uleb128 0x34
+ 1831 009a 00       		.byte	0
+ 1832 009b 03       		.uleb128 0x3
+ 1833 009c 0E       		.uleb128 0xe
+ 1834 009d 3A       		.uleb128 0x3a
+ 1835 009e 0B       		.uleb128 0xb
+ 1836 009f 3B       		.uleb128 0x3b
+ 1837 00a0 0B       		.uleb128 0xb
+ 1838 00a1 49       		.uleb128 0x49
+ 1839 00a2 13       		.uleb128 0x13
+ 1840 00a3 1C       		.uleb128 0x1c
+ 1841 00a4 0B       		.uleb128 0xb
+ 1842 00a5 00       		.byte	0
+ 1843 00a6 00       		.byte	0
+ 1844 00a7 0D       		.uleb128 0xd
+ 1845 00a8 34       		.uleb128 0x34
+ 1846 00a9 00       		.byte	0
+ 1847 00aa 03       		.uleb128 0x3
+ 1848 00ab 08       		.uleb128 0x8
+ 1849 00ac 3A       		.uleb128 0x3a
+ 1850 00ad 0B       		.uleb128 0xb
+ 1851 00ae 3B       		.uleb128 0x3b
+ 1852 00af 0B       		.uleb128 0xb
+ 1853 00b0 49       		.uleb128 0x49
+ 1854 00b1 13       		.uleb128 0x13
+ 1855 00b2 02       		.uleb128 0x2
+ 1856 00b3 17       		.uleb128 0x17
+ 1857 00b4 00       		.byte	0
+ 1858 00b5 00       		.byte	0
+ 1859 00b6 0E       		.uleb128 0xe
+ 1860 00b7 34       		.uleb128 0x34
+ 1861 00b8 00       		.byte	0
+ 1862 00b9 03       		.uleb128 0x3
+ 1863 00ba 0E       		.uleb128 0xe
+ 1864 00bb 3A       		.uleb128 0x3a
+ 1865 00bc 0B       		.uleb128 0xb
+ 1866 00bd 3B       		.uleb128 0x3b
+ 1867 00be 0B       		.uleb128 0xb
+ 1868 00bf 49       		.uleb128 0x49
+ 1869 00c0 13       		.uleb128 0x13
+ 1870 00c1 02       		.uleb128 0x2
+ 1871 00c2 17       		.uleb128 0x17
+ 1872 00c3 00       		.byte	0
+ 1873 00c4 00       		.byte	0
+ 1874 00c5 0F       		.uleb128 0xf
+ 1875 00c6 01       		.uleb128 0x1
+ 1876 00c7 01       		.byte	0x1
+ 1877 00c8 49       		.uleb128 0x49
+ 1878 00c9 13       		.uleb128 0x13
+ 1879 00ca 01       		.uleb128 0x1
+ 1880 00cb 13       		.uleb128 0x13
+ 1881 00cc 00       		.byte	0
+ 1882 00cd 00       		.byte	0
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 42
+
+
+ 1883 00ce 10       		.uleb128 0x10
+ 1884 00cf 21       		.uleb128 0x21
+ 1885 00d0 00       		.byte	0
+ 1886 00d1 49       		.uleb128 0x49
+ 1887 00d2 13       		.uleb128 0x13
+ 1888 00d3 2F       		.uleb128 0x2f
+ 1889 00d4 0B       		.uleb128 0xb
+ 1890 00d5 00       		.byte	0
+ 1891 00d6 00       		.byte	0
+ 1892 00d7 11       		.uleb128 0x11
+ 1893 00d8 26       		.uleb128 0x26
+ 1894 00d9 00       		.byte	0
+ 1895 00da 49       		.uleb128 0x49
+ 1896 00db 13       		.uleb128 0x13
+ 1897 00dc 00       		.byte	0
+ 1898 00dd 00       		.byte	0
+ 1899 00de 12       		.uleb128 0x12
+ 1900 00df 34       		.uleb128 0x34
+ 1901 00e0 00       		.byte	0
+ 1902 00e1 03       		.uleb128 0x3
+ 1903 00e2 08       		.uleb128 0x8
+ 1904 00e3 3A       		.uleb128 0x3a
+ 1905 00e4 0B       		.uleb128 0xb
+ 1906 00e5 3B       		.uleb128 0x3b
+ 1907 00e6 0B       		.uleb128 0xb
+ 1908 00e7 49       		.uleb128 0x49
+ 1909 00e8 13       		.uleb128 0x13
+ 1910 00e9 02       		.uleb128 0x2
+ 1911 00ea 18       		.uleb128 0x18
+ 1912 00eb 00       		.byte	0
+ 1913 00ec 00       		.byte	0
+ 1914 00ed 13       		.uleb128 0x13
+ 1915 00ee 2E       		.uleb128 0x2e
+ 1916 00ef 01       		.byte	0x1
+ 1917 00f0 03       		.uleb128 0x3
+ 1918 00f1 0E       		.uleb128 0xe
+ 1919 00f2 3A       		.uleb128 0x3a
+ 1920 00f3 0B       		.uleb128 0xb
+ 1921 00f4 3B       		.uleb128 0x3b
+ 1922 00f5 0B       		.uleb128 0xb
+ 1923 00f6 11       		.uleb128 0x11
+ 1924 00f7 01       		.uleb128 0x1
+ 1925 00f8 12       		.uleb128 0x12
+ 1926 00f9 06       		.uleb128 0x6
+ 1927 00fa 40       		.uleb128 0x40
+ 1928 00fb 18       		.uleb128 0x18
+ 1929 00fc 9742     		.uleb128 0x2117
+ 1930 00fe 19       		.uleb128 0x19
+ 1931 00ff 01       		.uleb128 0x1
+ 1932 0100 13       		.uleb128 0x13
+ 1933 0101 00       		.byte	0
+ 1934 0102 00       		.byte	0
+ 1935 0103 14       		.uleb128 0x14
+ 1936 0104 898201   		.uleb128 0x4109
+ 1937 0107 01       		.byte	0x1
+ 1938 0108 11       		.uleb128 0x11
+ 1939 0109 01       		.uleb128 0x1
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 43
+
+
+ 1940 010a 31       		.uleb128 0x31
+ 1941 010b 13       		.uleb128 0x13
+ 1942 010c 00       		.byte	0
+ 1943 010d 00       		.byte	0
+ 1944 010e 15       		.uleb128 0x15
+ 1945 010f 8A8201   		.uleb128 0x410a
+ 1946 0112 00       		.byte	0
+ 1947 0113 02       		.uleb128 0x2
+ 1948 0114 18       		.uleb128 0x18
+ 1949 0115 9142     		.uleb128 0x2111
+ 1950 0117 18       		.uleb128 0x18
+ 1951 0118 00       		.byte	0
+ 1952 0119 00       		.byte	0
+ 1953 011a 16       		.uleb128 0x16
+ 1954 011b 2E       		.uleb128 0x2e
+ 1955 011c 01       		.byte	0x1
+ 1956 011d 3F       		.uleb128 0x3f
+ 1957 011e 19       		.uleb128 0x19
+ 1958 011f 03       		.uleb128 0x3
+ 1959 0120 0E       		.uleb128 0xe
+ 1960 0121 3A       		.uleb128 0x3a
+ 1961 0122 0B       		.uleb128 0xb
+ 1962 0123 3B       		.uleb128 0x3b
+ 1963 0124 05       		.uleb128 0x5
+ 1964 0125 27       		.uleb128 0x27
+ 1965 0126 19       		.uleb128 0x19
+ 1966 0127 49       		.uleb128 0x49
+ 1967 0128 13       		.uleb128 0x13
+ 1968 0129 11       		.uleb128 0x11
+ 1969 012a 01       		.uleb128 0x1
+ 1970 012b 12       		.uleb128 0x12
+ 1971 012c 06       		.uleb128 0x6
+ 1972 012d 40       		.uleb128 0x40
+ 1973 012e 18       		.uleb128 0x18
+ 1974 012f 9742     		.uleb128 0x2117
+ 1975 0131 19       		.uleb128 0x19
+ 1976 0132 01       		.uleb128 0x1
+ 1977 0133 13       		.uleb128 0x13
+ 1978 0134 00       		.byte	0
+ 1979 0135 00       		.byte	0
+ 1980 0136 17       		.uleb128 0x17
+ 1981 0137 34       		.uleb128 0x34
+ 1982 0138 00       		.byte	0
+ 1983 0139 03       		.uleb128 0x3
+ 1984 013a 0E       		.uleb128 0xe
+ 1985 013b 3A       		.uleb128 0x3a
+ 1986 013c 0B       		.uleb128 0xb
+ 1987 013d 3B       		.uleb128 0x3b
+ 1988 013e 05       		.uleb128 0x5
+ 1989 013f 49       		.uleb128 0x49
+ 1990 0140 13       		.uleb128 0x13
+ 1991 0141 02       		.uleb128 0x2
+ 1992 0142 18       		.uleb128 0x18
+ 1993 0143 00       		.byte	0
+ 1994 0144 00       		.byte	0
+ 1995 0145 18       		.uleb128 0x18
+ 1996 0146 34       		.uleb128 0x34
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 44
+
+
+ 1997 0147 00       		.byte	0
+ 1998 0148 03       		.uleb128 0x3
+ 1999 0149 0E       		.uleb128 0xe
+ 2000 014a 3A       		.uleb128 0x3a
+ 2001 014b 0B       		.uleb128 0xb
+ 2002 014c 3B       		.uleb128 0x3b
+ 2003 014d 05       		.uleb128 0x5
+ 2004 014e 49       		.uleb128 0x49
+ 2005 014f 13       		.uleb128 0x13
+ 2006 0150 00       		.byte	0
+ 2007 0151 00       		.byte	0
+ 2008 0152 19       		.uleb128 0x19
+ 2009 0153 898201   		.uleb128 0x4109
+ 2010 0156 00       		.byte	0
+ 2011 0157 11       		.uleb128 0x11
+ 2012 0158 01       		.uleb128 0x1
+ 2013 0159 31       		.uleb128 0x31
+ 2014 015a 13       		.uleb128 0x13
+ 2015 015b 00       		.byte	0
+ 2016 015c 00       		.byte	0
+ 2017 015d 1A       		.uleb128 0x1a
+ 2018 015e 898201   		.uleb128 0x4109
+ 2019 0161 01       		.byte	0x1
+ 2020 0162 11       		.uleb128 0x11
+ 2021 0163 01       		.uleb128 0x1
+ 2022 0164 31       		.uleb128 0x31
+ 2023 0165 13       		.uleb128 0x13
+ 2024 0166 01       		.uleb128 0x1
+ 2025 0167 13       		.uleb128 0x13
+ 2026 0168 00       		.byte	0
+ 2027 0169 00       		.byte	0
+ 2028 016a 1B       		.uleb128 0x1b
+ 2029 016b 34       		.uleb128 0x34
+ 2030 016c 00       		.byte	0
+ 2031 016d 03       		.uleb128 0x3
+ 2032 016e 0E       		.uleb128 0xe
+ 2033 016f 3A       		.uleb128 0x3a
+ 2034 0170 0B       		.uleb128 0xb
+ 2035 0171 3B       		.uleb128 0x3b
+ 2036 0172 05       		.uleb128 0x5
+ 2037 0173 49       		.uleb128 0x49
+ 2038 0174 13       		.uleb128 0x13
+ 2039 0175 3F       		.uleb128 0x3f
+ 2040 0176 19       		.uleb128 0x19
+ 2041 0177 3C       		.uleb128 0x3c
+ 2042 0178 19       		.uleb128 0x19
+ 2043 0179 00       		.byte	0
+ 2044 017a 00       		.byte	0
+ 2045 017b 1C       		.uleb128 0x1c
+ 2046 017c 2E       		.uleb128 0x2e
+ 2047 017d 01       		.byte	0x1
+ 2048 017e 3F       		.uleb128 0x3f
+ 2049 017f 19       		.uleb128 0x19
+ 2050 0180 03       		.uleb128 0x3
+ 2051 0181 0E       		.uleb128 0xe
+ 2052 0182 3A       		.uleb128 0x3a
+ 2053 0183 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 45
+
+
+ 2054 0184 3B       		.uleb128 0x3b
+ 2055 0185 0B       		.uleb128 0xb
+ 2056 0186 27       		.uleb128 0x27
+ 2057 0187 19       		.uleb128 0x19
+ 2058 0188 3C       		.uleb128 0x3c
+ 2059 0189 19       		.uleb128 0x19
+ 2060 018a 01       		.uleb128 0x1
+ 2061 018b 13       		.uleb128 0x13
+ 2062 018c 00       		.byte	0
+ 2063 018d 00       		.byte	0
+ 2064 018e 1D       		.uleb128 0x1d
+ 2065 018f 05       		.uleb128 0x5
+ 2066 0190 00       		.byte	0
+ 2067 0191 49       		.uleb128 0x49
+ 2068 0192 13       		.uleb128 0x13
+ 2069 0193 00       		.byte	0
+ 2070 0194 00       		.byte	0
+ 2071 0195 1E       		.uleb128 0x1e
+ 2072 0196 2E       		.uleb128 0x2e
+ 2073 0197 00       		.byte	0
+ 2074 0198 3F       		.uleb128 0x3f
+ 2075 0199 19       		.uleb128 0x19
+ 2076 019a 03       		.uleb128 0x3
+ 2077 019b 0E       		.uleb128 0xe
+ 2078 019c 3A       		.uleb128 0x3a
+ 2079 019d 0B       		.uleb128 0xb
+ 2080 019e 3B       		.uleb128 0x3b
+ 2081 019f 0B       		.uleb128 0xb
+ 2082 01a0 27       		.uleb128 0x27
+ 2083 01a1 19       		.uleb128 0x19
+ 2084 01a2 3C       		.uleb128 0x3c
+ 2085 01a3 19       		.uleb128 0x19
+ 2086 01a4 00       		.byte	0
+ 2087 01a5 00       		.byte	0
+ 2088 01a6 1F       		.uleb128 0x1f
+ 2089 01a7 2E       		.uleb128 0x2e
+ 2090 01a8 01       		.byte	0x1
+ 2091 01a9 3F       		.uleb128 0x3f
+ 2092 01aa 19       		.uleb128 0x19
+ 2093 01ab 03       		.uleb128 0x3
+ 2094 01ac 0E       		.uleb128 0xe
+ 2095 01ad 3A       		.uleb128 0x3a
+ 2096 01ae 0B       		.uleb128 0xb
+ 2097 01af 3B       		.uleb128 0x3b
+ 2098 01b0 0B       		.uleb128 0xb
+ 2099 01b1 3C       		.uleb128 0x3c
+ 2100 01b2 19       		.uleb128 0x19
+ 2101 01b3 01       		.uleb128 0x1
+ 2102 01b4 13       		.uleb128 0x13
+ 2103 01b5 00       		.byte	0
+ 2104 01b6 00       		.byte	0
+ 2105 01b7 20       		.uleb128 0x20
+ 2106 01b8 18       		.uleb128 0x18
+ 2107 01b9 00       		.byte	0
+ 2108 01ba 00       		.byte	0
+ 2109 01bb 00       		.byte	0
+ 2110 01bc 21       		.uleb128 0x21
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 46
+
+
+ 2111 01bd 2E       		.uleb128 0x2e
+ 2112 01be 01       		.byte	0x1
+ 2113 01bf 3F       		.uleb128 0x3f
+ 2114 01c0 19       		.uleb128 0x19
+ 2115 01c1 03       		.uleb128 0x3
+ 2116 01c2 0E       		.uleb128 0xe
+ 2117 01c3 3A       		.uleb128 0x3a
+ 2118 01c4 0B       		.uleb128 0xb
+ 2119 01c5 3B       		.uleb128 0x3b
+ 2120 01c6 0B       		.uleb128 0xb
+ 2121 01c7 49       		.uleb128 0x49
+ 2122 01c8 13       		.uleb128 0x13
+ 2123 01c9 3C       		.uleb128 0x3c
+ 2124 01ca 19       		.uleb128 0x19
+ 2125 01cb 01       		.uleb128 0x1
+ 2126 01cc 13       		.uleb128 0x13
+ 2127 01cd 00       		.byte	0
+ 2128 01ce 00       		.byte	0
+ 2129 01cf 22       		.uleb128 0x22
+ 2130 01d0 2E       		.uleb128 0x2e
+ 2131 01d1 01       		.byte	0x1
+ 2132 01d2 3F       		.uleb128 0x3f
+ 2133 01d3 19       		.uleb128 0x19
+ 2134 01d4 03       		.uleb128 0x3
+ 2135 01d5 0E       		.uleb128 0xe
+ 2136 01d6 3A       		.uleb128 0x3a
+ 2137 01d7 0B       		.uleb128 0xb
+ 2138 01d8 3B       		.uleb128 0x3b
+ 2139 01d9 0B       		.uleb128 0xb
+ 2140 01da 27       		.uleb128 0x27
+ 2141 01db 19       		.uleb128 0x19
+ 2142 01dc 3C       		.uleb128 0x3c
+ 2143 01dd 19       		.uleb128 0x19
+ 2144 01de 00       		.byte	0
+ 2145 01df 00       		.byte	0
+ 2146 01e0 00       		.byte	0
+ 2147              		.section	.debug_loc,"",%progbits
+ 2148              	.Ldebug_loc0:
+ 2149              	.LLST0:
+ 2150 0000 00000000 		.4byte	.LVL0
+ 2151 0004 14000000 		.4byte	.LVL2
+ 2152 0008 0100     		.2byte	0x1
+ 2153 000a 50       		.byte	0x50
+ 2154 000b 14000000 		.4byte	.LVL2
+ 2155 000f 26000000 		.4byte	.LVL6
+ 2156 0013 0400     		.2byte	0x4
+ 2157 0015 F3       		.byte	0xf3
+ 2158 0016 01       		.uleb128 0x1
+ 2159 0017 50       		.byte	0x50
+ 2160 0018 9F       		.byte	0x9f
+ 2161 0019 26000000 		.4byte	.LVL6
+ 2162 001d 42000000 		.4byte	.LVL8
+ 2163 0021 0100     		.2byte	0x1
+ 2164 0023 50       		.byte	0x50
+ 2165 0024 44000000 		.4byte	.LVL9
+ 2166 0028 66000000 		.4byte	.LVL12
+ 2167 002c 0100     		.2byte	0x1
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 47
+
+
+ 2168 002e 50       		.byte	0x50
+ 2169 002f 68000000 		.4byte	.LVL13
+ 2170 0033 8C000000 		.4byte	.LFE67
+ 2171 0037 0100     		.2byte	0x1
+ 2172 0039 50       		.byte	0x50
+ 2173 003a 00000000 		.4byte	0
+ 2174 003e 00000000 		.4byte	0
+ 2175              	.LLST1:
+ 2176 0042 12000000 		.4byte	.LVL1
+ 2177 0046 26000000 		.4byte	.LVL6
+ 2178 004a 0200     		.2byte	0x2
+ 2179 004c 30       		.byte	0x30
+ 2180 004d 9F       		.byte	0x9f
+ 2181 004e 26000000 		.4byte	.LVL6
+ 2182 0052 70000000 		.4byte	.LVL17
+ 2183 0056 0100     		.2byte	0x1
+ 2184 0058 53       		.byte	0x53
+ 2185 0059 72000000 		.4byte	.LVL18
+ 2186 005d 7A000000 		.4byte	.LVL19
+ 2187 0061 0100     		.2byte	0x1
+ 2188 0063 53       		.byte	0x53
+ 2189 0064 00000000 		.4byte	0
+ 2190 0068 00000000 		.4byte	0
+ 2191              	.LLST2:
+ 2192 006c 12000000 		.4byte	.LVL1
+ 2193 0070 16000000 		.4byte	.LVL3
+ 2194 0074 0200     		.2byte	0x2
+ 2195 0076 30       		.byte	0x30
+ 2196 0077 9F       		.byte	0x9f
+ 2197 0078 16000000 		.4byte	.LVL3
+ 2198 007c 1E000000 		.4byte	.LVL4
+ 2199 0080 0200     		.2byte	0x2
+ 2200 0082 31       		.byte	0x31
+ 2201 0083 9F       		.byte	0x9f
+ 2202 0084 1E000000 		.4byte	.LVL4
+ 2203 0088 20000000 		.4byte	.LVL5
+ 2204 008c 0200     		.2byte	0x2
+ 2205 008e 30       		.byte	0x30
+ 2206 008f 9F       		.byte	0x9f
+ 2207 0090 26000000 		.4byte	.LVL6
+ 2208 0094 2A000000 		.4byte	.LVL7
+ 2209 0098 0100     		.2byte	0x1
+ 2210 009a 54       		.byte	0x54
+ 2211 009b 2A000000 		.4byte	.LVL7
+ 2212 009f 48000000 		.4byte	.LVL10
+ 2213 00a3 0100     		.2byte	0x1
+ 2214 00a5 57       		.byte	0x57
+ 2215 00a6 48000000 		.4byte	.LVL10
+ 2216 00aa 6A000000 		.4byte	.LVL14
+ 2217 00ae 0100     		.2byte	0x1
+ 2218 00b0 54       		.byte	0x54
+ 2219 00b1 6C000000 		.4byte	.LVL15
+ 2220 00b5 7A000000 		.4byte	.LVL19
+ 2221 00b9 0100     		.2byte	0x1
+ 2222 00bb 54       		.byte	0x54
+ 2223 00bc 7A000000 		.4byte	.LVL19
+ 2224 00c0 80000000 		.4byte	.LVL20
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 48
+
+
+ 2225 00c4 0100     		.2byte	0x1
+ 2226 00c6 53       		.byte	0x53
+ 2227 00c7 80000000 		.4byte	.LVL20
+ 2228 00cb 88000000 		.4byte	.LVL21
+ 2229 00cf 0100     		.2byte	0x1
+ 2230 00d1 54       		.byte	0x54
+ 2231 00d2 00000000 		.4byte	0
+ 2232 00d6 00000000 		.4byte	0
+ 2233              	.LLST3:
+ 2234 00da 12000000 		.4byte	.LVL1
+ 2235 00de 26000000 		.4byte	.LVL6
+ 2236 00e2 0200     		.2byte	0x2
+ 2237 00e4 30       		.byte	0x30
+ 2238 00e5 9F       		.byte	0x9f
+ 2239 00e6 26000000 		.4byte	.LVL6
+ 2240 00ea 5E000000 		.4byte	.LVL11
+ 2241 00ee 0100     		.2byte	0x1
+ 2242 00f0 55       		.byte	0x55
+ 2243 00f1 5E000000 		.4byte	.LVL11
+ 2244 00f5 6E000000 		.4byte	.LVL16
+ 2245 00f9 0200     		.2byte	0x2
+ 2246 00fb 31       		.byte	0x31
+ 2247 00fc 9F       		.byte	0x9f
+ 2248 00fd 6E000000 		.4byte	.LVL16
+ 2249 0101 88000000 		.4byte	.LVL21
+ 2250 0105 0100     		.2byte	0x1
+ 2251 0107 55       		.byte	0x55
+ 2252 0108 00000000 		.4byte	0
+ 2253 010c 00000000 		.4byte	0
+ 2254              	.LLST4:
+ 2255 0110 00000000 		.4byte	.LVL22
+ 2256 0114 24000000 		.4byte	.LVL23
+ 2257 0118 0100     		.2byte	0x1
+ 2258 011a 50       		.byte	0x50
+ 2259 011b 24000000 		.4byte	.LVL23
+ 2260 011f D4000000 		.4byte	.LFE68
+ 2261 0123 0400     		.2byte	0x4
+ 2262 0125 F3       		.byte	0xf3
+ 2263 0126 01       		.uleb128 0x1
+ 2264 0127 50       		.byte	0x50
+ 2265 0128 9F       		.byte	0x9f
+ 2266 0129 00000000 		.4byte	0
+ 2267 012d 00000000 		.4byte	0
+ 2268              		.section	.debug_aranges,"",%progbits
+ 2269 0000 34000000 		.4byte	0x34
+ 2270 0004 0200     		.2byte	0x2
+ 2271 0006 00000000 		.4byte	.Ldebug_info0
+ 2272 000a 04       		.byte	0x4
+ 2273 000b 00       		.byte	0
+ 2274 000c 0000     		.2byte	0
+ 2275 000e 0000     		.2byte	0
+ 2276 0010 00000000 		.4byte	.LFB67
+ 2277 0014 8C000000 		.4byte	.LFE67-.LFB67
+ 2278 0018 00000000 		.4byte	.LFB68
+ 2279 001c D4000000 		.4byte	.LFE68-.LFB68
+ 2280 0020 00000000 		.4byte	.LFB63
+ 2281 0024 0A000000 		.4byte	.LFE63-.LFB63
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 49
+
+
+ 2282 0028 00000000 		.4byte	.LFB73
+ 2283 002c E4010000 		.4byte	.LFE73-.LFB73
+ 2284 0030 00000000 		.4byte	0
+ 2285 0034 00000000 		.4byte	0
+ 2286              		.section	.debug_ranges,"",%progbits
+ 2287              	.Ldebug_ranges0:
+ 2288 0000 00000000 		.4byte	.LFB67
+ 2289 0004 8C000000 		.4byte	.LFE67
+ 2290 0008 00000000 		.4byte	.LFB68
+ 2291 000c D4000000 		.4byte	.LFE68
+ 2292 0010 00000000 		.4byte	.LFB63
+ 2293 0014 0A000000 		.4byte	.LFE63
+ 2294 0018 00000000 		.4byte	.LFB73
+ 2295 001c E4010000 		.4byte	.LFE73
+ 2296 0020 00000000 		.4byte	0
+ 2297 0024 00000000 		.4byte	0
+ 2298              		.section	.debug_line,"",%progbits
+ 2299              	.Ldebug_line0:
+ 2300 0000 53030000 		.section	.debug_str,"MS",%progbits,1
+ 2300      0200F401 
+ 2300      00000201 
+ 2300      FB0E0D00 
+ 2300      01010101 
+ 2301              	.LASF57:
+ 2302 0000 4932435F 		.ascii	"I2C_1_Start\000"
+ 2302      315F5374 
+ 2302      61727400 
+ 2303              	.LASF68:
+ 2304 000c 4C534D36 		.ascii	"LSM6DS0_Read_Acelerometer\000"
+ 2304      4453305F 
+ 2304      52656164 
+ 2304      5F416365 
+ 2304      6C65726F 
+ 2305              	.LASF56:
+ 2306 0026 50574D5F 		.ascii	"PWM_1_Start\000"
+ 2306      315F5374 
+ 2306      61727400 
+ 2307              	.LASF13:
+ 2308 0032 696E7438 		.ascii	"int8_t\000"
+ 2308      5F7400
+ 2309              	.LASF53:
+ 2310 0039 595F4163 		.ascii	"Y_Accelerator_str\000"
+ 2310      63656C65 
+ 2310      7261746F 
+ 2310      725F7374 
+ 2310      7200
+ 2311              	.LASF48:
+ 2312 004b 5A5F4D61 		.ascii	"Z_Mageneto_str\000"
+ 2312      67656E65 
+ 2312      746F5F73 
+ 2312      747200
+ 2313              	.LASF67:
+ 2314 005a 4C534D36 		.ascii	"LSM6DS0_Read_Gyrometer\000"
+ 2314      4453305F 
+ 2314      52656164 
+ 2314      5F477972 
+ 2314      6F6D6574 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 50
+
+
+ 2315              	.LASF45:
+ 2316 0071 50726573 		.ascii	"Pressure_str\000"
+ 2316      73757265 
+ 2316      5F737472 
+ 2316      00
+ 2317              	.LASF5:
+ 2318 007e 73686F72 		.ascii	"short int\000"
+ 2318      7420696E 
+ 2318      7400
+ 2319              	.LASF24:
+ 2320 0088 73697A65 		.ascii	"sizetype\000"
+ 2320      74797065 
+ 2320      00
+ 2321              	.LASF54:
+ 2322 0091 5A5F4163 		.ascii	"Z_Accelerator_str\000"
+ 2322      63656C65 
+ 2322      7261746F 
+ 2322      725F7374 
+ 2322      7200
+ 2323              	.LASF22:
+ 2324 00a3 63686172 		.ascii	"char8\000"
+ 2324      3800
+ 2325              	.LASF75:
+ 2326 00a9 6D61696E 		.ascii	"main\000"
+ 2326      00
+ 2327              	.LASF66:
+ 2328 00ae 4C495333 		.ascii	"LIS3MDL_Read_Magnetiometer\000"
+ 2328      4D444C5F 
+ 2328      52656164 
+ 2328      5F4D6167 
+ 2328      6E657469 
+ 2329              	.LASF37:
+ 2330 00c9 585F4779 		.ascii	"X_Gyro\000"
+ 2330      726F00
+ 2331              	.LASF34:
+ 2332 00d0 585F4D61 		.ascii	"X_Mageneto\000"
+ 2332      67656E65 
+ 2332      746F00
+ 2333              	.LASF51:
+ 2334 00db 5A5F4779 		.ascii	"Z_Gyro_str\000"
+ 2334      726F5F73 
+ 2334      747200
+ 2335              	.LASF47:
+ 2336 00e6 595F4D61 		.ascii	"Y_Mageneto_str\000"
+ 2336      67656E65 
+ 2336      746F5F73 
+ 2336      747200
+ 2337              	.LASF18:
+ 2338 00f5 75696E74 		.ascii	"uint16\000"
+ 2338      313600
+ 2339              	.LASF14:
+ 2340 00fc 75696E74 		.ascii	"uint8_t\000"
+ 2340      385F7400 
+ 2341              	.LASF33:
+ 2342 0104 50726573 		.ascii	"Pressure\000"
+ 2342      73757265 
+ 2342      00
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 51
+
+
+ 2343              	.LASF60:
+ 2344 010d 496E6974 		.ascii	"Init_LIS3MDL\000"
+ 2344      5F4C4953 
+ 2344      334D444C 
+ 2344      00
+ 2345              	.LASF65:
+ 2346 011a 4C505332 		.ascii	"LPS25H_Read_PRESSURE\000"
+ 2346      35485F52 
+ 2346      6561645F 
+ 2346      50524553 
+ 2346      53555245 
+ 2347              	.LASF43:
+ 2348 012f 74656D70 		.ascii	"temperature_str\000"
+ 2348      65726174 
+ 2348      7572655F 
+ 2348      73747200 
+ 2349              	.LASF55:
+ 2350 013f 55415254 		.ascii	"UART_1_Start\000"
+ 2350      5F315F53 
+ 2350      74617274 
+ 2350      00
+ 2351              	.LASF58:
+ 2352 014c 496E6974 		.ascii	"Init_LSM6DS0\000"
+ 2352      5F4C534D 
+ 2352      36445330 
+ 2352      00
+ 2353              	.LASF40:
+ 2354 0159 585F4163 		.ascii	"X_Accelerator\000"
+ 2354      63656C65 
+ 2354      7261746F 
+ 2354      7200
+ 2355              	.LASF20:
+ 2356 0167 666C6F61 		.ascii	"float\000"
+ 2356      7400
+ 2357              	.LASF10:
+ 2358 016d 6C6F6E67 		.ascii	"long long int\000"
+ 2358      206C6F6E 
+ 2358      6720696E 
+ 2358      7400
+ 2359              	.LASF42:
+ 2360 017b 5A5F4163 		.ascii	"Z_Accelerator\000"
+ 2360      63656C65 
+ 2360      7261746F 
+ 2360      7200
+ 2361              	.LASF46:
+ 2362 0189 585F4D61 		.ascii	"X_Mageneto_str\000"
+ 2362      67656E65 
+ 2362      746F5F73 
+ 2362      747200
+ 2363              	.LASF8:
+ 2364 0198 6C6F6E67 		.ascii	"long int\000"
+ 2364      20696E74 
+ 2364      00
+ 2365              	.LASF25:
+ 2366 01a1 63696E74 		.ascii	"cint8_run\000"
+ 2366      385F7275 
+ 2366      6E00
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 52
+
+
+ 2367              	.LASF1:
+ 2368 01ab 5F5F7569 		.ascii	"__uint8_t\000"
+ 2368      6E74385F 
+ 2368      7400
+ 2369              	.LASF49:
+ 2370 01b5 585F4779 		.ascii	"X_Gyro_str\000"
+ 2370      726F5F73 
+ 2370      747200
+ 2371              	.LASF64:
+ 2372 01c0 48545332 		.ascii	"HTS221_Read_Humidity\000"
+ 2372      32315F52 
+ 2372      6561645F 
+ 2372      48756D69 
+ 2372      64697479 
+ 2373              	.LASF35:
+ 2374 01d5 595F4D61 		.ascii	"Y_Mageneto\000"
+ 2374      67656E65 
+ 2374      746F00
+ 2375              	.LASF62:
+ 2376 01e0 50574D5F 		.ascii	"PWM_1_WriteCompare\000"
+ 2376      315F5772 
+ 2376      69746543 
+ 2376      6F6D7061 
+ 2376      726500
+ 2377              	.LASF17:
+ 2378 01f3 75696E74 		.ascii	"uint8\000"
+ 2378      3800
+ 2379              	.LASF3:
+ 2380 01f9 756E7369 		.ascii	"unsigned char\000"
+ 2380      676E6564 
+ 2380      20636861 
+ 2380      7200
+ 2381              	.LASF61:
+ 2382 0207 496E6974 		.ascii	"Init_LPS25H\000"
+ 2382      5F4C5053 
+ 2382      32354800 
+ 2383              	.LASF29:
+ 2384 0213 69313654 		.ascii	"i16ToString\000"
+ 2384      6F537472 
+ 2384      696E6700 
+ 2385              	.LASF2:
+ 2386 021f 7369676E 		.ascii	"signed char\000"
+ 2386      65642063 
+ 2386      68617200 
+ 2387              	.LASF30:
+ 2388 022b 74656D70 		.ascii	"temp_n\000"
+ 2388      5F6E00
+ 2389              	.LASF11:
+ 2390 0232 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2390      206C6F6E 
+ 2390      6720756E 
+ 2390      7369676E 
+ 2390      65642069 
+ 2391              	.LASF52:
+ 2392 0249 585F4163 		.ascii	"X_Accelerator_str\000"
+ 2392      63656C65 
+ 2392      7261746F 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 53
+
+
+ 2392      725F7374 
+ 2392      7200
+ 2393              	.LASF12:
+ 2394 025b 756E7369 		.ascii	"unsigned int\000"
+ 2394      676E6564 
+ 2394      20696E74 
+ 2394      00
+ 2395              	.LASF41:
+ 2396 0268 595F4163 		.ascii	"Y_Accelerator\000"
+ 2396      63656C65 
+ 2396      7261746F 
+ 2396      7200
+ 2397              	.LASF6:
+ 2398 0276 73686F72 		.ascii	"short unsigned int\000"
+ 2398      7420756E 
+ 2398      7369676E 
+ 2398      65642069 
+ 2398      6E7400
+ 2399              	.LASF0:
+ 2400 0289 5F5F696E 		.ascii	"__int8_t\000"
+ 2400      74385F74 
+ 2400      00
+ 2401              	.LASF23:
+ 2402 0292 63686172 		.ascii	"char\000"
+ 2402      00
+ 2403              	.LASF71:
+ 2404 0297 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 2404      4320342E 
+ 2404      392E3320 
+ 2404      32303135 
+ 2404      30333033 
+ 2405 02ca 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 2405      20726576 
+ 2405      6973696F 
+ 2405      6E203232 
+ 2405      31323230 
+ 2406 02fd 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2406      66756E63 
+ 2406      74696F6E 
+ 2406      2D736563 
+ 2406      74696F6E 
+ 2407              	.LASF16:
+ 2408 0325 696E7433 		.ascii	"int32_t\000"
+ 2408      325F7400 
+ 2409              	.LASF74:
+ 2410 032d 4C45445F 		.ascii	"LED_On\000"
+ 2410      4F6E00
+ 2411              	.LASF15:
+ 2412 0334 696E7431 		.ascii	"int16_t\000"
+ 2412      365F7400 
+ 2413              	.LASF32:
+ 2414 033c 48756D69 		.ascii	"Humidity\000"
+ 2414      64697479 
+ 2414      00
+ 2415              	.LASF26:
+ 2416 0345 63696E74 		.ascii	"cint8_run_len\000"
+ 2416      385F7275 
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 54
+
+
+ 2416      6E5F6C65 
+ 2416      6E00
+ 2417              	.LASF44:
+ 2418 0353 48756D69 		.ascii	"Humidity_str\000"
+ 2418      64697479 
+ 2418      5F737472 
+ 2418      00
+ 2419              	.LASF19:
+ 2420 0360 75696E74 		.ascii	"uint32\000"
+ 2420      333200
+ 2421              	.LASF72:
+ 2422 0367 6D61696E 		.ascii	"main.c\000"
+ 2422      2E6300
+ 2423              	.LASF9:
+ 2424 036e 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2424      20756E73 
+ 2424      69676E65 
+ 2424      6420696E 
+ 2424      7400
+ 2425              	.LASF21:
+ 2426 0380 646F7562 		.ascii	"double\000"
+ 2426      6C6500
+ 2427              	.LASF69:
+ 2428 0387 55415254 		.ascii	"UART_1_PutString\000"
+ 2428      5F315F50 
+ 2428      75745374 
+ 2428      72696E67 
+ 2428      00
+ 2429              	.LASF28:
+ 2430 0398 6938546F 		.ascii	"i8ToString\000"
+ 2430      53747269 
+ 2430      6E6700
+ 2431              	.LASF39:
+ 2432 03a3 5A5F4779 		.ascii	"Z_Gyro\000"
+ 2432      726F00
+ 2433              	.LASF73:
+ 2434 03aa 433A5C55 		.ascii	"C:\\Users\\Hesham\\Documents\\PSoC Creator\\PrISM_L"
+ 2434      73657273 
+ 2434      5C486573 
+ 2434      68616D5C 
+ 2434      446F6375 
+ 2435 03d8 65643031 		.ascii	"ed01\\UART\\Lab_1_PreCourses\\Design01.cydsn\000"
+ 2435      5C554152 
+ 2435      545C4C61 
+ 2435      625F315F 
+ 2435      50726543 
+ 2436              	.LASF50:
+ 2437 0402 595F4779 		.ascii	"Y_Gyro_str\000"
+ 2437      726F5F73 
+ 2437      747200
+ 2438              	.LASF63:
+ 2439 040d 48545332 		.ascii	"HTS221_Read_Temperature\000"
+ 2439      32315F52 
+ 2439      6561645F 
+ 2439      54656D70 
+ 2439      65726174 
+ 2440              	.LASF36:
+ARM GAS  C:\Users\Hesham\AppData\Local\Temp\ccjHmKIb.s 			page 55
+
+
+ 2441 0425 5A5F4D61 		.ascii	"Z_Mageneto\000"
+ 2441      67656E65 
+ 2441      746F00
+ 2442              	.LASF7:
+ 2443 0430 5F5F696E 		.ascii	"__int32_t\000"
+ 2443      7433325F 
+ 2443      7400
+ 2444              	.LASF27:
+ 2445 043a 73746172 		.ascii	"start_found\000"
+ 2445      745F666F 
+ 2445      756E6400 
+ 2446              	.LASF4:
+ 2447 0446 5F5F696E 		.ascii	"__int16_t\000"
+ 2447      7431365F 
+ 2447      7400
+ 2448              	.LASF38:
+ 2449 0450 595F4779 		.ascii	"Y_Gyro\000"
+ 2449      726F00
+ 2450              	.LASF31:
+ 2451 0457 54656D70 		.ascii	"Temperature\000"
+ 2451      65726174 
+ 2451      75726500 
+ 2452              	.LASF59:
+ 2453 0463 496E6974 		.ascii	"Init_HTS221\000"
+ 2453      5F485453 
+ 2453      32323100 
+ 2454              	.LASF76:
+ 2455 046f 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2455      52784275 
+ 2455      66666572 
+ 2455      00
+ 2456              	.LASF70:
+ 2457 047c 43794465 		.ascii	"CyDelay\000"
+ 2457      6C617900 
+ 2458              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

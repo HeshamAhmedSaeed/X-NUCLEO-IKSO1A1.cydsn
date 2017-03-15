@@ -1,0 +1,10 @@
+C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/CortexM3/ARM_GCC_493/Debug/CyBootAsmGnu.o : C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/Generated_Source/PSoC5/CyBootAsmGnu.s C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/Generated_Source/PSoC5/cydevicegnu.inc C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/Generated_Source/PSoC5/cydevicegnu_trm.inc C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/Generated_Source/PSoC5/cyfittergnu.inc 
+
+C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/Generated_Source/PSoC5/CyBootAsmGnu.s : 
+
+C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/Generated_Source/PSoC5/cydevicegnu.inc : 
+
+C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/Generated_Source/PSoC5/cydevicegnu_trm.inc : 
+
+C:/Users/Hesham/Documents/PSoC\ Creator/PrISM_Led01/UART/Lab_1_PreCourses/Design01.cydsn/Generated_Source/PSoC5/cyfittergnu.inc : 
+

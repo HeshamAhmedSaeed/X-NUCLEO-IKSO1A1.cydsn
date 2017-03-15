@@ -1,0 +1,8 @@
+C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\DelSig_I2CM01.cydsn\DelSig_I2CM01.cyprj|5f6b3529-1e62-41df-b266-e44dddd0d5ef
+C:\Program Files (x86)\Cypress\PSoC Creator\4.0\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|4a232149-1362-4e5a-b2f1-b1e52176b141
+C:\Program Files (x86)\Cypress\PSoC Creator\4.0\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|b24a968a-dc73-4ca8-a6a4-5ec7645aeca1
+C:\Program Files (x86)\Cypress\PSoC Creator\4.0\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|6bc69801-6be9-454c-9f60-cee74f80049c
+C:\Program Files (x86)\Cypress\PSoC Creator\4.0\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|d333bdd0-a4c4-4ebc-bec7-7dcc68a505f5
+C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\DelSig_I2CS_Test01.cydsn\DelSig_I2CS_Test01.cyprj|57ba4cb9-36a3-433e-a3e1-ef832bdb5e80
+C:\Program Files (x86)\Cypress\PSoC Creator\4.0\PSoC Creator\psoc\content\default\CyReferenceLibrary\CyReferenceLibrary.cylib\CyReferenceLibrary.cyprj|4f9d4d7c-1a9e-4062-8521-42c3f0654dc0
+C:\Users\Hesham\Documents\PSoC Creator\PrISM_Led01\UART\Lab_1_PreCourses\Design01.cydsn\Design01.cyprj|0df863d7-6512-4182-aefa-f0b262ee87e0
